@@ -1,0 +1,38 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-900">
+    <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold mb-8 text-white">Sign Up</h2>
+      <form [formGroup]="signup" (ngSubmit)="onsubmit()">
+        <div class="mb-4">
+          <label for="username" class="block text-white text-sm font-semibold mb-2">Username</label>
+          <input type="text"  formControlName="username"  id="username" name="username" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your username">
+          <div *ngIf="signup.get('username')?.errors?.['required'] &&  (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username is required</div>
+          <div *ngIf="signup.get('username')?.errors?.['minlength'] && (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username must be atleast 2 characters</div>
+          <div *ngIf="signup.get('username')?.errors?.['maxlength'] && (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username cannot exceed 20 charcters</div>
+        </div>
+        <div class="mb-4">
+          <label for="email" class="block text-white text-sm font-semibold mb-2">Email</label>
+          <input type="email"  formControlName="email" id="email" name="email" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your email">
+          <div *ngIf="signup.get('email')?.errors?.['required'] &&  (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">Email is required</div>
+          <div *ngIf="signup.get('email')?.errors?.['email'] && (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">Invalid email format</div>
+          <div *ngIf="signup.get('email')?.errors?.['emailInvalid'] && (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">check email format</div>
+        </div>
+        <div class="mb-4">
+          <label for="password" class="block text-white text-sm font-semibold mb-2">Password</label>
+          <input type="password"  formControlName="password" id="password" name="password" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your password">
+          <div *ngIf="signup.get('password')?.errors?.['required'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">password is required</div>
+          <div *ngIf="signup.get('password')?.errors?.['maxlength'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">password cannot exceed 20 characters</div>
+          <div *ngIf="signup.get('password')?.errors?.['pattern'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">password must include upper,lower and digit </div>
+        </div>
+        <div class="mb-6">
+          <label for="dob" class="block text-white text-sm font-semibold mb-2">Date of Birth</label>
+          <input type="date" formControlName="dateofbirth"  id="dob" name="dob" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Select your date of birth">
+          <div *ngIf="signup.get('dateofbirth')?.errors?.['required'] && (signup.get('dateofbirth')?.touched)" class="text-red-500 text-xs mt-1">dateofbirth is required</div>
+        </div>
+        <button type="submit" [disabled]="signup.invalid" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Sign Up</button>
+      </form>
+      <div class="mt-4 text-sm text-gray-300">
+        Already have an account? <a routerLink="/login" class="text-blue-500 hover:text-blue-700">Login here</a>
+      </div>
+    </div>
+  </div>
+  

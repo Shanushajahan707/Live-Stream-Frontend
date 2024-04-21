@@ -1,0 +1,21 @@
+<div class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white">
+    <p class="text-2xl font-bold flex items-center">Capture
+      <ng-container *ngIf="islogged">
+        <button class="ml-4  text-xl  rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent">Category</button>
+        <button class="ml-4 text-xl  rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent">Following</button>  
+      </ng-container>
+    </p>
+    <div>
+      <ng-container *ngIf="!islogged">
+        <button (click)="onlogin()" class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">Login</button>
+        <button (click)="onsignup()" class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700">Signup</button>
+      </ng-container>
+      <ng-container *ngIf="islogged">
+        <button  class="mr-2 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:bg-yellow-700">Start Live</button>
+        <button  class="mr-2 rounded bg-indigo-500 px-4 py-2 font-bold text-white hover:bg-indigo-700">View Channels</button>
+        <button  class="mr-2 rounded bg-purple-500 px-4 py-2 font-bold text-white hover:bg-purple-700">Manage Account</button>
+        <button (click)="onlogout()" class="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-green-700">Logout</button>
+      </ng-container>
+    </div>
+  </div>
+  
