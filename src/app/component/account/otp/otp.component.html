@@ -28,7 +28,7 @@
           <div class="text-center text-red-600 mt-2" *ngIf="start && !stop">Time elapsed: {{ value }} seconds</div>
         </form> 
         <div class="mt-4 text-sm text-gray-300">
-          Didn't receive the code?   <button (click)="resendotp()"  class="text-blue-500 cursor-pointer" [disabled]="!stop">Resend</button>
+          Didn't receive the code?   <button *ngIf="stop" (click)="resendotp()"  class="text-blue-500 cursor-pointer" [disabled]="!stop">Resend</button>
         </div>
       </div>
     </div>

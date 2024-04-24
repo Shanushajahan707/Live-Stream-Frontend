@@ -17,8 +17,7 @@ export class SignupComponent implements OnInit {
     this.signup=this.fb.group({
       username:['',[Validators.required, Validators.minLength(2),Validators.maxLength(20)]],
       email:['',[Validators.required,Validators.email,this.emailValidator.bind(this)]],
-      password:['',[Validators.required,Validators.maxLength(20),Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/
-    )
+      password:['',[Validators.required,Validators.maxLength(20),Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
     ]],
       dateofbirth:['',[Validators.required]]
     })
@@ -27,6 +26,8 @@ export class SignupComponent implements OnInit {
     if(this.signup.valid){
       console.log(this.signup.value);
       this.toastr.warning("Processing")
+      const signupdata=JSON.stringify(this.signup.value)
+      localStorage.setItem('userMail',signupdata)
      this.sendSignupDate(this.signup.value)
     }
   }

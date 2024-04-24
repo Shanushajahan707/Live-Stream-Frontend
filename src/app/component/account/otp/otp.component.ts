@@ -3,6 +3,7 @@ import { FormBuilder,FormGroup,Validators } from '@angular/forms';
 import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { signupCredential } from '../../../model/auth';
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 export class OtpComponent implements OnInit,OnDestroy{
     otpform!:FormGroup
     start:boolean=true
-    value:number=60
+    value:number=30
     stop:boolean=false
     intervaltimer!:any
     constructor(private fb:FormBuilder,private service:AccountService,private toastr:ToastrService,private router:Router){}
@@ -26,11 +27,13 @@ export class OtpComponent implements OnInit,OnDestroy{
       digit6: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1)]],
    })
    this.timer()
+   console.log("storage value",localStorage);
   }
   otpsubmit(){
     console.log(this.otpform.value);
     this.service.otp(this.otpform.value).subscribe({
       next:(res=>{
+        console.log('response after otp',res);
         if(res && res.message){
         this.toastr.success(res.messages)
         this.router.navigate(['/login'])
@@ -57,22 +60,26 @@ export class OtpComponent implements OnInit,OnDestroy{
   }
 
   resendotp(){
-   this.service.resendotp().subscribe({
-    next:(res=>{
-      if(res && res.message){
-        this.toastr.success(res.message)
-      }
-    }),
-    error:(err=>{
-      if(err && err.error.message){
-        this.toastr.error(err.error.message)
-      }
-    })
-   })
+    const userdata:string | null=localStorage.getItem('userMail')
+   if(userdata!==null){
+    const user = JSON.parse(userdata)
+    this.service.resendotp(user).subscribe({
+      next:(res=>{
+        if(res && res.message){
+          this.toastr.success(res.message)
+          localStorage.removeItem('userMail')
+        }
+      }),
+      error:(err=>{
+        if(err && err.error.message){
+          this.toastr.error(err.error.message)
+        }
+      })
+     })
+   }
   }
 
   ngOnDestroy(): void {
     clearInterval(this.intervaltimer)
   }
-  
 }
