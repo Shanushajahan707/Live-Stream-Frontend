@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup,FormBuilder,Validators, FormControl } from '@angular/forms';
 import { AccountService } from '../../../service/account.service';
 import { NotExpr } from '@angular/compiler';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -10,9 +11,15 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit,OnDestroy {
   signup!:FormGroup
+  private signupSubsription:Subscription|undefined
   constructor(private fb:FormBuilder,private service:AccountService,private toastr:ToastrService){}
+
+
+  public hidePassword=true
+
+
   ngOnInit(): void {
     this.signup=this.fb.group({
       username:['',[Validators.required, Validators.minLength(2),Validators.maxLength(20)]],
@@ -28,16 +35,16 @@ export class SignupComponent implements OnInit {
       this.toastr.warning("Processing")
       const signupdata=JSON.stringify(this.signup.value)
       localStorage.setItem('userMail',signupdata)
-     this.sendSignupDate(this.signup.value)
+      this.sendSignupDate(this.signup.value)
     }
   }
   
   sendSignupDate(data:any){
-    this.service.signup(data).subscribe(
+    this.signupSubsription= this.service.signup(data).subscribe(
       {
         next:(res)=>{
           if(res && res.message){
-           this.toastr.success(res.message)
+            this.toastr.success(res.message)
             this.signup.reset()
           }
         },error:(err)=>{
@@ -55,13 +62,23 @@ export class SignupComponent implements OnInit {
     }
     return null;
   }
-
+  
   passwordMatchValidator(control: FormControl): { [s: string]: boolean } | null {
     if (control.value !== control.root.get('password')?.value) {
       return { 'passwordMismatch': true };
     }
     return null;
   }
-
+togglePasswordVisibility(event:Event): void {
+  event.preventDefault();
+  event.stopPropagation();
+  this.hidePassword = !this.hidePassword;
+}
+  
+ngOnDestroy(): void {
+  if(this.signupSubsription){
+    this.signupSubsription.unsubscribe()
+  }
+}
 
 }

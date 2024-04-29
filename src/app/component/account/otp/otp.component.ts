@@ -4,6 +4,7 @@ import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { signupCredential } from '../../../model/auth';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
@@ -12,9 +13,10 @@ import { signupCredential } from '../../../model/auth';
 export class OtpComponent implements OnInit,OnDestroy{
     otpform!:FormGroup
     start:boolean=true
-    value:number=30
+    value:number=60
     stop:boolean=false
     intervaltimer!:any
+    private otpSubscription:Subscription|undefined
     constructor(private fb:FormBuilder,private service:AccountService,private toastr:ToastrService,private router:Router){}
     
     ngOnInit(): void {
@@ -31,7 +33,7 @@ export class OtpComponent implements OnInit,OnDestroy{
   }
   otpsubmit(){
     console.log(this.otpform.value);
-    this.service.otp(this.otpform.value).subscribe({
+    this.otpSubscription= this.service.otp(this.otpform.value).subscribe({
       next:(res=>{
         console.log('response after otp',res);
         if(res && res.message){
@@ -60,6 +62,7 @@ export class OtpComponent implements OnInit,OnDestroy{
   }
 
   resendotp(){
+    this.timer()
     const userdata:string | null=localStorage.getItem('userMail')
    if(userdata!==null){
     const user = JSON.parse(userdata)
@@ -81,5 +84,8 @@ export class OtpComponent implements OnInit,OnDestroy{
 
   ngOnDestroy(): void {
     clearInterval(this.intervaltimer)
+    if(this.otpSubscription){
+      this.otpSubscription.unsubscribe()
+    }
   }
 }

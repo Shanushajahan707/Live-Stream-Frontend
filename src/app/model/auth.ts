@@ -9,3 +9,14 @@ export interface signupCredential{
     password:string,
     dateofbirth:Date
 }
+export interface User {
+    _id: string;
+    username: string;
+    email: string;
+    password: string;
+    role: string;
+    dateofbirth: string;
+    isblocked: boolean;
+    googleId:number;
+   }
+   

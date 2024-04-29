@@ -13,13 +13,18 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { LandinghomeComponent } from './component/landinghome/landinghome.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { OtpComponent } from './component/account/otp/otp.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { AdminHomeComponent } from './component/admin-home/admin-home.component';
+import { AdminHomeComponent } from './component/admin/admin-home/admin-home.component';
 import { UserhomeComponent } from './component/userhomw/userhome/userhomme.component';
 import { RecommendlistComponent } from './component/userhomw/recommendlist/recommendlist.component';
+import { AdminUsermanageComponent } from './component/admin/admin-usermanage/admin-usermanage.component';
+import { AdminSidebarComponent } from './component/admin/admin-sidebar/admin-sidebar.component';
+import { AdminHeaderComponent } from './component/admin/admin-header/admin-header.component';
+import { AdminDashboardComponent } from './component/admin/admin-dashboard/admin-dashboard.component';
+import { AuthInterceptor } from './auth/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -35,6 +40,10 @@ import { RecommendlistComponent } from './component/userhomw/recommendlist/recom
     AdminHomeComponent,
     UserhomeComponent,
     RecommendlistComponent,
+    AdminUsermanageComponent,
+    AdminSidebarComponent,
+    AdminHeaderComponent,
+    AdminDashboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -44,7 +53,9 @@ import { RecommendlistComponent } from './component/userhomw/recommendlist/recom
     StoreModule.forRoot({}, {}),
     ToastrModule.forRoot(),
   ],
-  providers: [provideAnimationsAsync()],
+  providers: [provideAnimationsAsync(),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
