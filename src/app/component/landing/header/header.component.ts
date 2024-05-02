@@ -10,8 +10,8 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 })
 export class HeaderComponent implements OnInit {
   constructor(
-    private router: Router,
-    private service: AccountService,
+    private _router: Router,
+    private _service: AccountService,
     private breakpointObserver: BreakpointObserver
   ) {}
   islogged: Boolean = false;
@@ -19,23 +19,23 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(localStorage.getItem('token'));
-    this.service.islogged$.subscribe((res) => {
-      this.islogged = this.service.islogged();
+    this._service.islogged$.subscribe((res) => {
+      this.islogged = this._service.islogged();
     });
-    this.service.isAdmin$.subscribe((res) => {
-      this.isadmin = this.service.isAdmin();
+    this._service.isAdmin$.subscribe((res) => {
+      this.isadmin = this._service.isAdmin();
     });
   }
   onlogin() {
-    this.router.navigate(['/login']);
+    this._router.navigate(['/login']);
   }
   onsignup() {
-    this.router.navigate(['/signup']);
+    this._router.navigate(['/signup']);
   }
   onlogout() {
     localStorage.removeItem('token');
-    this.service.islogged$.next(false);
-    this.router.navigate(['']);
+    this._service.islogged$.next(false);
+    this._router.navigate(['']);
   }
   test() {
     // this.service.test().subscribe((res) => {

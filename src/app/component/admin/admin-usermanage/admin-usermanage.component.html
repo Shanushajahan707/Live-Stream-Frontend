@@ -1,50 +1,79 @@
-<app-admin-header/>
-<app-admin-sidebar/>
+<app-admin-header />
+<app-admin-sidebar />
 <!-- Content -->
 <div class="ml-64 p-8 mt-20">
-    <!-- Table -->
-    <table class="min-w-full">
-        <thead>
-            <tr>
-                <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">ID</th>
-                <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Username</th>
-                <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">DOB</th>
-                <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Active</th>
-                <th class="px-6 py-3 bg-gray-800"></th> <!-- Empty cell for actions -->
-            </tr>
-        </thead>
-        <tbody class="bg-gray-700 text-yellow-100 divide-y divide-gray-600 items-center justify-center">
-            <!-- Dummy data -->
-            <tr *ngFor="let user of users; let i = index">
-                <td class="px-6 py-4 whitespace-pre-wrap">{{ i+1 }}</td>
-                <td class="px-6 py-4 whitespace-pre-wrap">{{ user.username }}</td>
-                <td class="px-6 py-4 whitespace-pre-wrap">{{ user.dateofbirth | date:'shortDate' }}</td>
-                <td class="px-6 py-4 whitespace-pre-wrap">{{ user.email }}</td>
-                <td class="px-6 py-4 whitespace-pre-wrap">
-                  <div class="flex items-center">
-                    <div *ngIf="!user.isblocked" class="h-3 w-3 rounded-full mr-2 bg-green-500 animate-bounce"></div>
-                    <div *ngIf="user.isblocked" class="h-3 w-3 rounded-full mr-2 bg-red-500 animate-bounce"></div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-pre-wrap flex">
-                  <!-- <button class="text-sm px-4 text-gray-400 hover:text-white">Delete</button> -->
-                  <button class="text-sm px-4 text-gray-400 hover:text-white" (click)="toggleBlockStatus(user)">
-                    {{ user.isblocked ? 'Unblock' : 'Block' }}
-                  </button>
-                  
-                </td>
-              </tr>
-              
-            
-    
-            <!-- Add more rows as needed -->
-        </tbody>
-    </table>
+  <!-- Table -->
+  <table class="min-w-full">
+    <thead>
+      <tr>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          ID
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Username
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          DOB
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Email
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Active
+        </th>
+        <th class="px-6 py-3 bg-gray-800"></th>
+        <!-- Empty cell for actions -->
+      </tr>
+    </thead>
+    <tbody
+      class="bg-gray-700 text-yellow-100 divide-y divide-gray-600 items-center justify-center"
+    >
+      <!-- Dummy data -->
+      <tr *ngFor="let user of users; let i = index">
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ i + 1 }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ user.username }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <ng-container *ngIf="user.dateofbirth; else nil">{{
+            user.dateofbirth | date : "shortDate"
+          }}</ng-container>
+          <ng-template #nil>Nill</ng-template>
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ user.email }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <div class="flex items-center">
+            <div
+              *ngIf="!user.isblocked"
+              class="h-3 w-3 rounded-full mr-2 bg-green-500 animate-bounce"
+            ></div>
+            <div
+              *ngIf="user.isblocked"
+              class="h-3 w-3 rounded-full mr-2 bg-red-500 animate-bounce"
+            ></div>
+          </div>
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap flex">
+          <!-- <button class="text-sm px-4 text-gray-400 hover:text-white">Delete</button> -->
+          <button
+            class="text-sm px-4 text-gray-400 hover:text-white"
+            (click)="toggleBlockStatus(user)"
+          >
+            {{ user.isblocked ? "Unblock" : "Block" }}
+          </button>
+        </td>
+      </tr>
+
+      <!-- Add more rows as needed -->
+    </tbody>
+  </table>
+  <dui-paginator variant="circular" [length]="50"></dui-paginator>
 </div>
-
-
-
-
-
-

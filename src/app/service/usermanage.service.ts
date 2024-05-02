@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment } from '../../enviorments/enviorment'
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../model/auth';
+import { GetUsersResponse, User } from '../model/auth';
 
 
 @Injectable({
@@ -11,13 +11,24 @@ import { User } from '../model/auth';
 export class UsermanageService {
   apiUrl=environment.apiUrl
 
-  constructor(private http:HttpClient) { }
+  constructor(private _http:HttpClient) { }
 
 
-  getUsers():Observable<any>{
-    return this.http.get(`${this.apiUrl}getusers`);
-  }
+ getUsers(): Observable<GetUsersResponse> {
+ try {
+    return this._http.get<GetUsersResponse>(`${this.apiUrl}getusers`);
+ } catch (error) {
+    console.log('error', error);
+    throw error;
+ }
+}
+
   blockuser(userid:string):Observable<any>{
-    return this.http.put(`${this.apiUrl}blockuser/${userid}`, {});
+    try {
+      return this._http.put(`${this.apiUrl}blockuser/${userid}`, {});
+    } catch (error) {
+      console.log('error',error);
+      throw error
+    }
   } 
 }

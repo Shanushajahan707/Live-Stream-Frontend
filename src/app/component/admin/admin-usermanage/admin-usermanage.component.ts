@@ -11,28 +11,14 @@ import { Observable, catchError, map, of } from 'rxjs';
 })
 export class AdminUsermanageComponent implements OnInit {
   constructor(
-    private service: UsermanageService,
-    private toaster: ToastrService
+    private _service: UsermanageService,
+    private _toaster: ToastrService
   ) {}
+  showConfirmation = false;
   users: User[] = [];
 
-  toggleBlockStatus(user: User) {
-    this.service.blockuser(user._id).subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          this.toaster.success(res.message);
-        }
-      },
-      error: (err) => {
-        if (err && err.error.message) {
-          this.toaster.error(err.error.message);
-        }
-      },
-    });
-  }
-  
   ngOnInit(): void {
-    this.service.getUsers().subscribe({
+    this._service.getUsers().subscribe({
       next: (res) => {
         if (res && res.message) {
           this.users = res.users;
@@ -41,5 +27,20 @@ export class AdminUsermanageComponent implements OnInit {
     });
 
     console.log('users are', this.users);
+  }
+  toggleBlockStatus(user: User) {
+    this._service.blockuser(user._id).subscribe({
+      next: (res) => {
+        if (res && res.message) {
+          this._toaster.success(res.message);
+          this.users = this.users.map(u => u._id === res.user._id ? { ...u, ...res.user } : u);
+        }
+      },
+      error: (err) => {
+        if (err && err.error.message) {
+          this._toaster.error(err.error.message);
+        }
+      },
+    });
   }
 }

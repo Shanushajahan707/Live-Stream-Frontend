@@ -8,12 +8,12 @@ import { Router } from '@angular/router';
 })
 export class AdminHeaderComponent {
 
-  constructor(private router:Router) {
+  constructor(private _router:Router) {
     
   }
 
   logout(){
     localStorage.removeItem('admindata')
-    this.router.navigate(['/login'])
+    this._router.navigate(['/login'])
   }
 }

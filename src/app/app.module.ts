@@ -25,6 +25,10 @@ import { AdminSidebarComponent } from './component/admin/admin-sidebar/admin-sid
 import { AdminHeaderComponent } from './component/admin/admin-header/admin-header.component';
 import { AdminDashboardComponent } from './component/admin/admin-dashboard/admin-dashboard.component';
 import { AuthInterceptor } from './auth/auth-interceptor';
+import { DUIPaginator } from "david-ui-angular";
+import { DUIButton } from "david-ui-angular";
+import { DUIInput } from "david-ui-angular";
+import { ChannelOverviewComponent } from './component/channel/channel-overview/channel-overview.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +48,7 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     AdminSidebarComponent,
     AdminHeaderComponent,
     AdminDashboardComponent,
+    ChannelOverviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -52,6 +57,9 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     HttpClientModule,
     StoreModule.forRoot({}, {}),
     ToastrModule.forRoot(),
+    DUIPaginator,
+    DUIButton,
+    DUIInput
   ],
   providers: [provideAnimationsAsync(),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

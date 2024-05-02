@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../enviorments/enviorment';
 import { CookieService } from 'ngx-cookie-service';
+import { loginCredential } from '../../../model/auth';
 
 @Component({
   selector: 'app-login',
@@ -59,14 +60,15 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  sendLoginData(data: any) {
+  sendLoginData(data: loginCredential) {
     this.loginSubscription = this.service.login(data).subscribe({
       next: (res) => {
         if (res && res.message) {
+          console.log('response is',typeof(res.isAdmin));
           this.toastr.success(res.message);
           this.loginForm.reset();
-          console.log(res.isAdmin.isAdmin);
-          if (res.isAdmin.isAdmin) {
+          console.log(res.isAdmin?.isAdmin);
+        if (res.isAdmin?.isAdmin) {
             localStorage.setItem('admindata', res.token);
             this.router.navigate(['/admin/dashboard']);
           } else {

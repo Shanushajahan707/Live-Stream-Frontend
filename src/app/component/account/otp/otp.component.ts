@@ -16,11 +16,12 @@ export class OtpComponent implements OnInit,OnDestroy{
     value:number=60
     stop:boolean=false
     intervaltimer!:any
-    private otpSubscription:Subscription|undefined
-    constructor(private fb:FormBuilder,private service:AccountService,private toastr:ToastrService,private router:Router){}
+    private _otpSubscription:Subscription|undefined
+  fb: any;
+    constructor(private _fb:FormBuilder,private _service:AccountService,private _toastr:ToastrService,private _router:Router){}
     
     ngOnInit(): void {
-      this.otpform=this.fb.group({
+      this.otpform=this._fb.group({
         digit1: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1)]],
         digit2: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1)]],
       digit3: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(1)]],
@@ -33,18 +34,18 @@ export class OtpComponent implements OnInit,OnDestroy{
   }
   otpsubmit(){
     console.log(this.otpform.value);
-    this.otpSubscription= this.service.otp(this.otpform.value).subscribe({
+    this._otpSubscription= this._service.otp(this.otpform.value).subscribe({
       next:(res=>{
         console.log('response after otp',res);
         if(res && res.message){
-        this.toastr.success(res.messages)
-        this.router.navigate(['/login'])
+        this._toastr.success(res.message)
+        this._router.navigate(['/login'])
         this.otpform.reset()
         }
       }),
       error:(err=>{
         if(err && err.error.message){
-          this.toastr.error(err.error.message)
+          this._toastr.error(err.error.message)
           this.otpform.reset()
         }
       })
@@ -66,16 +67,16 @@ export class OtpComponent implements OnInit,OnDestroy{
     const userdata:string | null=localStorage.getItem('userMail')
    if(userdata!==null){
     const user = JSON.parse(userdata)
-    this.service.resendotp(user).subscribe({
+    this._service.resendotp(user).subscribe({
       next:(res=>{
         if(res && res.message){
-          this.toastr.success(res.message)
+          this._toastr.success(res.message)
           localStorage.removeItem('userMail')
         }
       }),
       error:(err=>{
         if(err && err.error.message){
-          this.toastr.error(err.error.message)
+          this._toastr.error(err.error.message)
         }
       })
      })
@@ -84,8 +85,8 @@ export class OtpComponent implements OnInit,OnDestroy{
 
   ngOnDestroy(): void {
     clearInterval(this.intervaltimer)
-    if(this.otpSubscription){
-      this.otpSubscription.unsubscribe()
+    if(this._otpSubscription){
+      this._otpSubscription.unsubscribe()
     }
   }
 }
