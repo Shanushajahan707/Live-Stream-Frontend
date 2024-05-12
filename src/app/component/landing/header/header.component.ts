@@ -18,13 +18,13 @@ export class HeaderComponent implements OnInit {
   isadmin: Boolean = false;
 
   ngOnInit(): void {
-    console.log(localStorage.getItem('token'));
     this._service.islogged$.subscribe((res) => {
       this.islogged = this._service.islogged();
     });
     this._service.isAdmin$.subscribe((res) => {
       this.isadmin = this._service.isAdmin();
     });
+    console.log('logged',this.islogged);
   }
   onlogin() {
     this._router.navigate(['/login']);
@@ -38,6 +38,7 @@ export class HeaderComponent implements OnInit {
     this._router.navigate(['']);
   }
   test() {
+    console.log('clicked')
     // this.service.test().subscribe((res) => {
     //   console.log('response', res);
     // });

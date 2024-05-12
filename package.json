@@ -10,7 +10,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "^17.3.5",
+    "@angular/animations": "^17.3.7",
     "@angular/cdk": "^17.3.4",
     "@angular/common": "^17.1.0",
     "@angular/compiler": "^17.1.0",
@@ -26,6 +26,8 @@
     "flowbite": "^2.3.0",
     "ngx-cookie-service": "^17.1.0",
     "ngx-toastr": "^18.0.0",
+    "primeicons": "^7.0.0",
+    "primeng": "^17.16.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"

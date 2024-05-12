@@ -3,50 +3,183 @@
     <h2 class="text-3xl font-bold mb-8 text-white">Sign Up</h2>
     <form class="text-white" [formGroup]="signup" (ngSubmit)="onsubmit()">
       <div class="mb-4">
-        <label for="username" class="block text-white text-sm font-semibold mb-2">Username</label>
-        <input type="text"  formControlName="username"  id="username" name="username" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your username">
-        <div *ngIf="signup.get('username')?.errors?.['required'] &&  (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username is required</div>
-        <div *ngIf="signup.get('username')?.errors?.['minlength'] && (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username must be atleast 2 characters</div>
-        <div *ngIf="signup.get('username')?.errors?.['maxlength'] && (signup.get('username')?.touched)" class="text-red-500 text-xs mt-1">Username cannot exceed 20 charcters</div>
+        <label
+          for="username"
+          class="block text-white text-sm font-semibold mb-2"
+          >Username</label
+        >
+        <input
+          type="text"
+          formControlName="username"
+          id="username"
+          name="username"
+          class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+          placeholder="Enter your username"
+        />
+        <div
+          *ngIf="signup.get('username')?.errors?.['required'] &&  (signup.get('username')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Username is required
+        </div>
+        <div
+          *ngIf="signup.get('username')?.errors?.['minlength'] && (signup.get('username')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Username must be atleast 2 characters
+        </div>
+        <div
+          *ngIf="signup.get('username')?.errors?.['maxlength'] && (signup.get('username')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Username cannot exceed 20 charcters
+        </div>
       </div>
       <div class="mb-4">
-        <label for="email" class="block text-white text-sm font-semibold mb-2">Email</label>
-        <input type="email" formControlName="email" id="email" name="email" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your email">
-        <div *ngIf="signup.get('email')?.errors?.['required'] &&  (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">Email is required</div>
-        <div *ngIf="signup.get('email')?.errors?.['email'] && (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">Invalid email format</div>
-        <div *ngIf="signup.get('email')?.errors?.['emailInvalid'] && (signup.get('email')?.touched)" class="text-red-500 text-xs mt-1">Check email format</div>
-    </div>
-    <div class="mb-4 items-center relative">
-      <label for="password" class="block text-white text-sm font-semibold mb-2">Password</label>
-      <div class="relative">
-          <input type="{{ hidePassword ? 'password' : 'text' }}" formControlName="password" id="password" name="password" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Enter your password">
-          <a (click)="togglePasswordVisibility($event)" class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 cursor-pointer">  
-            <svg class="flex-shrink-0 size-3.5 text-gray-400" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path class="hs-password-active:hidden" d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                  <path class="hs-password-active:hidden" d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                  <path class="hs-password-active:hidden" d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                  <line class="hs-password-active:hidden" x1="2" x2="22" y1="2" y2="22"></line>
-                  <path class="hidden hs-password-active:block" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-                  <circle class="hidden hs-password-active:block" cx="12" cy="12" r="3"></circle>
-              </svg>
+        <label for="email" class="block text-white text-sm font-semibold mb-2"
+          >Email</label
+        >
+        <input
+          type="email"
+          formControlName="email"
+          id="email"
+          name="email"
+          class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+          placeholder="Enter your email"
+        />
+        <div
+          *ngIf="signup.get('email')?.errors?.['required'] &&  (signup.get('email')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Email is required
+        </div>
+        <div
+          *ngIf="signup.get('email')?.errors?.['email'] && (signup.get('email')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Invalid email format
+        </div>
+        <div
+          *ngIf="signup.get('email')?.errors?.['emailInvalid'] && (signup.get('email')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Check email format
+        </div>
+      </div>
+      <div class="mb-4 items-center relative">
+        <label
+          for="password"
+          class="block text-white text-sm font-semibold mb-2"
+          >Password</label
+        >
+        <div class="relative">
+          <input
+            type="{{ hidePassword ? 'password' : 'text' }}"
+            formControlName="password"
+            id="password"
+            name="password"
+            class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            placeholder="Enter your password"
+          />
+          <a
+            (click)="togglePasswordVisibility($event)"
+            class="absolute right-2 top-1/2 transform -translate-y-1/2 text-blue-500 cursor-pointer"
+          >
+            <svg
+              class="flex-shrink-0 size-3.5 text-gray-400"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                class="hs-password-active:hidden"
+                d="M9.88 9.88a3 3 0 1 0 4.24 4.24"
+              ></path>
+              <path
+                class="hs-password-active:hidden"
+                d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"
+              ></path>
+              <path
+                class="hs-password-active:hidden"
+                d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"
+              ></path>
+              <line
+                class="hs-password-active:hidden"
+                x1="2"
+                x2="22"
+                y1="2"
+                y2="22"
+              ></line>
+              <path
+                class="hidden hs-password-active:block"
+                d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"
+              ></path>
+              <circle
+                class="hidden hs-password-active:block"
+                cx="12"
+                cy="12"
+                r="3"
+              ></circle>
+            </svg>
           </a>
+        </div>
+        <div
+          *ngIf="signup.get('password')?.errors?.['required'] && (signup.get('password')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Password is required
+        </div>
+        <div
+          *ngIf="signup.get('password')?.errors?.['maxlength'] && (signup.get('password')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Password cannot exceed 20 characters
+        </div>
+        <div
+          *ngIf="signup.get('password')?.errors?.['pattern'] && (signup.get('password')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          Password must include upper, lower, and digit
+        </div>
       </div>
-      <div *ngIf="signup.get('password')?.errors?.['required'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">Password is required</div>
-      <div *ngIf="signup.get('password')?.errors?.['maxlength'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">Password cannot exceed 20 characters</div>
-      <div *ngIf="signup.get('password')?.errors?.['pattern'] && (signup.get('password')?.touched)" class="text-red-500 text-xs mt-1">Password must include upper, lower, and digit</div>
-  </div>
-  
-  
-  
+
       <div class="mb-6">
-        <label for="dob" class="block text-white text-sm font-semibold mb-2">Date of Birth</label>
-        <input type="date" formControlName="dateofbirth"  id="dob" name="dob" class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500" placeholder="Select your date of birth">
-        <div *ngIf="signup.get('dateofbirth')?.errors?.['required'] && (signup.get('dateofbirth')?.touched)" class="text-red-500 text-xs mt-1">dateofbirth is required</div>
+        <label for="dob" class="block text-white text-sm font-semibold mb-2"
+          >Date of Birth</label
+        >
+        <input
+          type="date"
+          formControlName="dateofbirth"
+          id="dob"
+          name="dob"
+          class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+          placeholder="Select your date of birth"
+        />
+        <div
+          *ngIf="signup.get('dateofbirth')?.errors?.['required'] && (signup.get('dateofbirth')?.touched)"
+          class="text-red-500 text-xs mt-1"
+        >
+          dateofbirth is required
+        </div>
       </div>
-      <button type="submit" [disabled]="signup.invalid" class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Sign Up</button>
+      <button
+        type="submit"
+        [disabled]="signup.invalid"
+        class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+      >
+        Sign Up
+      </button>
     </form>
     <div class="mt-4 text-sm text-gray-300">
-      Already have an account? <a routerLink="/login" class="text-blue-500 hover:text-blue-700">Login here</a>
+      Already have an account?
+      <a routerLink="/login" class="text-blue-500 hover:text-blue-700"
+        >Login here</a
+      >
     </div>
   </div>
 </div>

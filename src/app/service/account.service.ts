@@ -8,6 +8,9 @@ import { LoginResponse, OtpResponse, ResendResponse, SignupResponse, loginCreden
   providedIn: 'root'
 })
 export class AccountService implements OnInit {
+  onLoadChannelInfo() {
+    throw new Error('Method not implemented.');
+  }
 
   apiUrl=environment.apiUrl
   islogged$=new BehaviorSubject<Boolean>(false)
@@ -56,7 +59,6 @@ export class AccountService implements OnInit {
   }
   resendotp(fomData:signupCredential):Observable<ResendResponse>{
     try {
-      
       console.log('formdt form the serveice',fomData);
       const reqBody = { form: fomData}
       return this._http.post<ResendResponse>(`${this.apiUrl}resendotp`,reqBody)

@@ -1,0 +1,100 @@
+<app-admin-header />
+<app-admin-sidebar />
+<!-- Content -->
+<div class="ml-64 p-8 mt-20">
+  <!-- Table -->
+  <table class="min-w-full">
+    <thead>
+      <tr>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          ID
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Username
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Channel Name
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Followers
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Subscriptions
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Banner Image
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          isblocked
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Videos
+        </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          Lives
+        </th>
+      </tr>
+    </thead>
+    <tbody class="bg-gray-700 text-yellow-100 divide-y divide-gray-600">
+      <tr *ngFor="let channel of channels; let i = index">
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ i + 1 }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.username }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.channelName }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.followers }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          {{ channel.subscription }}
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <img
+            [src]="channel.banner"
+            alt="Banner Image"
+            class="w-20 h-20 object-cover"
+          />
+        </td>
+        <td
+          class="px-6 py-4 whitespace-pre-wrap flex items-center justify-center"
+        >
+          <!-- Add actions as needed -->
+          <label class="inline-flex items-center me-5 cursor-pointer">
+            <input
+              type="checkbox"
+              value=""
+              class="sr-only peer"
+              [checked]="channel.isblocked"
+              (change)="toggleBlockStatus(channel)"
+            />
+            <div
+              class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"
+            ></div>
+          </label>
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <!-- Display videos count or list -->
+          {{ channel.video.length }}
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <!-- Display lives count or list -->
+          {{ channel.lives.length }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

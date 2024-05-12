@@ -1,36 +1,120 @@
 <div>
-    <div class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white">
-      <p class="text-4xl font-bold">Capture</p>
-      <div>
-        <button  class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">Login</button>
-        <button  class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700">Signup</button>
-      </div>
+  <div
+    class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white"
+  >
+    <p class="text-4xl font-bold">Capture</p>
+    <div>
+      <button
+        class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+      >
+        Login
+      </button>
+      <button
+        class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+      >
+        Signup
+      </button>
     </div>
-    <div class="min-h-screen flex items-center justify-center bg-gray-900">
-      <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-bold mb-8 text-white">OTP Verification</h2>
-        <form [formGroup]="otpform" (ngSubmit)="otpsubmit()">
-          <div class="grid grid-cols-6 gap-4">
-            <input  formControlName="digit1"  type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"    maxlength="1" />
-            <input  formControlName="digit2" type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"    maxlength="1"/>
-            <input formControlName="digit3"  type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"   maxlength="1" />
-            <input  formControlName="digit4" type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"    maxlength="1"/>
-            <input  formControlName="digit5" type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"   maxlength="1" />
-            <input  formControlName="digit6" type="text" class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"    maxlength="1"/>
-            <div *ngIf="otpform.get('digit1')?.errors?.['required'] &&  (otpform.get('digit1')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
-            <div *ngIf="otpform.get('digit2')?.errors?.['required'] &&  (otpform.get('digit2')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
-            <div *ngIf="otpform.get('digit3')?.errors?.['required'] &&  (otpform.get('digit3')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
-            <div *ngIf="otpform.get('digit4')?.errors?.['required'] &&  (otpform.get('digit4')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
-            <div *ngIf="otpform.get('digit5')?.errors?.['required'] &&  (otpform.get('digit5')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
-            <div *ngIf="otpform.get('digit6 ')?.errors?.['required'] &&  (otpform.get('   digit6')?.touched)" class="text-red-500 text-xs mt-1">Fill Properly</div>
+  </div>
+  <div class="min-h-screen flex items-center justify-center bg-gray-900">
+    <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold mb-8 text-white">OTP Verification</h2>
+      <form [formGroup]="otpform" (ngSubmit)="otpsubmit()">
+        <div class="grid grid-cols-6 gap-4">
+          <input
+            formControlName="digit1"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <input
+            formControlName="digit2"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <input
+            formControlName="digit3"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <input
+            formControlName="digit4"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <input
+            formControlName="digit5"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <input
+            formControlName="digit6"
+            type="text"
+            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            maxlength="1"
+          />
+          <div
+            *ngIf="otpform.get('digit1')?.errors?.['required'] &&  (otpform.get('digit1')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
           </div>
-          <button type="submit" class="w-full mt-8 bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700">Verify OTP</button>
-          <div class="text-center text-red-600 mt-2" *ngIf="start && !stop">Time elapsed: {{ value }} seconds</div>
-        </form> 
-        <div class="mt-4 text-sm text-gray-300">
-          Didn't receive the code?   <button *ngIf="stop" (click)="resendotp()"  class="text-blue-500 cursor-pointer" [disabled]="!stop">Resend</button>
+          <div
+            *ngIf="otpform.get('digit2')?.errors?.['required'] &&  (otpform.get('digit2')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
+          </div>
+          <div
+            *ngIf="otpform.get('digit3')?.errors?.['required'] &&  (otpform.get('digit3')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
+          </div>
+          <div
+            *ngIf="otpform.get('digit4')?.errors?.['required'] &&  (otpform.get('digit4')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
+          </div>
+          <div
+            *ngIf="otpform.get('digit5')?.errors?.['required'] &&  (otpform.get('digit5')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
+          </div>
+          <div
+            *ngIf="otpform.get('digit6 ')?.errors?.['required'] &&  (otpform.get('   digit6')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Fill Properly
+          </div>
         </div>
+        <button
+          type="submit"
+          class="w-full mt-8 bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+        >
+          Verify OTP
+        </button>
+        <div class="text-center text-red-600 mt-2" *ngIf="start && !stop">
+          Time elapsed: {{ value }} seconds
+        </div>
+      </form>
+      <div class="mt-4 text-sm text-gray-300">
+        Didn't receive the code?
+        <button
+          *ngIf="stop"
+          (click)="resendotp()"
+          class="text-blue-500 cursor-pointer"
+          [disabled]="!stop"
+        >
+          Resend
+        </button>
       </div>
     </div>
   </div>
-  
+</div>

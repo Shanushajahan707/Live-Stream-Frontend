@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrl: './livescreen.component.scss'
 })
 export class LivescreenComponent {
-
+  videoUrl:string="https://youtu.be/2nV2DfTeUPk?si=jPIpA_zg1izLQL4m"
 }

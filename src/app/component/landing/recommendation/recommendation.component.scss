@@ -1,0 +1,15 @@
+/* Add this to your global styles.css or equivalent */
+@media (max-width: 768px) {
+    .responsive-container {
+       display: none;
+    }
+    .hamburger-menu {
+       display: block;
+    }
+   }
+   
+   /* Add this to your global styles.css or equivalent */
+.hamburger-menu-active .responsive-container {
+    display: block;
+   }
+   

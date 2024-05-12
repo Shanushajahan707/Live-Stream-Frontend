@@ -18,39 +18,38 @@ import { loginCredential } from '../../../model/auth';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   res!: any;
-  apiUrl=environment.apiUrl
+  apiUrl = environment.apiUrl;
+  value: string = '';
   private loginSubscription: Subscription | undefined;
 
   constructor(
-    private fb: FormBuilder,
-    private store: Store,
-    private http: HttpClient,
-    private service: AccountService,
-    private toastr: ToastrService,
-    private router: Router,
-    private CookieService:CookieService
+    private _fb: FormBuilder,
+    private _service: AccountService,
+    private _toastr: ToastrService,
+    private _router: Router,
+    private CookieService: CookieService
   ) {}
 
   ngOnInit(): void {
-    this.loginForm = this.fb.group({
+    this.loginForm = this._fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
 
-
     const authResponseCookie = this.CookieService.get('authResponse');
     if (authResponseCookie) {
       const authResponse = JSON.parse(authResponseCookie);
-      if(authResponse.user) {
-        this.toastr.success(authResponse.message)
+      if (authResponse.user) {
+        this._toastr.success(authResponse.message);
         console.log('authResponse:', authResponse);
         console.log('User:', authResponse.user);
         console.log('token:', JSON.stringify(authResponse.token));
-        this.CookieService.delete('authResponse');
         localStorage.setItem('token', authResponse.token);
-        this.service.islogged$.next(true);
-        this.router.navigate(['/userhome']);
-      }}
+        this.CookieService.delete('authResponse');
+        this._service.islogged$.next(true);
+        this._router.navigate(['/userhome']);
+      }
+    }
   }
 
   onSubmit() {
@@ -61,46 +60,43 @@ export class LoginComponent implements OnInit {
   }
 
   sendLoginData(data: loginCredential) {
-    this.loginSubscription = this.service.login(data).subscribe({
+    this.loginSubscription = this._service.login(data).subscribe({
       next: (res) => {
         if (res && res.message) {
-          console.log('response is',typeof(res.isAdmin));
-          this.toastr.success(res.message);
+          console.log('response is', typeof res.isAdmin);
+          this._toastr.success(res.message);
           this.loginForm.reset();
-          console.log(res.isAdmin?.isAdmin);
-        if (res.isAdmin?.isAdmin) {
+          // console.log(res.isAdmin?.isAdmin);
+          if (res.isAdmin?.isAdmin) {
             localStorage.setItem('admindata', res.token);
-            this.router.navigate(['/admin/dashboard']);
+            this._router.navigate(['/admin/dashboard']);
           } else {
             localStorage.setItem('token', res.token);
-            this.service.islogged$.next(true);
-            this.router.navigate(['/userhome']);
+            this._service.islogged$.next(true);
+            this._router.navigate(['/userhome']);
             this.loginForm.reset();
           }
         }
       },
       error: (err) => {
         if (err.error && err.error.message) {
-          this.toastr.error(err.error.message);
+          this._toastr.error(err.error.message);
         }
       },
     });
   }
-  googleclick(event:Event) {
+  googleclick(event: Event) {
     console.log('clicl');
     // window.location.href =  `${this.apiUrl}auth/google `;
-    this.service.googleAuth().subscribe({
-      next:(successResponse:any)=>{
-        if(successResponse.message){
-          console.log('rsponse',successResponse);
+    this._service.googleAuth().subscribe({
+      next: (successResponse: any) => {
+        if (successResponse.message) {
+          console.log('rsponse', successResponse);
         }
-      },error:(error:any)=>{
-
-      }
-    })
-   }
-   
-
+      },
+      error: (error: any) => {},
+    });
+  }
 
   // Unsubscribe from the login subscription to prevent memory leaks
   ngOnDestroy(): void {

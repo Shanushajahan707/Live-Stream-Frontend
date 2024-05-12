@@ -10,6 +10,7 @@ export interface signupCredential {
   dateofbirth: Date;
 }
 export interface User {
+  [x: string]: any;
   _id: string;
   username: string;
   email: string;
@@ -26,6 +27,7 @@ interface IsAdminResponse {
 export interface LoginResponse {
   message: string;
   token: string;
+  refreshToken:string
   isAdmin?: IsAdminResponse;
 }
 export interface SignupResponse {
@@ -41,4 +43,39 @@ export interface ResendResponse {
 export interface GetUsersResponse {
   message: string;
   users: User[];
+}
+export interface Follower {
+  username: string;
+  userId: string; 
+}
+
+export interface ChannelData {
+  _id: string;
+  username: string;
+  channelName: string;
+  followers: Follower[];
+  subscription: number;
+  banner: string;
+  video: string[];
+  lives: string[];
+  isblocked: boolean;
+}
+
+
+export interface GetChannelResponse {
+  message: string;
+  channels: ChannelData[];
+}
+export interface GetChannelInfo {
+  message: string;
+  channeldata: ChannelData;
+}
+export interface EditChannelInterface {
+  message: string;
+  newChannelData: ChannelData;
+}
+
+export interface GetRecommededChannel {
+  message: string;
+  recommendedChannels: ChannelData[];
 }

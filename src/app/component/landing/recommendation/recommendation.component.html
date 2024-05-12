@@ -1,19 +1,26 @@
-<div class="w-full h-full bg-gray-900 ">
-    <div class="p-4 pt-8">
-        <h2 class="text-lg text-white font-bold mb-12">Recommended Lives</h2>
-        <!-- Channel listings -->
-        <div *ngIf="recommendations">
-            <div *ngFor="let value of recommendations" class="flex items-center mb-4">
-              <div class="w-12 h-12 rounded-full bg-gray-300">
-                <!-- Avatar -->
-                <img [src]="value.avatar" class="rounded-full" alt="Avatar">
-              </div>
-              <div class="ml-2 text-white">
-                <p class="font-semibold">{{ value.channelName }}</p>
-                <p class="text-sm">Views: {{ value.viewsCount }}</p>
-              </div>
+<div class="w-full h-full bg-gray-900" [class.hamburger-menu-active]="showMenu">
+
+<div class="w-full h-full bg-gray-900">
+  <div class="p-4 pt-8">
+      <h2 class="text-lg text-white font-bold mb-12">Recommended Lives</h2>
+      <!-- Hamburger Menu -->
+      <button class="hamburger-menu" (click)="toggleMenu()">
+          <span class="material-icons">menu</span>
+      </button>
+      <!-- Channel listings -->
+      <div *ngIf="recommendations" class="responsive-container">
+          <div *ngFor="let value of recommendations" class="flex items-center mb-4">
+            <div class="w-12 h-12 rounded-full bg-gray-300">
+              <!-- Avatar -->
+              <img [src]="value.avatar" class="rounded-full" alt="Avatar">
+            </div>
+            <div class="ml-2 text-white">
+              <p class="font-semibold">{{ value.channelName }}</p>
+              <p class="text-sm">Views: {{ value.viewsCount }}</p>
             </div>
           </div>
-        <!-- Repeat the channel listings as needed -->
-    </div>
+        </div>
+      <!-- Repeat the channel listings as needed -->
+  </div>
+</div>
 </div>

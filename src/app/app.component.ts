@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
+import { PrimeNGConfig } from 'primeng/api';
 
 
 @Component({
@@ -8,8 +9,11 @@ import { initFlowbite } from 'flowbite';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit{
+  constructor(private primengConfig: PrimeNGConfig) {}
+
   ngOnInit(): void {
     initFlowbite()
+    this.primengConfig.ripple = true;
   }
   title = 'Live-Stream';
   

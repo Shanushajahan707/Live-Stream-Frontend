@@ -1,30 +1,100 @@
-<div *ngIf="!isadmin" class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white">
-  <p class="text-2xl font-bold flex items-center">Capture
-      <ng-container *ngIf="islogged">
-          <button class="ml-4 text-xl rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent">Category</button>
-          <button class="ml-4 text-xl rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent">Following</button>
-      </ng-container>
+<div
+  *ngIf="!isadmin"
+  class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white"
+>
+  <p class="text-2xl font-bold flex items-center">
+    <a routerLink="/userhome"> Capture </a>
+    <ng-container *ngIf="islogged">
+      <button
+        class="ml-4 text-xl rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent"
+      >
+        Category
+      </button>
+      <button
+        class="ml-4 text-xl rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent"
+      >
+        Following
+      </button>
+    </ng-container>
   </p>
   <div class="flex items-center">
-      <ng-container *ngIf="!islogged">
-          <button (click)="onlogin()" class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">Login</button>
-          <button (click)="onsignup()" class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700">Signup</button>
-      </ng-container>
-      <ng-container *ngIf="islogged">
-          <button (click)="test()" class="mr-2 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:bg-yellow-700">Start Live</button>
-          <button class="mr-2 rounded bg-indigo-500 px-4 py-2 font-bold text-white hover:bg-indigo-700">View Channels</button>
-          <button class="mr-2 rounded bg-purple-500 px-4 py-2 font-bold text-white hover:bg-purple-700">Manage Account</button>
-          <button (click)="onlogout()" class="block rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-green-700">Logout</button>
-      </ng-container>
+    <ng-container *ngIf="!islogged">
+      <button
+        (click)="onlogin()"
+        class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+      >
+        Login
+      </button>
+      <button
+        (click)="onsignup()"
+        class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+      >
+        Signup
+      </button>
+    </ng-container>
+    <ng-container *ngIf="islogged">
+      <button
+        class="mr-2 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:bg-yellow-700"
+      >
+        Start Live
+      </button>
+    </ng-container>
+    <ng-container *ngIf="islogged">
+      <button
+        (click)="test()"
+        id="dropdownUserAvatarButton"
+        data-dropdown-toggle="dropdownAvatar"
+        class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+        type="button"
+      >
+        <span class="sr-only">Open user menu</span>
+        <img
+          class="w-8 h-8 rounded-full"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
+          alt="user photo"
+        />
+      </button>
+
+      <!-- Dropdown menu -->
+      <div
+        id="dropdownAvatar"
+        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+      >
+        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+          <div>Bonnie Green</div>
+          <div class="font-medium truncate">name.com</div>
+        </div>
+        <ul
+          class="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby="dropdownUserAvatarButton"
+        >
+          <li>
+            <a
+              routerLink="/channel"
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >Channel</a
+            >
+          </li>
+          <li>
+            <a
+              
+              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+            >
+              Settings
+              <i class="pi pi-spin pi-cog" style="font-size: 1.4rem"></i>
+            </a>
+          </li>
+        </ul>
+        <div class="py-2">
+          <a
+            (click)="onlogout()"
+            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+          >
+            Sign out
+            <i class="pi pi-power-off" style="font-size: 1.4rem"></i>
+          </a>
+        </div>
+      </div>
+    </ng-container>
   </div>
 </div>
-
-
-
-
-<!-- <button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-    Toggle modal
-    </button> -->
-    
-  
-    

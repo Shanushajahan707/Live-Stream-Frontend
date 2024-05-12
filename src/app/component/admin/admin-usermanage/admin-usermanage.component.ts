@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { UsermanageService } from '../../../service/usermanage.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../../model/auth';
-import { Observable, catchError, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-admin-usermanage',
@@ -14,9 +13,12 @@ export class AdminUsermanageComponent implements OnInit {
     private _service: UsermanageService,
     private _toaster: ToastrService
   ) {}
-  showConfirmation = false;
-  users: User[] = [];
 
+  displayedUsers: User[] = [];
+  users: User[] = [];
+  visible: boolean = false;
+
+  // In your component class
   ngOnInit(): void {
     this._service.getUsers().subscribe({
       next: (res) => {
@@ -33,7 +35,11 @@ export class AdminUsermanageComponent implements OnInit {
       next: (res) => {
         if (res && res.message) {
           this._toaster.success(res.message);
-          this.users = this.users.map(u => u._id === res.user._id ? { ...u, ...res.user } : u);
+          this.users = this.users.map((u) =>
+            u._id === res.user._id
+              ? { ...u, ...res.user, showDialog: false }
+              : u
+          );
         }
       },
       error: (err) => {
@@ -42,5 +48,9 @@ export class AdminUsermanageComponent implements OnInit {
         }
       },
     });
+  }
+
+  showDialog() {
+    this.visible = true;
   }
 }
