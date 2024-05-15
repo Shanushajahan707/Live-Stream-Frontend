@@ -9,6 +9,8 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../../../enviorments/enviorment';
 import { CookieService } from 'ngx-cookie-service';
 import { loginCredential } from '../../../model/auth';
+import { Userstate } from '../../../store/userlogin/login-state';
+import { userLogin } from '../../../store/userlogin/login-action';
 
 @Component({
   selector: 'app-login',
@@ -20,14 +22,15 @@ export class LoginComponent implements OnInit {
   res!: any;
   apiUrl = environment.apiUrl;
   value: string = '';
-  private loginSubscription: Subscription | undefined;
+  // private loginSubscription: Subscription | undefined;
 
   constructor(
     private _fb: FormBuilder,
     private _service: AccountService,
     private _toastr: ToastrService,
     private _router: Router,
-    private CookieService: CookieService
+    private CookieService: CookieService,
+    private store: Store<Userstate>,
   ) {}
 
   ngOnInit(): void {
@@ -41,12 +44,12 @@ export class LoginComponent implements OnInit {
       const authResponse = JSON.parse(authResponseCookie);
       if (authResponse.user) {
         this._toastr.success(authResponse.message);
+        localStorage.setItem('token', authResponse.token);
         console.log('authResponse:', authResponse);
         console.log('User:', authResponse.user);
         console.log('token:', JSON.stringify(authResponse.token));
-        localStorage.setItem('token', authResponse.token);
-        this.CookieService.delete('authResponse');
         this._service.islogged$.next(true);
+        this.CookieService.delete('authResponse');
         this._router.navigate(['/userhome']);
       }
     }
@@ -60,31 +63,40 @@ export class LoginComponent implements OnInit {
   }
 
   sendLoginData(data: loginCredential) {
-    this.loginSubscription = this._service.login(data).subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          console.log('response is', typeof res.isAdmin);
-          this._toastr.success(res.message);
-          this.loginForm.reset();
-          // console.log(res.isAdmin?.isAdmin);
-          if (res.isAdmin?.isAdmin) {
-            localStorage.setItem('admindata', res.token);
-            this._router.navigate(['/admin/dashboard']);
-          } else {
-            localStorage.setItem('token', res.token);
-            this._service.islogged$.next(true);
-            this._router.navigate(['/userhome']);
-            this.loginForm.reset();
-          }
-        }
-      },
-      error: (err) => {
-        if (err.error && err.error.message) {
-          this._toastr.error(err.error.message);
-        }
-      },
-    });
+    if(data){
+      
+      this.store.dispatch(userLogin({userData: data}))
+    }
   }
+
+
+
+
+  // sendLoginData(data: loginCredential) {
+  //   this.loginSubscription = this._service.login(data).subscribe({
+  //     next: (res) => {
+  //       if (res && res.message) {
+  //         this._toastr.success(res.message);
+  //         this.loginForm.reset();
+  //         if (res.isAdmin?.isAdmin) {
+  //           localStorage.setItem('admindata', res.token);
+  //           this._router.navigate(['/admin/dashboard']);
+  //         } else {
+  //           localStorage.setItem('token', res.token);
+  //           localStorage.setItem('refreshToken', res.refreshToken);
+  //           this._service.islogged$.next(true);
+  //           this._router.navigate(['/userhome']);
+  //           this.loginForm.reset();
+  //         }
+  //       }
+  //     },
+  //     error: (err) => {
+  //       if (err.error && err.error.message) {
+  //         this._toastr.error(err.error.message);
+  //       }
+  //     },
+  //   });
+  // }
   googleclick(event: Event) {
     console.log('clicl');
     // window.location.href =  `${this.apiUrl}auth/google `;
@@ -99,9 +111,9 @@ export class LoginComponent implements OnInit {
   }
 
   // Unsubscribe from the login subscription to prevent memory leaks
-  ngOnDestroy(): void {
-    if (this.loginSubscription) {
-      this.loginSubscription.unsubscribe();
-    }
-  }
+  // ngOnDestroy(): void {
+  //   if (this.loginSubscription) {
+  //     this.loginSubscription.unsubscribe();
+  //   }
+  // }
 }

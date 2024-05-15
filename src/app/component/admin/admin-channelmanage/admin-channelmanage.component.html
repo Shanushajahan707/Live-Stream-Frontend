@@ -58,13 +58,13 @@
         <td class="px-6 py-4 whitespace-pre-wrap">{{ i + 1 }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.username }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.channelName }}</td>
-        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.followers }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.followers.length }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           {{ channel.subscription }}
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           <img
-            [src]="channel.banner"
+          src="http://localhost:3000/channelBanner/{{ channel?.banner }}?"
             alt="Banner Image"
             class="w-20 h-20 object-cover"
           />
@@ -96,5 +96,19 @@
         </td>
       </tr>
     </tbody>
+    
   </table>
+  <div class="pagination-controls flex justify-center items-center mt-4">
+    <button type="button" 
+            (click)="prevPage()"
+            class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+      Previous
+    </button>
+    <span class="text-gray-800">Page {{ currentPage }} of {{ totalPages }}</span>
+    <button type="button"
+            (click)="nextPage()"
+            class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+      Next
+    </button>
+  </div>
 </div>

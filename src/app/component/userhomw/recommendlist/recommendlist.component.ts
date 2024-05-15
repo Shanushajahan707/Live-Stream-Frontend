@@ -86,7 +86,6 @@ export class RecommendlistComponent implements OnInit {
     const userid: string = localStorage.getItem('token') as string;
     const decodedToken: any = jwtDecode(userid);
     const isfollow = channel.followers.includes(decodedToken._id);
-    console.log('flow', isfollow);
     return isfollow;
   }
 }

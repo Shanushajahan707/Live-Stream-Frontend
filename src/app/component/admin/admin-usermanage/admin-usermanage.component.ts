@@ -17,19 +17,54 @@ export class AdminUsermanageComponent implements OnInit {
   displayedUsers: User[] = [];
   users: User[] = [];
   visible: boolean = false;
+  currentPage = 1;
+  itemsPerPage = 1;
+  totalPages = 0;
 
   // In your component class
-  ngOnInit(): void {
-    this._service.getUsers().subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          this.users = res.users;
-        }
-      },
-    });
 
-    console.log('users are', this.users);
+  ngOnInit(): void {
+    this.fetchUsers();
   }
+  // alert(this.users)
+  // this.totalPages = Math.ceil(data.users.length / this.itemsPerPage);
+  async fetchUsers() {
+    try {
+      this._service.getUsers(this.currentPage, this.itemsPerPage).subscribe({
+        next: (res) => {
+          console.log('res', res);
+          this.users = res.users;
+          console.log('user', this.users);
+          this.totalPages = Math.ceil(res.totalcount / this.itemsPerPage);
+          if (res && res.message) {
+            this._toaster.success(res.message);
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.fetchUsers();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.fetchUsers();
+    }
+  }
+
   toggleBlockStatus(user: User) {
     this._service.blockuser(user._id).subscribe({
       next: (res) => {
@@ -53,4 +88,5 @@ export class AdminUsermanageComponent implements OnInit {
   showDialog() {
     this.visible = true;
   }
+
 }

@@ -20,6 +20,13 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserSideRoutingModule } from './user-side-routing.module';
 import { FileUploadModule } from 'primeng/fileupload';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { userReducer } from '../../store/userlogin/login-reducer';
+import { AuthEffects } from '../../store/userlogin/login-effects';
+
+
+
 @NgModule({
   declarations: [
     RecommendationComponent,

@@ -12,9 +12,9 @@ export class ChannelmanageService {
 
   constructor(private _http:HttpClient) { }
 
-  getChannels():Observable<GetChannelResponse>{
+  getChannels(page: number, limit: number):Observable<GetChannelResponse>{
     try {
-      return this._http.get<GetChannelResponse>(`${this.apiUrl}getchannels`)
+      return this._http.get<GetChannelResponse>(`${this.apiUrl}getchannels?page=${page}&limit=${limit}`)
     } catch (error) {
       throw error
     }

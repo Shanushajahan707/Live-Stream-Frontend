@@ -1,46 +1,27 @@
-// import { Injectable } from '@angular/core';
-// import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
-// import { ToastrService } from 'ngx-toastr';
-// import { Observable } from 'rxjs';
-
-// @Injectable({
-//  providedIn: 'root'
-// })
-// export class AuthGuard implements CanActivate {
-
-//  constructor(private router: Router,private toaster:ToastrService) {}
-
-//  canActivate(
-//     route: ActivatedRouteSnapshot,
-//     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-//     const userData = localStorage.getItem('token');
-//     if (userData) {
-//       return true;
-//     } else {
-//       this.toaster.error("Unauthorized Entry")
-//       this.router.navigate(['/login']);
-//       return false;
-//     }
-//  }
-// }
-
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastrService } from 'ngx-toastr';
+import { AccountService } from '../service/account.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
+  const _service =inject(AccountService)
 
   const token = localStorage.getItem('token');
+
+  // Check if token exists
   if (!token) {
     router.navigateByUrl('');
     return false;
   }
 
   try {
+    // Decode token
     const decodedToken: any = jwtDecode(token);
+
+    // Check if token has expired
     const currentTime = Math.floor(Date.now() / 1000);
     if (decodedToken.exp < currentTime) {
       localStorage.removeItem('token');
@@ -50,12 +31,12 @@ export const authGuard: CanActivateFn = (route, state) => {
       return true;
     }
   } catch (error) {
-    localStorage.removeItem('token');
+    console.log('Error decoding token:', error);
     router.navigateByUrl('');
-    console.log(error);
     return false;
   }
-};
+}
+
 
 export const authGuardForLoggedUsers: CanActivateFn = (route, state) => {
   const router = inject(Router);

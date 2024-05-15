@@ -1,5 +1,5 @@
 export interface loginCredential {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -9,6 +9,7 @@ export interface signupCredential {
   password: string;
   dateofbirth: Date;
 }
+
 export interface User {
   [x: string]: any;
   _id: string;
@@ -29,6 +30,7 @@ export interface LoginResponse {
   token: string;
   refreshToken:string
   isAdmin?: IsAdminResponse;
+  userdata:User
 }
 export interface SignupResponse {
   message: string;
@@ -43,6 +45,7 @@ export interface ResendResponse {
 export interface GetUsersResponse {
   message: string;
   users: User[];
+  totalcount:number
 }
 export interface Follower {
   username: string;
@@ -65,6 +68,7 @@ export interface ChannelData {
 export interface GetChannelResponse {
   message: string;
   channels: ChannelData[];
+  totalcount:number
 }
 export interface GetChannelInfo {
   message: string;

@@ -14,14 +14,16 @@ export class UsermanageService {
   constructor(private _http:HttpClient) { }
 
 
- getUsers(): Observable<GetUsersResponse> {
- try {
-    return this._http.get<GetUsersResponse>(`${this.apiUrl}getusers`);
- } catch (error) {
-    console.log('error', error);
-    throw error;
- }
-}
+  getUsers(page: number, limit: number): Observable<GetUsersResponse> {
+    try {
+      
+      return this._http.get<GetUsersResponse>(`${this.apiUrl}getusers?page=${page}&limit=${limit}`);
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  }
+  
 
   blockuser(userid:string):Observable<any>{
     try {

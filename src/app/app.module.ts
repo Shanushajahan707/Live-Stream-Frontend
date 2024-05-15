@@ -8,10 +8,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { StoreModule } from '@ngrx/store';
 import { ToastrModule } from 'ngx-toastr';
-import { AuthInterceptor } from './auth/auth-interceptor';
+import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { AdminModule } from './modules/admin/admin.module';
 import { UserModule } from './modules/user/user.module';
 import { HeaderComponent } from './component/landing/header/header.component';
+import { userReducer } from './store/userlogin/login-reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { AuthEffects } from './store/userlogin/login-effects';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
@@ -24,6 +27,17 @@ import { HeaderComponent } from './component/landing/header/header.component';
     HttpClientModule,
     StoreModule.forRoot({}, {}),
     ToastrModule.forRoot(),
+    StoreModule.forRoot({}, {}),
+    StoreModule.forRoot(
+      {
+        auth: userReducer,
+      }),
+    EffectsModule.forRoot(
+      [
+        AuthEffects,
+        
+      ]
+    ),
   ],
   providers: [
     provideAnimationsAsync(),
