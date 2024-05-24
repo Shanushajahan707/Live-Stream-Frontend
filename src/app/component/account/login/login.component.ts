@@ -5,12 +5,13 @@ import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, flatMap } from 'rxjs';
 import { environment } from '../../../../enviorments/enviorment';
 import { CookieService } from 'ngx-cookie-service';
 import { loginCredential } from '../../../model/auth';
 import { Userstate } from '../../../store/userlogin/login-state';
 import { userLogin } from '../../../store/userlogin/login-action';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +23,9 @@ export class LoginComponent implements OnInit {
   res!: any;
   apiUrl = environment.apiUrl;
   value: string = '';
+  visible: boolean = false;
+  position: string | any = 'center';
+  registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
 
   constructor(
@@ -30,13 +34,17 @@ export class LoginComponent implements OnInit {
     private _toastr: ToastrService,
     private _router: Router,
     private CookieService: CookieService,
-    private store: Store<Userstate>,
+    private store: Store<Userstate>
   ) {}
 
   ngOnInit(): void {
     this.loginForm = this._fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
+    });
+
+    this.registeredEmail = this._fb.group({
+      registeredemail: [''],
     });
 
     const authResponseCookie = this.CookieService.get('authResponse');
@@ -63,14 +71,10 @@ export class LoginComponent implements OnInit {
   }
 
   sendLoginData(data: loginCredential) {
-    if(data){
-      
-      this.store.dispatch(userLogin({userData: data}))
+    if (data) {
+      this.store.dispatch(userLogin({ userData: data }));
     }
   }
-
-
-
 
   // sendLoginData(data: loginCredential) {
   //   this.loginSubscription = this._service.login(data).subscribe({
@@ -116,4 +120,24 @@ export class LoginComponent implements OnInit {
   //     this.loginSubscription.unsubscribe();
   //   }
   // }
+  
+  showDialog(position: string) {
+    this.position = position;
+    this.visible = true;
+  }
+  forgotpass() {
+    this.visible = false;
+    this._service.forgotUrl(this.registeredEmail.value).subscribe({
+      next: (res) => {
+        if (res && res.message) {
+          this._toastr.success(res.message);
+        }
+      },
+      error: (err) => {
+        if (err && err.error.message) {
+          this._toastr.error(err.error.message);
+        }
+      },
+    });
+  }
 }

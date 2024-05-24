@@ -12,15 +12,26 @@ import { User } from '../../../model/auth';
 })
 export class UserhomeComponent {
   user$: Observable<User | null>;
+  visible: boolean = false;
+  sidebarVisible1: boolean = false;
+
   constructor(
     private _service: AccountService,
     private store: Store<UserState>
   ) {
     this.user$ = this.store.pipe(select(selectUser));
-     this.user$.subscribe(res=>{console.log(res);});
+    this.user$.subscribe((res) => {
+      console.log(res);
+    });
   }
   Oninit() {
-    console.log('logged userhome', this._service.islogged$, this.user$.subscribe(res=>{console.log(res)}));
-
+    console.log(
+      'logged userhome',
+      this._service.islogged$,
+      this.user$.subscribe((res) => {
+        console.log(res);
+      })
+    );
   }
+
 }

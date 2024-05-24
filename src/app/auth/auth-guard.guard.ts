@@ -25,6 +25,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     const currentTime = Math.floor(Date.now() / 1000);
     if (decodedToken.exp < currentTime) {
       localStorage.removeItem('token');
+      _service.islogged$.next(false)
       router.navigateByUrl('');
       return false;
     } else {
@@ -36,7 +37,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false;
   }
 }
-
+ 
 
 export const authGuardForLoggedUsers: CanActivateFn = (route, state) => {
   const router = inject(Router);
@@ -48,9 +49,10 @@ export const authGuardForLoggedUsers: CanActivateFn = (route, state) => {
   try {
     const decodedToken: any = jwtDecode(token);
     const currentTime = Math.floor(Date.now() / 1000);
-
+    console.log('decoded',decodedToken);
     if (decodedToken.exp > currentTime) {
       if (decodedToken.role == 'user') {
+        console.log('enter the if');
         router.navigateByUrl('/userhome');
         return false;
       } else if (decodedToken.role == 'Admin') {

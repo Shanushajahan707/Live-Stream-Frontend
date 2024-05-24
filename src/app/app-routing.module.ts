@@ -17,7 +17,7 @@ const routes: Routes = [
  {
     path: 'login',
     component: LoginComponent,
-    canActivate: [authGuardForLoggedUsers],
+    canActivate:[authGuardForLoggedUsers]
  },
  {
     path: 'signup',

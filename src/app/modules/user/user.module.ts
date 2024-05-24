@@ -14,19 +14,13 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { TooltipModule } from 'primeng/tooltip';
+import { TooltipModule } from 'primeng/tooltip'; 
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserSideRoutingModule } from './user-side-routing.module';
 import { FileUploadModule } from 'primeng/fileupload';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
-import { userReducer } from '../../store/userlogin/login-reducer';
-import { AuthEffects } from '../../store/userlogin/login-effects';
-
-
-
+import { LiveComponent } from '../../component/userhomw/live/live.component';
 @NgModule({
   declarations: [
     RecommendationComponent,
@@ -39,6 +33,7 @@ import { AuthEffects } from '../../store/userlogin/login-effects';
     UserhomeComponent,
     RecommendlistComponent,
     ChannelOverviewComponent,
+    LiveComponent
   ],
   imports: [
     UserSideRoutingModule,
@@ -53,6 +48,7 @@ import { AuthEffects } from '../../store/userlogin/login-effects';
     InputTextModule,
     ReactiveFormsModule,
     FileUploadModule,
+  
   ],
   exports: [
     TooltipModule,

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -15,7 +14,8 @@ import { HeaderComponent } from './component/landing/header/header.component';
 import { userReducer } from './store/userlogin/login-reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/userlogin/login-effects';
-
+import { DialogModule } from 'primeng/dialog';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
   imports: [
@@ -28,16 +28,12 @@ import { AuthEffects } from './store/userlogin/login-effects';
     StoreModule.forRoot({}, {}),
     ToastrModule.forRoot(),
     StoreModule.forRoot({}, {}),
-    StoreModule.forRoot(
-      {
-        auth: userReducer,
-      }),
-    EffectsModule.forRoot(
-      [
-        AuthEffects,
-        
-      ]
-    ),
+    StoreModule.forRoot({
+      auth: userReducer,
+    }),
+    EffectsModule.forRoot([AuthEffects]),
+    DialogModule,
+    FormsModule
   ],
   providers: [
     provideAnimationsAsync(),

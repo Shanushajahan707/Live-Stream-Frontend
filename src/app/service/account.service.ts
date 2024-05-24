@@ -55,6 +55,18 @@ export class AccountService implements OnInit {
       throw error;
     }
   }
+  forgotUrl(formData: any): Observable<any> {
+    try {
+      return this._http.post<any>(
+        `${this.apiUrl}forgoturl`,
+        formData
+      );
+    } catch (error) {
+      console.log('error', error);
+      throw error;
+    }
+  }
+  
   googleAuth(): Observable<any> {
     try {
       return this._http.get<any>(`${this.GOOGLE_URL}auth/google`);

@@ -1,43 +1,57 @@
 <div class="flex flex-col w-full h-full bg-gray-900 pt-16">
     <!-- Messages container -->
-    <div class="flex flex-col h-full overflow-y-auto text-green-100 ">
-        <!-- Sample message -->
-       <div class="flex flex-col my-2 ">
-    <!-- Username and message content -->
-    <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-        <span class="font-semibold">Alice</span>
-        <span class="text-sm">Hey there!  How's it going?</span>
-    </div>
-    <span class="text-xs text-gray-500 pl-4">10:24 AM</span>
-    
-    <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-        <span class="font-semibold">Bob (Web Dev)</span>
-        <span class="text-sm">Just finished fixing that bug . Feel free to test it now!</span>
-    </div>
-    <span class="text-xs text-gray-500 pl-4">2:15 PM</span>
-    
-    <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-        <span class="font-semibold">Charlie </span>
-        <span class="text-sm">Woof!  Can't wait for our walk in the park later </span>
-    </div>
-    <span class="text-xs text-gray-500 pl-4">Yesterday, 5:32 PM</span>
-    
-    <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-        <span class="font-semibold">Delivery Notification</span>
-        <span class="text-sm">Your package is out for delivery today!  Check the link for details.</span>
-    </div>
-    <span class="text-xs text-gray-500 pl-4">2024-04-20 (Saturday) 9:48 AM</span>
-    <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-        <span class="font-semibold">Group Chat</span>
-        <span class="text-sm">Anyone up for a movie night this weekend? </span>
-    </div>
-    <span class="text-xs text-gray-500 pl-4">Last Friday, 8:30 PM</span>
-    
-  </div>
-  
+    <div class="flex flex-col flex-1 overflow-y-auto text-green-100 ">
+        <!-- Sample messages -->
+        <div class="flex flex-col my-2">
+            <!-- Username and message content -->
+            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
+                <span class="font-semibold">Alice</span>
+                <span class="text-sm">Hey there! How's it going?</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">10:24 AM</span>
+        </div>
+        
+        <div class="flex flex-col my-2">
+            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
+                <span class="font-semibold">Bob (Web Dev)</span>
+                <span class="text-sm">Just finished fixing that bug. Feel free to test it now!</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">2:15 PM</span>
+        </div>
+        
+        <div class="flex flex-col my-2">
+            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
+                <span class="font-semibold">Charlie</span>
+                <span class="text-sm">Woof! Can't wait for our walk in the park later.</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">Yesterday, 5:32 PM</span>
+        </div>
+        
+        <div class="flex flex-col my-2">
+            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
+                <span class="font-semibold">Delivery Notification</span>
+                <span class="text-sm">Your package is out for delivery today! Check the link for details.</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">2024-04-20 (Saturday) 9:48 AM</span>
+        </div>
+        
+        <div class="flex flex-col my-2">
+            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
+                <span class="font-semibold">Group Chat</span>
+                <span class="text-sm">Anyone up for a movie night this weekend?</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">Last Friday, 8:30 PM</span>
+        </div>
+        
         <!-- Repeat this structure for each message -->
     </div>
+
     <!-- Input box for sending messages -->
-  
-  </div>
+    <div class="p-4 bg-gray-800 flex items-center">
+        <input type="text" placeholder="Type your message..." class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"/>
+        <button class="p-2 bg-blue-500 rounded-full text-white">
+            <i class="fas fa-paper-plane"></i> <!-- Send icon -->
+        </button>
+    </div>
+</div>
   

@@ -5,6 +5,7 @@ import * as AuthActions from '../userlogin/login-action';
 import { AccountService } from '../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Injectable()
 export class AuthEffects {
@@ -31,7 +32,7 @@ export class AuthEffects {
                 localStorage.setItem('token', res.token);
                 localStorage.setItem('refreshToken', res.refreshToken);
                 this.service.islogged$.next(true);
-                this.router.navigate(['/userhome']);
+                this.router.navigateByUrl('/userhome');
                 // this.loginForm.reset();
               }
             }

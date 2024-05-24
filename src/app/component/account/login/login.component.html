@@ -52,6 +52,11 @@
         >
           Password is required
         </div>
+        <a
+          (click)="showDialog('top')"
+          class="text-blue-500 hover:text-blue-700 mt-2"
+          >Forgot Password?</a
+        >
       </div>
       <button
         type="submit"
@@ -77,4 +82,25 @@
       </button>
     </a>
   </div>
+  <form [formGroup]="registeredEmail" (ngSubmit)="forgotpass()">
+  <p-dialog
+    header="Forgot Password"
+    [modal]="true"
+    [(visible)]="visible"
+    [position]="position"
+    [style]="{ width: '25rem' }"
+  >
+    <span class="p-text-secondary block mb-5">
+      Enter your Resgistered Email.
+    </span>
+    <div class="flex align-items-center gap-3 mb-5">
+        <label for="email" class="font-semibold w-6rem"> Email </label>
+        <input formControlName="registeredemail" pInputText id="email" class="flex-auto" autocomplete="off" />
+      </div>
+      <div class="flex justify-content-end gap-2">
+        <p-button label="Cancel" class="text-red-400" severity="secondary" (click)="visible = false" />
+        <button class="font-bold" type="submit" label="Save">Proceed</button>
+      </div>
+    </p-dialog>
+  </form>
 </div>
