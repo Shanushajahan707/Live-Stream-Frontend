@@ -1,5 +1,5 @@
-<app-admin-header />
-<app-admin-sidebar />
+<app-admin-header></app-admin-header>
+<app-admin-sidebar></app-admin-sidebar>
 <!-- Content -->
 <div class="ml-64 p-8 mt-20">
   <!-- Table -->
@@ -51,6 +51,11 @@
         >
           Lives
         </th>
+        <th
+          class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider"
+        >
+          See Followers
+        </th>
       </tr>
     </thead>
     <tbody class="bg-gray-700 text-yellow-100 divide-y divide-gray-600">
@@ -58,13 +63,15 @@
         <td class="px-6 py-4 whitespace-pre-wrap">{{ i + 1 }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.username }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.channelName }}</td>
-        <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.followers.length }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          {{ channel.followers.length }}
+        </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           {{ channel.subscription }}
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           <img
-          src="http://localhost:3000/channelBanner/{{ channel?.banner }}?"
+            src="http://localhost:3000/channelBanner/{{ channel?.banner }}?"
             alt="Banner Image"
             class="w-20 h-20 object-cover"
           />
@@ -72,7 +79,6 @@
         <td
           class="px-6 py-4 whitespace-pre-wrap flex items-center justify-center"
         >
-          <!-- Add actions as needed -->
           <label class="inline-flex items-center me-5 cursor-pointer">
             <input
               type="checkbox"
@@ -87,28 +93,82 @@
           </label>
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
-          <!-- Display videos count or list -->
           {{ channel.video.length }}
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
-          <!-- Display lives count or list -->
           {{ channel.lives.length }}
+        </td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          <button class="btn bg-blue-500 p-3 rounded-md hover:bg-opacity-20 transition " (click)="viewFollowers(channel)">
+            See Followers
+          </button>
         </td>
       </tr>
     </tbody>
-    
   </table>
+
   <div class="pagination-controls flex justify-center items-center mt-4">
-    <button type="button" 
-            (click)="prevPage()"
-            class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+    <button
+      type="button"
+      (click)="prevPage()"
+      class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+    >
       Previous
     </button>
-    <span class="text-gray-800">Page {{ currentPage }} of {{ totalPages }}</span>
-    <button type="button"
-            (click)="nextPage()"
-            class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700">
+    <span class="text-gray-800"
+      >Page {{ currentPage }} of {{ totalPages }}</span
+    >
+    <button
+      type="button"
+      (click)="nextPage()"
+      class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+    >
       Next
     </button>
   </div>
+
+
+  
+  <div class="modal" [class.show]="isVisible" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Followers</h2>
+      <ul *ngIf="followers.length > 0; else noFollowers">
+        <li class="flex justify-around" *ngFor="let follower of followers">
+          <a (click)="showUserDetails(follower.userId)">
+            {{ follower.username }}
+          </a>
+          <button class="underline text-blue-500" (click)="showUserDetails(follower.userId)">View Profile</button>
+        </li>
+      </ul>
+      <ng-template #noFollowers>
+        <p>No followers</p>
+      </ng-template>
+    </div>
+  </div>
+  
+  
+  <div class="modal" [class.show]="isUserDataVisible" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>User Profile Card</h2>
+      <div *ngIf="user; else noUser">
+        <div class="profile-card">
+          <img src="https://imgs.search.brave.com/TqxFuZ3Dfp6U4sxR39pY6gzhovk92NF6HzC9oQ7SzKc/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA3LzI1LzQyLzE0/LzM2MF9GXzcyNTQy/MTQwOF9yQ1I0Zlla/Qlh5c0dtRnIybG1m/T3ZNUGJsdGQxTmtt/aS5qcGc" alt="Profile Picture" class="profile-pic">
+          <div class="card-body">
+            <h3>{{ user.username }}</h3>
+            <p>{{ user.email }}</p>
+            <!-- Add more details as needed -->
+          </div>
+        </div>
+      </div>
+      <ng-template #noUser>
+        <p>No user details available</p>
+      </ng-template>
+    </div>
+  </div>
+  
+
+
+
 </div>

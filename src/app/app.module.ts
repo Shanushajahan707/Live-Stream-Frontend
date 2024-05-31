@@ -16,8 +16,15 @@ import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/userlogin/login-effects';
 import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from '@angular/forms';
+import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
+import { BlockedAccountComponent } from './component/account/blocked-account/blocked-account.component';
 @NgModule({
-  declarations: [AppComponent, HeaderComponent],
+  declarations: [
+    AppComponent,
+    HeaderComponent,
+    ForgotPasswordComponent,
+    BlockedAccountComponent,
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -29,11 +36,11 @@ import { FormsModule } from '@angular/forms';
     ToastrModule.forRoot(),
     StoreModule.forRoot({}, {}),
     StoreModule.forRoot({
-      auth: userReducer,
+      user: userReducer,
     }),
     EffectsModule.forRoot([AuthEffects]),
     DialogModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [
     provideAnimationsAsync(),

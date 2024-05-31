@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { HttpClient } from '@angular/common/http';
@@ -18,7 +18,9 @@ import { formatDate } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
+  private _googleAuthSubscription!: Subscription;
+  private _forgotUrlSubscription!: Subscription;
   loginForm!: FormGroup;
   res!: any;
   apiUrl = environment.apiUrl;
@@ -104,7 +106,7 @@ export class LoginComponent implements OnInit {
   googleclick(event: Event) {
     console.log('clicl');
     // window.location.href =  `${this.apiUrl}auth/google `;
-    this._service.googleAuth().subscribe({
+    this._googleAuthSubscription = this._service.googleAuth().subscribe({
       next: (successResponse: any) => {
         if (successResponse.message) {
           console.log('rsponse', successResponse);
@@ -120,24 +122,31 @@ export class LoginComponent implements OnInit {
   //     this.loginSubscription.unsubscribe();
   //   }
   // }
-  
+
   showDialog(position: string) {
     this.position = position;
     this.visible = true;
   }
   forgotpass() {
     this.visible = false;
-    this._service.forgotUrl(this.registeredEmail.value).subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          this._toastr.success(res.message);
-        }
-      },
-      error: (err) => {
-        if (err && err.error.message) {
-          this._toastr.error(err.error.message);
-        }
-      },
-    });
+    this._forgotUrlSubscription = this._service
+      .forgotUrl(this.registeredEmail.value)
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._toastr.success(res.message);
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toastr.error(err.error.message);
+          }
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this._googleAuthSubscription?.unsubscribe();
+    this._forgotUrlSubscription?.unsubscribe();
   }
 }

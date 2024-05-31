@@ -1,0 +1,13 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-900">
+
+    <!-- Modal for showing account blocked -->
+    <div *ngIf="isBlocked" class="modal-container max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg mb-24 animate__animated animate__fadeIn animate__fadeInUp relative">
+      <h2 class="text-3xl font-bold mb-8 text-white flex items-center">
+        <i class="pi pi-wrench text-red-500 me-2" style="font-size: 1.3rem"></i>
+        Account Blocked
+      </h2>
+      <p class="text-white mb-4">Your account has been blocked. Please contact support for assistance.</p>
+      <button [ngStyle]="{'background-color': buttonColor}" class="w-full text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out focus:outline-none" (click)="goBack()">Go Back</button>
+    </div>
+  </div>
+  

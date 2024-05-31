@@ -11,19 +11,19 @@ export interface UserState {
 const initialState: UserState = {
   loading: false,
   error: null,
-  user: null
+  user: null,
 };
 
 export const userReducer = createReducer(
   initialState,
-  on(UserActions.userLogin, state =>  {
+  on(UserActions.userLogin, (state) => {
     console.log('Login user action dispatched');
     return { ...state, loading: true, error: null };
   }),
 
   on(UserActions.submitSuccess, (state, { successResponse }) => {
-    console.log('state updated: ', successResponse)
-    return { ...state, loading: false, user: successResponse }
-  }),
-//   on(UserActions.loginUserFailure, (state, { error }) => ({ ...state, loading: false, error }))
+    console.log('state updated: ', successResponse);
+    return { ...state, loading: false, user: successResponse };
+  })
+  //   on(UserActions.loginUserFailure, (state, { error }) => ({ ...state, loading: false, error }))
 );

@@ -1,0 +1,143 @@
+<div class="flex flex-col md:flex-row bg-gray-800 h-screen">
+  <div class=" mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
+
+  <div class="w-full md:w-3/4 m-7">
+    <!-- Banner of the channel -->
+    <div class="relative mb-4">
+      <img
+        src="http://localhost:3000/channelBanner/{{ followChannel.banner }}?"
+        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
+        alt="Channel Banner"
+      />
+      <!-- <img
+        src="\assets\Images\channel-banner1.png"
+        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
+        alt="Channel Banner"
+      /> -->
+    </div>
+    <!-- Profile with channel name and followers -->
+    <div class="flex items-center justify-between p-4 bg-gray-800">
+      <div class="flex items-center justify-between">
+        <div class="relative">
+          <img
+            class="w-14 h-14 rounded-full"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
+            alt=""
+          />
+          <span
+            class="top-0 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+          ></span>
+        </div>
+        <div class="flex flex-col ml-2">
+          <span class="text-lg text-white font-bold ml-2">{{
+            followChannel.channelName
+          }}</span>
+          <span class="font-bold ml-2"
+            >Followers:
+            {{ followChannel && followChannel.followers.length }}</span
+          >
+        </div>
+        <div *ngIf="followChannel.isblocked !== true"></div>
+
+        <!-- Edit Icon -->
+      </div>
+      <button
+        disabled
+        type="button"
+        class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+      >
+        {{ followChannel.isblocked ? "Blocked" : "Active" }}
+      </button>
+    </div>
+
+    <!-- Content of the session -->
+    <div class="p-4 flex text-lg space-x-5 font-bold">
+      <label for="videos" class="text-white">
+        Shorts
+        <input
+          type="radio"
+          id="shorts"
+          name="content"
+          [(ngModel)]="selectedContent"
+          value="shorts"
+        />
+      </label>
+      <label for="live" class="text-white">
+        Live
+        <input
+          type="radio"
+          id="live"
+          name="content"
+          [(ngModel)]="selectedContent"
+          value="live"
+        />
+      </label>
+    </div>
+
+    <!-- Dynamic Content Display Based on Selection -->
+    <div
+      id="videosContainer"
+      class="content-container"
+      *ngIf="selectedContent === 'shorts'"
+    >
+      <!-- <ul>
+        <li *ngFor="let video of channel?.video; else noVideo">
+          <video controls>
+            <source [src]="video" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </li>
+      </ul>  -->
+      <!--      
+        <video class="h-29 w-7" controls autoplay muted>
+          <source src="" type="video/mp4">
+          Your browser does not support the video tag.
+        </video> -->
+      <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
+      <div class="card">
+        <!-- Check if followChannel.video is available and has at least one item -->
+        <ng-container *ngIf="followChannel.video.length; else singleVideo">
+          <p-carousel
+            [value]="followChannel.video"
+            [numVisible]="3"
+            [numScroll]="3"
+            [responsiveOptions]="responsiveOptions"
+          >
+            <ng-template let-channel pTemplate="item">
+              <video
+                #target
+                class="video-js"
+                [src]="channel.video"
+                controls
+                muted
+                playsinline
+                preload="none"
+              ></video>
+            </ng-template>
+          </p-carousel>
+        </ng-container>
+
+        <!-- Template for single video when followChannel.video is not available or empty -->
+        <ng-template #singleVideo>
+          <video
+            #target
+            class="video-js h-44 w-45" 
+            src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
+            controls
+            muted
+            playsinline
+            preload="none"
+          ></video>
+        </ng-template>
+      </div>
+    </div>
+
+    <div
+      id="liveContainer"
+      class="content-container"
+      *ngIf="selectedContent === 'live'"
+    >
+      <p>This is where your live videos will be displayed.</p>
+    </div>
+  </div>
+</div>

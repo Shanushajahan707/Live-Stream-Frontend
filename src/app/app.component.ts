@@ -12,7 +12,7 @@ export class AppComponent implements OnInit{
   constructor(private primengConfig: PrimeNGConfig) {}
 
   ngOnInit(): void {
-    initFlowbite()
+    initFlowbite();
     this.primengConfig.ripple = true;
   }
   title = 'Live-Stream';

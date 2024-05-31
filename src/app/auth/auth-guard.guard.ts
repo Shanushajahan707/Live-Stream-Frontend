@@ -7,7 +7,7 @@ import { AccountService } from '../service/account.service';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
-  const _service =inject(AccountService)
+  let _service =inject(AccountService)
 
   const token = localStorage.getItem('token');
 
@@ -34,6 +34,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   } catch (error) {
     console.log('Error decoding token:', error);
     router.navigateByUrl('');
+  _service.islogged$.next(false)
     return false;
   }
 }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../enviorments/enviorment';
 import { Observable } from 'rxjs';
-import { ChannelData, EditChannelInterface, GetChannelInfo, GetRecommededChannel } from '../model/auth';
+import { ChannelData, EditChannelInterface, GetChannelInfo, GetFollowResponse, GetFullFollowedChannel, GetRecommededChannel, GetUploadResponse } from '../model/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -38,23 +38,45 @@ export class ChannelService {
       throw error;
     }
   }
-  onFollowChannel(followChannel:ChannelData):Observable<any>{
+  onFollowChannel(followChannel:ChannelData):Observable<GetFollowResponse>{
     try {
-      return this._http.post<any>(`${this.apiUrl}followchannel`,followChannel)
+      return this._http.post<GetFollowResponse>(`${this.apiUrl}followchannel`,followChannel)
     } catch (error) {
       throw error
     }
   }
-  onUnFollowChannel(unFollowChannel:ChannelData):Observable<any>{
+  onUnFollowChannel(unFollowChannel:ChannelData):Observable<GetFollowResponse>{
     try {
-      return this._http.post<any>(`${this.apiUrl}unfollowchannel`,unFollowChannel)
+      return this._http.post<GetFollowResponse>(`${this.apiUrl}unfollowchannel`,unFollowChannel)
     } catch (error) {
       throw error
     }
   }
-  isFollow():Observable<any>{
+  // isFollow():Observable<any>{
+  //   try {
+  //     return this._http.get<any>(`${this.apiUrl}isfollow`)
+  //   } catch (error) {
+  //     throw error
+  //   }
+  // }
+  onGetFullFollowedchannels():Observable<GetFullFollowedChannel>{
     try {
-      return this._http.get<any>(`${this.apiUrl}isfollow`)
+      return this._http.get<GetFullFollowedChannel>(`${this.apiUrl}getfullfollowchannel`)
+    } catch (error) {
+      throw error
+    }
+  }
+  onGetFollowChannel(chanenlId:string):Observable<GetFollowResponse>{
+    try {
+      return this._http.get<GetFollowResponse>(`${this.apiUrl}getfollowchannel/${chanenlId}`,{})
+    } catch (error) {
+      throw error
+    }
+  }
+  onUploadShorts(videoFile:FormData,channelId:string):Observable<GetUploadResponse>{
+    try {
+      console.log('videolfile form the service',videoFile.get('videoFile'));
+      return this._http.post<GetUploadResponse>(`${this.apiUrl}uploadshorts/${channelId}`, videoFile)
     } catch (error) {
       throw error
     }

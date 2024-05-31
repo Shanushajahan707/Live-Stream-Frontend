@@ -16,8 +16,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './signup.component.scss',
 })
 export class SignupComponent implements OnInit, OnDestroy {
+  private _signupSubsription!: Subscription;
   signup!: FormGroup;
-  private _signupSubsription: Subscription | undefined;
   constructor(
     private _fb: FormBuilder,
     private _service: AccountService,
@@ -62,7 +62,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   sendSignupDate(data: any) {
-    console.log('valu',data);
+    console.log('valu', data);
     this._signupSubsription = this._service.signup(data).subscribe({
       next: (res) => {
         if (res && res.message) {
@@ -100,8 +100,6 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this._signupSubsription) {
-      this._signupSubsription.unsubscribe();
-    }
+    this._signupSubsription?.unsubscribe();
   }
 }

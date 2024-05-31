@@ -111,6 +111,11 @@ export class AccountService implements OnInit {
     // alert('Do you want to continue');
     return this._http.post<any>(`${this.apiUrl}refreshtoken`, { refreshToken });
   }
+  
+  forgotPasswordOtp(otpValue:number): Observable<any> {
+    return this._http.post<any>(`${this.apiUrl}forgotpasswordotp`, { otpValue });
+  }
+
   islogged() {
     try {
       return !!localStorage.getItem('token');

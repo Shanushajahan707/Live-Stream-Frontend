@@ -121,6 +121,15 @@ export class SocketService {
     };
   }
   
+  replaceTrack(oldTrack: MediaStreamTrack, newTrack: MediaStreamTrack) {
+    const sender = this.peer.getSenders().find((s) => s.track === oldTrack);
+    console.log('sender',sender);
+    if (sender) {
+      sender.replaceTrack(newTrack);
+      this.peerNegotiationNeeded();
+    }
+  }
+
   peerNegotiationNeeded() {
     this.peer.addEventListener('negotiationneeded', async (ev) => {
       try {
@@ -159,6 +168,8 @@ export class SocketService {
       }
     });
   }
+
+ 
 
   disconnect(){
     this._socket.disconnect()

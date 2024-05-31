@@ -11,6 +11,7 @@
         Category
       </button>
       <button
+        routerLink="/channel/following"
         class="ml-4 text-xl rounded px-4 py-2 font-bold text-white hover:bg-yellow-700 bg-transparent"
       >
         Following
@@ -33,45 +34,70 @@
       </button>
     </ng-container>
     <ng-container *ngIf="islogged">
-      <button (click)="livepage()"
+      <button
+        (click)="livepage()"
         class="mr-2 rounded bg-yellow-500 px-4 py-2 font-bold text-white hover:bg-yellow-700"
       >
         Start Live
       </button>
       <div class="card flex justify-content-center">
-        <p-button  />
-        <p-dialog header="Edit Profile" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
-          <span class="p-text-secondary block mb-5">Update your Live informationinformation.</span>
+        <p-button />
+        <p-dialog
+          header="Add Live Info"
+          [modal]="true"
+          [(visible)]="visible"
+          [style]="{ width: '25rem' }"
+        >
+          <span class="p-text-secondary block mb-5"
+            >Update your Live informationinformation.</span
+          >
           <div class="flex align-items-center gap-3 mb-3">
             <label for="username" class="font-semibold w-6rem">Livename</label>
-            <input pInputText id="username" type="text" class="flex-auto" [(ngModel)]="Livename" autocomplete="off" />
+            <input
+              pInputText
+              id="username"
+              type="text"
+              class="flex-auto"
+              [(ngModel)]="Livename"
+              autocomplete="off"
+            />
           </div>
           <div class="flex align-items-center gap-3 mb-5">
             <label for="email" class="font-semibold w-6rem">RooomId:</label>
-            <input pInputText id="email" type="number" class="flex-auto" [(ngModel)]="RoomId" autocomplete="off" />
+            <input
+              pInputText
+              id="email"
+              type="number"
+              class="flex-auto"
+              [(ngModel)]="RoomId"
+              autocomplete="off"
+            />
           </div>
           <div class="flex justify-content-end gap-2">
-            <p-button class="text-red-700" label="Cancel" severity="secondary" (click)="visible = false" />
-            <p-button class="text-green-700" label="Save" (click)="createRoom()" />
+            <p-button
+              class="text-red-700"
+              label="Cancel"
+              severity="secondary"
+              (click)="visible = false"
+            />
+            <p-button
+              class="text-green-700"
+              label="Save"
+              (click)="createRoom()"
+            />
           </div>
         </p-dialog>
-        
-    </div>
+      </div>
     </ng-container>
     <ng-container *ngIf="islogged">
       <button
-        (click)="test()"
         id="dropdownUserAvatarButton"
         data-dropdown-toggle="dropdownAvatar"
-        class="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+        class="flex text-sm bg-gray-800 rounded-full md:me-0 dark:focus:ring-gray-600"
         type="button"
       >
         <span class="sr-only">Open user menu</span>
-        <img
-          class="w-8 h-8 rounded-full"
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
-          alt="user photo"
-        />
+        <i class="pi pi-user" style="font-size: 2rem"></i>
       </button>
 
       <!-- Dropdown menu -->
@@ -80,23 +106,26 @@
         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
       >
         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-          <div>Bonnie Green</div>
-          <div class="font-medium truncate">name.com</div>
+          <!-- <div>{{ userName$ | async }}</div>
+          <div class="font-medium truncate">{{ email$ | async }}</div> -->
+          <div>{{ userData.username }}</div>
+          <div class="font-medium truncate">{{ userData.email }}</div>
         </div>
         <ul
           class="py-2 text-sm text-gray-700 dark:text-gray-200"
           aria-labelledby="dropdownUserAvatarButton"
         >
-          <li>
+          <li class="items-center flex">
             <a
-              routerLink="/channel"
+              routerLink="/channel/mychannel"
               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >Channel</a
-            >
+              >Channel
+
+              <i class="pi pi-youtube" style="font-size: 1.4rem"></i>
+            </a>
           </li>
           <li>
             <a
-              
               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
             >
               Settings
@@ -115,6 +144,5 @@
         </div>
       </div>
     </ng-container>
-    
   </div>
 </div>

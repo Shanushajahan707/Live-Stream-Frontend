@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../enviorments/enviorment';
-import { ChannelData, GetChannelResponse, GetUsersResponse } from '../model/auth';
+import { ChannelData, GetChannelResponse, GetUserOne, GetUsersResponse } from '../model/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,14 @@ export class ChannelmanageService {
   blockChannel(channelId:string):Observable<GetChannelResponse>{
     try {
       return this._http.put<GetChannelResponse>(`${this.apiUrl}blockchannel/${channelId}`, {});
+    } catch (error) {
+      throw error
+    }
+  }
+
+  getUserData(userid:string):Observable<GetUserOne>{
+    try {
+      return this._http.get<GetUserOne>(`${this.apiUrl}getUserProfileAdmin/${userid}`,{})
     } catch (error) {
       throw error
     }

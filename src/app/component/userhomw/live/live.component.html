@@ -2,12 +2,15 @@
   <!-- Video and Chat Container -->
   <div class="flex flex-1">
     <!-- Video Section -->
-    <div class="flex flex-col lg:flex-row w-full lg:w-3/4 p-4 lg:p-24 bg-black relative">
+    <div
+      class="flex flex-col lg:flex-row w-full lg:w-3/4 p-4 lg:p-24 bg-black relative"
+    >
       <div class="flex-1 mb-4 lg:mb-0 relative">
         <!-- Room Info -->
         <div class="absolute top-0 left-0 p-2 text-white">
-          <span class="text-red-500">Room ID:</span> {{ receivedData.RoomId }} - 
-          <span class="text-green-500">Live Name:</span> {{ receivedData.Livename }}
+          <span class="text-red-500">Room ID:</span> {{ receivedData.RoomId }} -
+          <span class="text-green-500">Live Name:</span>
+          {{ receivedData.Livename }}
         </div>
         <!-- Main Video for Remote User -->
         <video
@@ -19,11 +22,15 @@
         ></video>
       </div>
       <!-- User's Video - positioned next to the right side of the main video tag -->
-      <div class="w-full lg:w-56 lg:h-44 bg-black border border-gray-700 relative">
+      <div
+        class="w-full lg:w-56 lg:h-44 bg-black border border-gray-700 relative"
+      >
         <div class="video-container">
           <div class="absolute top-0 left-0 p-2 text-white">
-            <span class="text-red-500">Room ID:</span> {{ receivedData.RoomId }} - 
-            <span class="text-green-500">Live Name:</span> {{ receivedData.Livename }}
+            <span class="text-red-500">Room ID:</span>
+            {{ receivedData.RoomId }} -
+            <span class="text-green-500">Live Name:</span>
+            {{ receivedData.Livename }}
           </div>
           <video
             id="localVideo"
@@ -37,9 +44,30 @@
             The video feed is off
           </div>
         </div>
+        <div class="">
+          <div class="absolute top-0 left-0 p-2 text-white">
+            <span class="text-red-500">Room ID:</span>
+            {{ receivedData.RoomId }} -
+            <span class="text-green-500">Live Name:</span>
+            {{ receivedData.Livename }}
+          </div>
+            <video
+              id="screenVideo"
+              class="video-player hidden"
+              controls
+              autoplay
+            ></video>
+            <video
+  id="remoteUserScreenShare"
+  class="video-player hidden"
+  controls
+  autoplay
+  
+></video>
+        </div>
       </div>
     </div>
-    
+
     <!-- Chat Section -->
     <div class="p-6 hidden lg:flex w-full lg:w-1/4 flex-col bg-gray-900">
       <div class="h-full overflow-y-auto flex-1">
@@ -47,7 +75,14 @@
       </div>
     </div>
   </div>
-
+  <!-- <div id="screenShareContainer" class="hidden">
+    <video
+      id="screenVideo"
+      class="video-player"
+      controls
+      autoplay
+    ></video>
+  </div> -->
   <!-- Control Buttons -->
   <div class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4">
     <button

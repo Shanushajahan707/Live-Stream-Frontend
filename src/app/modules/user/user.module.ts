@@ -14,13 +14,21 @@ import { RouterModule } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
-import { TooltipModule } from 'primeng/tooltip'; 
+import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { UserSideRoutingModule } from './user-side-routing.module';
 import { FileUploadModule } from 'primeng/fileupload';
 import { LiveComponent } from '../../component/userhomw/live/live.component';
+import { CarouselModule } from 'primeng/carousel';
+import { TagModule } from 'primeng/tag';
+import { FollowedChannelComponent } from '../../component/channel/followed-channel/followed-channel.component';
+import { ViewChannelComponent } from '../../component/channel/view-channel/view-channel.component';
+import { MessageModule } from 'primeng/message';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
+
 @NgModule({
   declarations: [
     RecommendationComponent,
@@ -33,7 +41,9 @@ import { LiveComponent } from '../../component/userhomw/live/live.component';
     UserhomeComponent,
     RecommendlistComponent,
     ChannelOverviewComponent,
-    LiveComponent
+    LiveComponent,
+    FollowedChannelComponent,
+    ViewChannelComponent,
   ],
   imports: [
     UserSideRoutingModule,
@@ -48,7 +58,10 @@ import { LiveComponent } from '../../component/userhomw/live/live.component';
     InputTextModule,
     ReactiveFormsModule,
     FileUploadModule,
-  
+    CarouselModule,
+    TagModule,
+    MessageModule,
+    ProgressSpinnerModule
   ],
   exports: [
     TooltipModule,

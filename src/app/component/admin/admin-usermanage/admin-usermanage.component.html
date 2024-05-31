@@ -48,7 +48,9 @@
           }}</ng-container>
           <ng-template #nil>Nill</ng-template>
         </td>
-        <td class="px-6 py-4 whitespace-pre-wrap">{{ user.email }}</td>
+        <td class="px-6 py-4 whitespace-pre-wrap">
+          {{ user.email | emailpipe }}
+        </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           <div class="flex items-center">
             <div
@@ -90,19 +92,25 @@
         </td>
       </tr>
       <!-- Example of adding pagination controls -->
-      
+
       <!-- Add more rows as needed -->
     </tbody>
-    
   </table>
-  <div class="pagination-controls ">
-    <button type="button" class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out" (click)="prevPage()">
+  <div class="pagination-controls">
+    <button
+      type="button"
+      class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out"
+      (click)="prevPage()"
+    >
       Previous
     </button>
     <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
-    <button type="button" class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out" (click)="nextPage()">
+    <button
+      type="button"
+      class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out"
+      (click)="nextPage()"
+    >
       Next
     </button>
   </div>
-  
 </div>

@@ -6,6 +6,8 @@ import { LandinghomeComponent } from './component/landinghome/landinghome.compon
 import { LoginComponent } from './component/account/login/login.component';
 import { SignupComponent } from './component/account/signup/signup.component';
 import { OtpComponent } from './component/account/otp/otp.component';
+import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
+import { BlockedAccountComponent } from './component/account/blocked-account/blocked-account.component';
 
 
 const routes: Routes = [
@@ -28,6 +30,16 @@ const routes: Routes = [
     path: 'otp-verification',
     component: OtpComponent,
     canActivate: [authGuardForLoggedUsers],
+ },
+ {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent,
+    canActivate: [authGuardForLoggedUsers],
+ },
+ {
+    path: 'blocked-account',
+    component: BlockedAccountComponent,
+
  },
   {
     path: 'user',

@@ -16,6 +16,8 @@ export interface User {
   username: string;
   email: string;
   password: string;
+  exp: number;
+  iat: number;
   role: string;
   dateofbirth: string;
   isblocked: boolean;
@@ -59,11 +61,13 @@ export interface ChannelData {
   followers: Follower[];
   subscription: number;
   banner: string;
-  video: string[];
+  video: {
+    url: string;
+    views: number;
+  }[]; 
   lives: string[];
   isblocked: boolean;
 }
-
 
 export interface GetChannelResponse {
   message: string;
@@ -82,4 +86,23 @@ export interface EditChannelInterface {
 export interface GetRecommededChannel {
   message: string;
   recommendedChannels: ChannelData[];
+}
+export interface GetFullFollowedChannel {
+  message: string;
+  follwedChannels: ChannelData[];
+}
+
+export interface GetFollowResponse{
+  message:string;
+  channel:ChannelData
+}
+
+export interface GetUserOne{
+  userData:User
+  message:string
+}
+
+export interface GetUploadResponse{
+  message:string
+  uploadOnDp:ChannelData
 }

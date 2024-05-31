@@ -12,6 +12,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { SidebarModule } from 'primeng/sidebar';
 import { AdminRoutingModule } from './admin-side-routing.module';
+import { ChartModule } from 'primeng/chart';
+import { EmailpipePipe } from '../../pipe/emailpipe.pipe';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,7 @@ import { AdminRoutingModule } from './admin-side-routing.module';
     AdminUsermanageComponent,
     AdminDashboardComponent,
     AdminChannelmanageComponent,
+    EmailpipePipe
   ],
   imports: [
     AdminRoutingModule,
@@ -30,7 +33,9 @@ import { AdminRoutingModule } from './admin-side-routing.module';
     ButtonModule,
     InputTextModule,
     SidebarModule,
+    ChartModule,
+    
   ],
-  exports: [DialogModule, ButtonModule, InputTextModule, SidebarModule],
+  exports: [DialogModule, ButtonModule, InputTextModule, SidebarModule,EmailpipePipe],
 })
 export class AdminModule {}
