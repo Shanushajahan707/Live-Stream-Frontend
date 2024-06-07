@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { UsermanageService } from '../../../service/usermanage.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../../model/auth';
-import { Subscription } from 'rxjs';
-
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-admin-usermanage',
   templateUrl: './admin-usermanage.component.html',
@@ -15,8 +15,7 @@ export class AdminUsermanageComponent implements OnInit, OnDestroy {
     private _toaster: ToastrService
   ) {}
 
-  private _getUsersSubscription!: Subscription;
-  private _blockuserSubscription!: Subscription;
+  private readonly _destroy$ = new Subject<void>();
   displayedUsers: User[] = [];
   users: User[] = [];
   visible: boolean = false;
@@ -33,8 +32,9 @@ export class AdminUsermanageComponent implements OnInit, OnDestroy {
   // this.totalPages = Math.ceil(data.users.length / this.itemsPerPage);
   async fetchUsers() {
     try {
-      this._getUsersSubscription = this._service
+      this._service
         .getUsers(this.currentPage, this.itemsPerPage)
+        .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (res) => {
             console.log('res', res);
@@ -71,23 +71,26 @@ export class AdminUsermanageComponent implements OnInit, OnDestroy {
   }
 
   toggleBlockStatus(user: User) {
-    this._blockuserSubscription = this._service.blockuser(user._id).subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          this._toaster.success(res.message);
-          this.users = this.users.map((u) =>
-            u._id === res.user._id
-              ? { ...u, ...res.user, showDialog: false }
-              : u
-          );
-        }
-      },
-      error: (err) => {
-        if (err && err.error.message) {
-          this._toaster.error(err.error.message);
-        }
-      },
-    });
+    this._service
+      .blockuser(user._id)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._toaster.success(res.message);
+            this.users = this.users.map((u) =>
+              u._id === res.user._id
+                ? { ...u, ...res.user, showDialog: false }
+                : u
+            );
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
   }
 
   showDialog() {
@@ -95,7 +98,7 @@ export class AdminUsermanageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._getUsersSubscription?.unsubscribe();
-    this._blockuserSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

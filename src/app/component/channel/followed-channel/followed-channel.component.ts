@@ -2,7 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChannelData } from '../../../model/auth';
 import { ChannelService } from '../../../service/channel.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-followed-channel',
@@ -10,16 +11,16 @@ import { Subscription } from 'rxjs';
   styleUrl: './followed-channel.component.scss',
 })
 export class FollowedChannelComponent implements OnInit, OnDestroy {
-  private _onGetFullFollowedchannelsSubscription!: Subscription;
-  responsiveOptions: any[] | undefined;
-  followedChannels: ChannelData[] = [];
+  private readonly _destroy$ = new Subject<void>();
+  _responsiveOptions: any[] | undefined;
+  _followedChannels: ChannelData[] = [];
   constructor(
     private _channelService: ChannelService,
     private _toaster: ToastrService
   ) {}
 
   ngOnInit(): void {
-    this.responsiveOptions = [
+    this._responsiveOptions = [
       {
         breakpoint: '1199px',
         numVisible: 1,
@@ -37,13 +38,14 @@ export class FollowedChannelComponent implements OnInit, OnDestroy {
       },
     ];
 
-    this._onGetFullFollowedchannelsSubscription = this._channelService
+    this._channelService
       .onGetFullFollowedchannels()
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
             this._toaster.success(res.message);
-            this.followedChannels = res.follwedChannels;
+            this._followedChannels = res.follwedChannels;
           }
         },
         error: (err) => {
@@ -55,6 +57,7 @@ export class FollowedChannelComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._onGetFullFollowedchannelsSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

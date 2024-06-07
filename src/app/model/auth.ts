@@ -30,9 +30,9 @@ interface IsAdminResponse {
 export interface LoginResponse {
   message: string;
   token: string;
-  refreshToken:string
+  refreshToken: string;
   isAdmin?: IsAdminResponse;
-  userdata:User
+  userdata: User;
 }
 export interface SignupResponse {
   message: string;
@@ -47,11 +47,11 @@ export interface ResendResponse {
 export interface GetUsersResponse {
   message: string;
   users: User[];
-  totalcount:number
+  totalcount: number;
 }
 export interface Follower {
   username: string;
-  userId: string; 
+  userId: string;
 }
 
 export interface ChannelData {
@@ -64,7 +64,8 @@ export interface ChannelData {
   video: {
     url: string;
     views: number;
-  }[]; 
+    _id?: string;
+  }[];
   lives: string[];
   isblocked: boolean;
 }
@@ -72,7 +73,7 @@ export interface ChannelData {
 export interface GetChannelResponse {
   message: string;
   channels: ChannelData[];
-  totalcount:number
+  totalcount: number;
 }
 export interface GetChannelInfo {
   message: string;
@@ -92,17 +93,36 @@ export interface GetFullFollowedChannel {
   follwedChannels: ChannelData[];
 }
 
-export interface GetFollowResponse{
-  message:string;
-  channel:ChannelData
+export interface GetFollowResponse {
+  message: string;
+  channel: ChannelData;
 }
 
-export interface GetUserOne{
-  userData:User
-  message:string
+export interface GetUserOne {
+  userData: User;
+  message: string;
 }
 
-export interface GetUploadResponse{
-  message:string
-  uploadOnDp:ChannelData
+export interface GetUploadResponse {
+  message: string;
+  uploadOnDp: ChannelData;
+}
+export interface GetUpdateViewsResponse {
+  [x: string]: any;
+  message: string;
+  channel: ChannelData;
+}
+
+export interface GetIsBlockedResponse {
+  message: string;
+  isBlocked: boolean;
+}
+
+export interface GetRefreshTokenResponse {
+  message: string;
+  accessToken: boolean;
+}
+export interface GetSearchChannelResponse {
+  message: string;
+  channels: ChannelData[];
 }

@@ -9,8 +9,8 @@ import { ChannelService } from '../../../service/channel.service';
 import { ChannelData } from '../../../model/auth';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-channel-overview',
   templateUrl: './channel-overview.component.html',
@@ -24,41 +24,39 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
   ) {}
 
   @ViewChild('bannerInput') bannerInput!: ElementRef<HTMLInputElement>;
-  private _onLoadChannelInfoSubscription!: Subscription;
-  private _onUpdateChannelSubscription!: Subscription;
-  private _onUploadShortsSubscription!: Subscription;
-  previewImage: string | null = null;
-  channel!: ChannelData;
-  visible: boolean = false;
-  channelForm!: FormGroup;
-  banner!: File;
-  selectedContent: string = 'shorts';
-  responsiveOptions: any[] | undefined;
-  isModalVisible = false;
-  filePreview: string | ArrayBuffer | null = null;
-  isLoading = false;
-  videoFile!: File;
+  private readonly _destroy$ = new Subject<void>();
+  _previewImage: string | null = null;
+  _channel!: ChannelData;
+  _visible: boolean = false;
+  _channelForm!: FormGroup;
+  _banner!: File;
+  _selectedContent: string = 'shorts';
+  _responsiveOptions: any[] | undefined;
+  _isModalVisible = false;
+  _filePreview: string | ArrayBuffer | null = null;
+  _isLoading = false;
+  _videoFile!: File;
 
   ngOnInit(): void {
-    this._onLoadChannelInfoSubscription = this._service
+    this._service
       .onLoadChannelInfo()
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           console.log('channeldata is', res.channeldata);
           this._toaster.show(res.message);
-          this.channel = res.channeldata;
-          console.log('res form the channel is', res);
+          this._channel = res.channeldata;
         },
         error: (error) => {
           console.log('error', error);
         },
       });
 
-    this.channelForm = this._fb.group({
+    this._channelForm = this._fb.group({
       channelName: ['', Validators.required],
     });
 
-    this.responsiveOptions = [
+    this._responsiveOptions = [
       {
         breakpoint: '1199px',
         numVisible: 1,
@@ -78,11 +76,11 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
   }
 
   showDialog() {
-    this.visible = true;
+    this._visible = true;
   }
 
   closeDialog() {
-    this.visible = false;
+    this._visible = false;
   }
   // changeBanner(event: any) {
   //   const file: File = event.target.files[0];
@@ -101,31 +99,32 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
   changeBanner(event: Event) {
     const target = event.target as HTMLInputElement;
     if (target.files && target.files?.length > 0) {
-      this.banner = target.files[0];
+      this._banner = target.files[0];
       const file = target.files[0];
-      this.previewImage = URL.createObjectURL(file);
+      this._previewImage = URL.createObjectURL(file);
     }
   }
 
   onSubmit() {
-    if (this.channelForm) {
-      this.visible = false;
+    if (this._channelForm) {
+      this._visible = false;
       const formData: FormData = new FormData();
-      formData.append('channelName', this.channelForm.value.channelName);
+      formData.append('channelName', this._channelForm.value.channelName);
 
       // formData.append('banner', this.channelForm.value.banner);
-      console.log('this banner is', this.banner);
-      formData.append('banner', this.banner);
+      console.log('this banner is', this._banner);
+      formData.append('banner', this._banner);
       console.log('data is ', formData.get('banner'));
-      this._onUpdateChannelSubscription = this._service
+      this._service
         .onUpdateChannel(formData)
+        .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (res) => {
             if (res && res.message) {
               this._toaster.success(res.message);
             }
             console.log('updated info', res);
-            this.channel = res.newChannelData;
+            this._channel = res.newChannelData;
           },
           error: (err) => {
             if (err && err.error.message) {
@@ -136,21 +135,22 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
     }
   }
   showModal() {
-    this.isModalVisible = true;
+    this._isModalVisible = true;
+    console.log('modal');
   }
 
   hideModal() {
-    this.isModalVisible = false;
+    this._isModalVisible = false;
   }
 
   onFileSelected(event: any) {
-    this.videoFile = event.target.files[0];
-    if (this.videoFile) {
+    this._videoFile = event.target.files[0];
+    if (this._videoFile) {
       const reader = new FileReader();
       reader.onload = () => {
-        this.filePreview = reader.result;
+        this._filePreview = reader.result;
       };
-      reader.readAsDataURL(this.videoFile);
+      reader.readAsDataURL(this._videoFile);
     }
   }
 
@@ -159,21 +159,24 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
   }
 
   sentShort() {
-    this.isLoading = true;
+    console.log('click');
+
+    this._isLoading = true;
     const fomData = new FormData();
-    fomData.append('videoFile', this.videoFile);
+    fomData.append('videoFile', this._videoFile);
     console.log('formdata', fomData.get('videoFile'));
 
-    this._onUploadShortsSubscription = this._service
-      .onUploadShorts(fomData, this.channel._id)
+    this._service
+      .onUploadShorts(fomData, this._channel._id)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           console.log('Response:', res);
           if (res && res.message) {
             this._toaster.success(res.message);
-            this.channel = res.uploadOnDp;
+            this._channel = res.uploadOnDp;
             console.log('channle', res.uploadOnDp);
-            this.isLoading = false;
+            this._isLoading = false;
             this.hideModal();
           }
         },
@@ -182,14 +185,42 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
           if (err && err.error && err.error.message) {
             this._toaster.error(err.error.message);
           }
-          this.isLoading = false;
+          this._isLoading = false;
           this.hideModal();
         },
       });
   }
+
+  onVideoPlay(videoItem: any) {
+    console.log('played' + videoItem);
+    const formdata = new FormData();
+    formdata.append('videourl', videoItem);
+    this._service
+      .onUpdateViews(formdata, this._channel._id)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._channel.video.forEach((video) => {
+              const updatedVideo = res.channel.video.find(
+                (v) => v.url === video.url
+              );
+              if (updatedVideo) {
+                video.views = updatedVideo.views;
+              }
+            });
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
+  }
+
   ngOnDestroy(): void {
-    this._onLoadChannelInfoSubscription?.unsubscribe();
-    this._onUpdateChannelSubscription?.unsubscribe();
-    this._onUploadShortsSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

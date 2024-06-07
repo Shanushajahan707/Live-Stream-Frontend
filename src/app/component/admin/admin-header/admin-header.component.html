@@ -1,6 +1,26 @@
-<div class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-4 text-white">
-    <h1 class="text-4xl font-bold">Admin Panel</h1>
-    <div>
-        <button (click)="logout()" class="mr-2 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700">Logout</button>
-    </div>
+<div
+  class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-4 text-white"
+>
+  <h1 class="text-4xl font-bold">Admin Panel</h1>
+  <div>
+    <button
+      onclick="my_modal_5.showModal()"
+      class="mr-2 rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+    >
+      Logout
+    </button>
+  </div>
 </div>
+
+<dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Hello Admin!</h3>
+    <p class="py-4">Press ESC key or click the button below to Logout</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <!-- if there is a button in form, it will close the modal -->
+        <button (click)="logout()" class="btn">Exit</button>
+      </form>
+    </div>
+  </div>
+</dialog>

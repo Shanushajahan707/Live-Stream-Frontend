@@ -2,16 +2,14 @@
   <!-- Video and Chat Container -->
   <div class="flex flex-1">
     <!-- Video Section -->
+
+    
     <div
       class="flex flex-col lg:flex-row w-full lg:w-3/4 p-4 lg:p-24 bg-black relative"
     >
       <div class="flex-1 mb-4 lg:mb-0 relative">
         <!-- Room Info -->
-        <div class="absolute top-0 left-0 p-2 text-white">
-          <span class="text-red-500">Room ID:</span> {{ receivedData.RoomId }} -
-          <span class="text-green-500">Live Name:</span>
-          {{ receivedData.Livename }}
-        </div>
+
         <!-- Main Video for Remote User -->
         <video
           id="remoteVideo"
@@ -27,10 +25,11 @@
       >
         <div class="video-container">
           <div class="absolute top-0 left-0 p-2 text-white">
-            <span class="text-red-500">Room ID:</span>
-            {{ receivedData.RoomId }} -
+            <!-- <span class="text-red-500">Room ID:</span>
+            {{ livereceivedData.RoomId }} -
             <span class="text-green-500">Live Name:</span>
-            {{ receivedData.Livename }}
+            {{ livereceivedData.Livename }} -->
+            
           </div>
           <video
             id="localVideo"
@@ -40,30 +39,29 @@
             autoplay
             muted
           ></video>
-          <div *ngIf="!isVideoOn" class="video-off-message">
+          <div *ngIf="!_isVideoOn" class="video-off-message">
             The video feed is off
           </div>
         </div>
         <div class="">
           <div class="absolute top-0 left-0 p-2 text-white">
-            <span class="text-red-500">Room ID:</span>
-            {{ receivedData.RoomId }} -
+            <!-- <span class="text-red-500">Room ID:</span>
+            {{ livereceivedData.RoomId }} -
             <span class="text-green-500">Live Name:</span>
-            {{ receivedData.Livename }}
+            {{ livereceivedData.Livename }} -->
           </div>
-            <video
-              id="screenVideo"
-              class="video-player hidden"
-              controls
-              autoplay
-            ></video>
-            <video
-  id="remoteUserScreenShare"
-  class="video-player hidden"
-  controls
-  autoplay
-  
-></video>
+          <!-- <video
+            id="screenVideo"
+            class="video-player hidden"
+            controls
+            autoplay
+          ></video>
+          <video
+            id="remoteUserScreenShare"
+            class="video-player hidden"
+            controls
+            autoplay
+          ></video> -->
         </div>
       </div>
     </div>
@@ -84,13 +82,13 @@
     ></video>
   </div> -->
   <!-- Control Buttons -->
-  <div class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4">
+  <div class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4 mb-10">
     <button
       class="bg-gray-700 p-2 rounded-full text-white"
       (click)="toggleMic()"
     >
-      <i *ngIf="isMicOn" class="fas fa-microphone"></i>
-      <i *ngIf="!isMicOn" class="fas fa-microphone-slash"></i>
+      <i *ngIf="_isMicOn" class="fas fa-microphone"></i>
+      <i *ngIf="!_isMicOn" class="fas fa-microphone-slash"></i>
       <!-- Call mute/unmute icon -->
     </button>
 
@@ -98,19 +96,21 @@
       class="bg-gray-700 p-2 rounded-full text-white"
       (click)="toggleVideo()"
     >
-      <i *ngIf="isVideoOn" class="fas fa-video"></i>
-      <i *ngIf="!isVideoOn" class="fas fa-video-slash"></i>
+      <i *ngIf="_isVideoOn" class="fas fa-video"></i>
+      <i *ngIf="!_isVideoOn" class="fas fa-video-slash"></i>
       <!-- Video mute/unmute icon -->
     </button>
 
-    <button id="screenShare" class="bg-gray-700 p-2 rounded-full text-white">
+    <button (click)="toggleScreenShare()" id="screenShare" class="bg-gray-700 p-2 rounded-full text-white">
       <i class="fas fa-desktop"></i>
       <!-- Screenshare icon -->
     </button>
 
-    <button (click)="endCall()" class="bg-red-500 p-2 rounded-full text-white">
+    <button (click)="leaveRoom()" class="bg-red-500 p-2 rounded-full text-white">
       <i class="fas fa-phone-slash"></i>
       <!-- Call hang icon -->
     </button>
   </div>
 </div>
+
+

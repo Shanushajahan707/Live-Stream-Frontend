@@ -5,13 +5,13 @@ import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Subscription, flatMap } from 'rxjs';
+import { Subject, Subscription, flatMap } from 'rxjs';
 import { environment } from '../../../../enviorments/enviorment';
 import { CookieService } from 'ngx-cookie-service';
 import { loginCredential } from '../../../model/auth';
 import { Userstate } from '../../../store/userlogin/login-state';
 import { userLogin } from '../../../store/userlogin/login-action';
-import { formatDate } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -19,15 +19,12 @@ import { formatDate } from '@angular/common';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  private _googleAuthSubscription!: Subscription;
-  private _forgotUrlSubscription!: Subscription;
-  loginForm!: FormGroup;
-  res!: any;
-  apiUrl = environment.apiUrl;
-  value: string = '';
-  visible: boolean = false;
-  position: string | any = 'center';
-  registeredEmail!: FormGroup;
+  private readonly _destroy$ = new Subject<void>();
+  _loginForm!: FormGroup;
+  _value: string = '';
+  _visible: boolean = false;
+  _position: string | any = 'center';
+  _registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
 
   constructor(
@@ -40,12 +37,12 @@ export class LoginComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loginForm = this._fb.group({
+    this._loginForm = this._fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
 
-    this.registeredEmail = this._fb.group({
+    this._registeredEmail = this._fb.group({
       registeredemail: [''],
     });
 
@@ -66,14 +63,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('the form values are', this.loginForm.value);
-      this.sendLoginData(this.loginForm.value);
+    if (this._loginForm.valid) {
+      console.log('the form values are', this._loginForm.value);
+      this.sendLoginData(this._loginForm.value);
     }
   }
 
   sendLoginData(data: loginCredential) {
     if (data) {
+      console.log('data', data);
       this.store.dispatch(userLogin({ userData: data }));
     }
   }
@@ -83,7 +81,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   //     next: (res) => {
   //       if (res && res.message) {
   //         this._toastr.success(res.message);
-  //         this.loginForm.reset();
+  //         this._loginForm.reset();
   //         if (res.isAdmin?.isAdmin) {
   //           localStorage.setItem('admindata', res.token);
   //           this._router.navigate(['/admin/dashboard']);
@@ -92,7 +90,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   //           localStorage.setItem('refreshToken', res.refreshToken);
   //           this._service.islogged$.next(true);
   //           this._router.navigate(['/userhome']);
-  //           this.loginForm.reset();
+  //           this._loginForm.reset();
   //         }
   //       }
   //     },
@@ -104,16 +102,20 @@ export class LoginComponent implements OnInit, OnDestroy {
   //   });
   // }
   googleclick(event: Event) {
-    console.log('clicl');
-    // window.location.href =  `${this.apiUrl}auth/google `;
-    this._googleAuthSubscription = this._service.googleAuth().subscribe({
-      next: (successResponse: any) => {
-        if (successResponse.message) {
-          console.log('rsponse', successResponse);
-        }
-      },
-      error: (error: any) => {},
-    });
+    console.log('click');
+    this._service
+      .googleAuth()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (successResponse: any) => {
+          if (successResponse.message) {
+            console.log('response', successResponse);
+          }
+        },
+        error: (error: any) => {
+          console.error(error);
+        },
+      });
   }
 
   // Unsubscribe from the login subscription to prevent memory leaks
@@ -124,13 +126,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   // }
 
   showDialog(position: string) {
-    this.position = position;
-    this.visible = true;
+    this._position = position;
+    this._visible = true;
   }
   forgotpass() {
-    this.visible = false;
-    this._forgotUrlSubscription = this._service
-      .forgotUrl(this.registeredEmail.value)
+    this._visible = false;
+    this._service
+      .forgotUrl(this._registeredEmail.value)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
@@ -146,7 +149,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._googleAuthSubscription?.unsubscribe();
-    this._forgotUrlSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

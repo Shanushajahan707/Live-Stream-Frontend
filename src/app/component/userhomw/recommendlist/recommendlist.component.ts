@@ -3,7 +3,8 @@ import { ChannelService } from '../../../service/channel.service';
 import { ToastrService } from 'ngx-toastr';
 import { ChannelData, User } from '../../../model/auth';
 import { jwtDecode } from 'jwt-decode';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-recommendlist',
@@ -16,22 +17,21 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
     private _toaster: ToastrService
   ) {}
 
-  private _onRecommededChannelSubscription!: Subscription;
-  private _onFollowChannelSubscription!: Subscription;
-  private _onUnFollowChannelSubscription!: Subscription;
-  recommendedChannels: ChannelData[] = [];
-  responsiveOptions: any[] | undefined;
+  private readonly _destroy$ = new Subject<void>();
+  _recommendedChannels: ChannelData[] = [];
+  _responsiveOptions: any[] | undefined;
 
   ngOnInit(): void {
-    this._onRecommededChannelSubscription = this._service
+    this._service
       .onRecommededChannel()
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
             this._toaster.success(res.message);
           }
-          console.log('rec', res.recommendedChannels);
-          this.recommendedChannels = res.recommendedChannels;
+          // console.log('rec', res.recommendedChannels);
+          this._recommendedChannels = res.recommendedChannels;
         },
         error: (err) => {
           if (err && err.error.message) {
@@ -39,7 +39,7 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
           }
         },
       });
-    this.responsiveOptions = [
+    this._responsiveOptions = [
       {
         breakpoint: '1199px',
         numVisible: 1,
@@ -73,13 +73,14 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
     },
   ];
   follow(channel: ChannelData) {
-    this._onFollowChannelSubscription = this._service
+    this._service
       .onFollowChannel(channel)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
             this._toaster.success(res.message);
-            this.recommendedChannels = this.recommendedChannels.map((c) =>
+            this._recommendedChannels = this._recommendedChannels.map((c) =>
               c._id === channel._id ? res.channel : c
             );
           }
@@ -93,13 +94,14 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
   }
 
   unFollow(channel: ChannelData) {
-    this._onUnFollowChannelSubscription = this._service
+    this._service
       .onUnFollowChannel(channel)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
             this._toaster.success(res.message);
-            this.recommendedChannels = this.recommendedChannels.map((c) =>
+            this._recommendedChannels = this._recommendedChannels.map((c) =>
               c._id === channel._id ? res.channel : c
             );
           }
@@ -119,8 +121,7 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._onRecommededChannelSubscription?.unsubscribe();
-    this._onFollowChannelSubscription?.unsubscribe();
-    this._onUnFollowChannelSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

@@ -1,7 +1,7 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-900">
+<div class="h-screen flex items-center justify-center bg-gray-900">
   <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg mb-24">
     <h2 class="text-3xl font-bold mb-8 text-white">Login</h2>
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="_loginForm" (ngSubmit)="onSubmit()">
       <div class="mb-4">
         <label for="email" class="block text-white text-sm font-semibold mb-2"
           >Email</label
@@ -16,13 +16,13 @@
         />
 
         <div
-          *ngIf="loginForm.get('email')?.errors?.['required'] && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)"
+          *ngIf="_loginForm.get('email')?.errors?.['required'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Email is required
         </div>
         <div
-          *ngIf="loginForm.get('email')?.errors?.['email'] && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)"
+          *ngIf="_loginForm.get('email')?.errors?.['email'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Invalid email format
@@ -44,9 +44,9 @@
         />
         <div
           *ngIf="
-            loginForm.get('password')?.invalid &&
-            (loginForm.get('password')?.dirty ||
-              loginForm.get('password')?.touched)
+            _loginForm.get('password')?.invalid &&
+            (_loginForm.get('password')?.dirty ||
+              _loginForm.get('password')?.touched)
           "
           class="text-red-500 text-xs mt-1"
         >
@@ -60,7 +60,7 @@
       </div>
       <button
         type="submit"
-        [disabled]="loginForm.invalid"
+        [disabled]="_loginForm.invalid"
         class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
       >
         Login
@@ -74,20 +74,30 @@
     </div>
 
     <!-- Google Login Button -->
-    <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
+    <!-- <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
       <button
         class="w-full mt-4 bg-red-600 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-red-700 focus:outline-none focus:bg-red-700"
       >
-        Login with Google
+     <img src="\assets\Images\google.png" alt="" class="h-7">
+     Sign in with google
       </button>
-    </a>
+    </a> -->
+    <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
+      <button class="google-auth-btn" >
+          <img src="/assets/Images/google.png" alt="Google Authentication" class="google-logo h-7">
+          <span class="google-caption">Authenticate with Google</span>
+      </button>
+  </a>
+  
+  
   </div>
-  <form [formGroup]="registeredEmail" (ngSubmit)="forgotpass()">
+  <form [formGroup]="_registeredEmail" (ngSubmit)="forgotpass()">
+    
   <p-dialog
     header="Forgot Password"
     [modal]="true"
-    [(visible)]="visible"
-    [position]="position"
+    [(visible)]="_visible"
+    [position]="_position"
     [style]="{ width: '25rem' }"
   >
     <span class="p-text-secondary block mb-5">
@@ -98,7 +108,7 @@
         <input formControlName="registeredemail" pInputText id="email" class="flex-auto" autocomplete="off" />
       </div>
       <div class="flex justify-content-end gap-2">
-        <p-button label="Cancel" class="text-red-400" severity="secondary" (click)="visible = false" />
+        <p-button label="Cancel" class="text-red-400" severity="secondary" (click)="_visible = false" />
         <button class="font-bold" type="submit" label="Save">Proceed</button>
       </div>
     </p-dialog>

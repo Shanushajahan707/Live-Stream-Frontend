@@ -1,8 +1,44 @@
 #dropdownAvatar {
-    position: absolute;
-    top: 100%; /* Adjust as needed */
-    right: 0; /* Adjust as needed */
-   }
-   
+  position: absolute;
+  top: 100%; /* Adjust as needed */
+  right: 0; /* Adjust as needed */
+}
 
-   
+@media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .navbar p,
+    .navbar div {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .navbar img {
+      margin-left: 0;
+    }
+  
+    .navbar button {
+      margin: 0.5rem 0;
+    }
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .visible {
+    display: block;
+  }
+  
+  .flex-col {
+    flex-direction: column;
+  }
+  
+  .scrollable-container {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
+  

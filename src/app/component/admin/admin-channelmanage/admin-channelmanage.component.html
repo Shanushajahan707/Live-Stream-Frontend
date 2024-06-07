@@ -59,7 +59,7 @@
       </tr>
     </thead>
     <tbody class="bg-gray-700 text-yellow-100 divide-y divide-gray-600">
-      <tr *ngFor="let channel of channels; let i = index">
+      <tr *ngFor="let channel of _channels; let i = index">
         <td class="px-6 py-4 whitespace-pre-wrap">{{ i + 1 }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.username }}</td>
         <td class="px-6 py-4 whitespace-pre-wrap">{{ channel.channelName }}</td>
@@ -99,13 +99,82 @@
           {{ channel.lives.length }}
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
-          <button class="btn bg-blue-500 p-3 rounded-md hover:bg-opacity-20 transition " (click)="viewFollowers(channel)">
+          <button
+            class="btn bg-blue-500 p-3 rounded-md hover:bg-opacity-20 transition"
+            (click)="viewFollowers(channel)"
+          >
             See Followers
           </button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <div class="card flex justify-content-center">
+    <p-dialog
+      header="Followers"
+      [modal]="true"
+      [(visible)]="_isVisible"
+      [style]="{ width: '25rem' }"
+    >
+      <ul *ngIf="_followers.length > 0; else noFollowers">
+        <li class="flex justify-around" *ngFor="let follower of _followers">
+          <a (click)="showUserDetails(follower.userId)">
+            {{ follower.username }}
+          </a>
+          <button
+            class="underline text-blue-500"
+            (click)="showUserDetails(follower.userId)"
+          >
+            View Profile
+          </button>
+        </li>
+      </ul>
+      <ng-template #noFollowers>
+        <p>No followers</p>
+      </ng-template>
+    </p-dialog>
+  </div>
+
+  <div class="card flex justify-content-center">
+    <!-- <p-button  label="Show" /> -->
+    <p-dialog
+      header="Header"
+      [modal]="true"
+      [(visible)]="_isUserDataVisible"
+      [style]="{ width: '28rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+      [maximizable]="true"
+    >
+      <div *ngIf="_user; else noUser">
+        <!-- <div class="profile-card">
+          <img src="" alt="Profile Picture" class="profile-pic">
+          <div class="card-body">
+            <h3>{{ user.username }}</h3>
+            <p>{{ user.email }}</p>
+             Add more details as needed -->
+        <!-- </div>
+        </div>  -->
+        <div class="card w-96 bg-base-100 shadow-xl image-full">
+          <figure>
+            <img
+              src="https://imgs.search.brave.com/TqxFuZ3Dfp6U4sxR39pY6gzhovk92NF6HzC9oQ7SzKc/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA3LzI1LzQyLzE0/LzM2MF9GXzcyNTQy/MTQwOF9yQ1I0Zlla/Qlh5c0dtRnIybG1m/T3ZNUGJsdGQxTmtt/aS5qcGc"
+              alt="Shoes"
+            />
+          </figure>
+          <div class="card-body">
+            <h2 class="card-title">User-Profile</h2>
+            <h3>{{ _user.username }}</h3>
+            <p>{{ _user.email }}</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noUser>
+        <p>No user details available</p>
+      </ng-template>
+    </p-dialog>
+  </div>
 
   <div class="pagination-controls flex justify-center items-center mt-4">
     <button
@@ -115,9 +184,7 @@
     >
       Previous
     </button>
-    <span class="text-gray-800"
-      >Page {{ currentPage }} of {{ totalPages }}</span
-    >
+    <span class="text-white">Page {{ _currentPage }} of {{ _totalPages }}</span>
     <button
       type="button"
       (click)="nextPage()"
@@ -127,9 +194,7 @@
     </button>
   </div>
 
-
-  
-  <div class="modal" [class.show]="isVisible" (click)="closeModal()">
+  <!-- <div class="modal" [class.show]="isVisible" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <span class="close" (click)="closeModal()">&times;</span>
       <h2>Followers</h2>
@@ -146,9 +211,9 @@
       </ng-template>
     </div>
   </div>
-  
-  
-  <div class="modal" [class.show]="isUserDataVisible" (click)="closeModal()">
+   -->
+
+  <!-- <div class="modal" [class.show]="isUserDataVisible" (click)="closeModal()">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <span class="close" (click)="closeModal()">&times;</span>
       <h2>User Profile Card</h2>
@@ -158,17 +223,13 @@
           <div class="card-body">
             <h3>{{ user.username }}</h3>
             <p>{{ user.email }}</p>
-            <!-- Add more details as needed -->
-          </div>
+            < Add more details as needed -->
+  <!-- </div>
         </div>
       </div>
       <ng-template #noUser>
         <p>No user details available</p>
       </ng-template>
     </div>
-  </div>
-  
-
-
-
+  </div>  -->
 </div>

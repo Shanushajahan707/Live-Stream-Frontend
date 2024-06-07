@@ -5,8 +5,9 @@
     <!-- Banner of the channel -->
     <div class="relative mb-4">
       <img
-        src="http://localhost:3000/channelBanner/{{ channel.banner }}?"
-        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
+        *ngIf="_channel"
+        src="http://localhost:3000/channelBanner/{{ _channel.banner }}"
+        class="w-full rounded-sm h-56 md:h-64 lg:h-72 z-0"
         alt="Channel Banner"
       />
       <!-- <img
@@ -28,22 +29,22 @@
             class="top-0 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
           ></span>
         </div>
-        <div class="flex flex-col ml-2">
-          <span class="text-lg text-white font-bold ml-2">{{
-            channel.channelName
-          }}</span>
-          <span class="font-bold ml-2"
-            >Followers: {{ channel && channel.followers.length }}</span
+        <div *ngIf="_channel" class="flex flex-col ml-2">
+          <span class="text-lg text-white font-bold ml-2">
+            {{ _channel.channelName }}</span
+          >
+          <span class="font-bold ml-2 text-blue-300"
+            >Followers: {{ _channel && _channel.followers.length }}</span
           >
         </div>
-        <div *ngIf="channel?.isblocked !== true">
+        <div *ngIf="_channel && !_channel.isblocked">
           <i
             (click)="showDialog()"
             [pTooltip]="tooltipContent"
             severity="secondary"
             tooltipPosition="bottom"
             class="pi pi-pencil ms-3 mb-2"
-            style="font-size: 1.5rem"
+            style="font-size: 1.5rem; color: lightcoral"
           ></i>
           <ng-template #tooltipContent>
             <div class="flex align-items-center">
@@ -56,46 +57,37 @@
       </div>
       <div class="flex items-center">
         <div class="cursor-pointer p-2">
-            <!-- Enhanced Upload Icon with Hover Effect -->
-            <button
-            class="bg-yellow-50 p-2 text-black border rounded-md hover:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          <!-- Enhanced Upload Icon with Hover Effect -->
+          <button
+            class="bg-yellow-50 px-1 py-2.5 mb-2 text-black border rounded-md hover:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out transform"
             (click)="showModal()"
-        >
+          >
             <i class="pi pi-upload mx-2"></i>Upload Shorts
-        </button>
- 
-
-
+          </button>
         </div>
-        <div>
-            <button
-                disabled
-                type="button"
-                class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-            >
-                {{ channel.isblocked? "Blocked" : "Active" }}
-            </button>
-
-            
+        <div *ngIf="_channel">
+          <button
+            disabled
+            type="button"
+            class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+          >
+            {{ _channel.isblocked ? "Blocked" : "Active" }}
+          </button>
         </div>
-    </div>
-    
-    
+      </div>
     </div>
 
     <!-- Content of the session -->
-    <div class="p-4  text-lg space-x-5 font-bold">
-
-
+    <div class="p-4 text-lg space-x-5 font-bold">
       <div class="p-4 flex text-lg space-x-5 font-bold">
         <label for="videos" class="text-white">
-          Shorts
+          Clips
           <input
-          checked
+            checked
             type="radio"
             id="shorts"
             name="content"
-            [(ngModel)]="selectedContent"
+            [(ngModel)]="_selectedContent"
             value="shorts"
           />
         </label>
@@ -105,17 +97,27 @@
             type="radio"
             id="live"
             name="content"
-            [(ngModel)]="selectedContent"
+            [(ngModel)]="_selectedContent"
             value="live"
           />
         </label>
+        <label for="followers" class="text-white">
+          Followers
+          <input
+            type="radio"
+            id="followers"
+            name="content"
+            [(ngModel)]="_selectedContent"
+            value="followers"
+          />
+        </label>
       </div>
-  
+
       <!-- Dynamic Content Display Based on Selection -->
       <div
         id="videosContainer"
         class="content-container"
-        *ngIf="selectedContent === 'shorts'"
+        *ngIf="_selectedContent === 'shorts'"
       >
         <!-- <ul>
           <li *ngFor="let video of channel?.video; else noVideo">
@@ -133,23 +135,22 @@
         <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
         <div class="card">
           <!-- Check if followChannel.video is available and has at least one item -->
-          <ng-container *ngIf="channel?.video?.length; else singleVideo">
+          <ng-container *ngIf="_channel?.video?.length; else singleVideo">
             <p-carousel
-              [value]="channel.video"
+              [value]="_channel.video"
               [numVisible]="3"
               [numScroll]="3"
-              [responsiveOptions]="responsiveOptions"
+              [responsiveOptions]="_responsiveOptions"
             >
               <ng-template let-videoItem pTemplate="item">
                 <div class="video-card">
                   <video
                     #target
-                    class="video-js h-44 w-45"
+                    class="h-44 w-48"
                     [src]="videoItem.url"
                     controls
                     muted
-                    playsinline
-                    preload="none"
+                    (play)="onVideoPlay(videoItem.url)"
                   ></video>
                   <div class="video-info">
                     <span>{{ videoItem.views }} Views</span>
@@ -158,13 +159,12 @@
               </ng-template>
             </p-carousel>
           </ng-container>
-          
-  
+
           <!-- Template for single video when followChannel.video is not available or empty -->
           <ng-template #singleVideo>
             <video
               #target
-              class="video-js h-44 w-45" 
+              class="video-js h-44 w-45"
               src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
               controls
               muted
@@ -174,30 +174,44 @@
           </ng-template>
         </div>
       </div>
-  
+
       <div
         id="liveContainer"
         class="content-container"
-        *ngIf="selectedContent === 'live'"
+        *ngIf="_selectedContent === 'live'"
       >
         <p>This is where your live videos will be displayed.</p>
       </div>
-    </div>
 
-
-
+      <div
+        id="followContainer"
+        class="content-container"
+        *ngIf="_selectedContent === 'followers'"
+      >
+        <ul *ngIf="_channel.followers; else noFollowers">
+          <li
+            class="flex justify-around"
+            *ngFor="let follower of _channel.followers"
+          >
+            {{ follower.username }}
+          </li>
+        </ul>
+        <ng-template #noFollowers>
+          <p>No followers</p>
+        </ng-template>
+      </div>
     </div>
   </div>
-  
+</div>
 
 <!-- Modal for asking the edii form --><p-dialog
   header="Update your Channel_Info!"
-  [(visible)]="visible"
+  [(visible)]="_visible"
   [style]="{ width: '25rem' }"
   class="bg-gray-800 text-white"
 >
-  <form [formGroup]="channelForm" (ngSubmit)="onSubmit()">
-    <div class="flex flex-col gap-3 mb-3 p-4">
+  <form [formGroup]="_channelForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="_channel" class="flex flex-col gap-3 mb-3 p-4">
       <label for="channelName" class="font-semibold text-lg">ChannelName</label>
       <input
         pInputText
@@ -206,13 +220,18 @@
         formControlName="channelName"
         class="flex-auto bg-gray-200 text-dark border-none rounded-md p-2"
         autocomplete="off"
-        placeholder="{{ channel.channelName }}"
+        placeholder="{{ _channel.channelName }}"
       />
     </div>
     <div class="flex flex-col gap-3 mb-5 p-4">
       <label for="banner" class="font-semibold text-lg">Banner</label>
-      <div class="flex items-center justify-between bg-gray-200 rounded-md p-2 cursor-pointer" (click)="openFilePicker()">
-        <span *ngIf="!previewImage" class="text-gray-600">Select Banner Image</span>
+      <div
+        class="flex items-center justify-between bg-gray-200 rounded-md p-2 cursor-pointer"
+        (click)="openFilePicker()"
+      >
+        <span *ngIf="!_previewImage" class="text-gray-600"
+          >Select Banner Image</span
+        >
         <input
           #bannerInput
           id="banner"
@@ -221,18 +240,23 @@
           (change)="changeBanner($event)"
           autocomplete="off"
         />
-       <div class="">
-        <img *ngIf="previewImage" [src]="previewImage" alt="Selected Image" class="w-32 h-32 object-cover rounded-md ml-2"> <!-- Add this line -->
-       </div>
+        <div class="">
+          <img
+            *ngIf="_previewImage"
+            [src]="_previewImage"
+            alt="Selected Image"
+            class="w-32 h-32 object-cover rounded-md ml-2"
+          />
+          <!-- Add this line -->
+        </div>
       </div>
     </div>
-    
-    
+
     <div class="flex justify-end gap-2 p-4">
       <p-button
         label="Cancel"
         severity="secondary"
-        (click)="visible = false"
+        (click)="_visible = false"
         class="bg-red-600 text-white rounded-md px-4 py-2"
       />
       <p-button
@@ -244,40 +268,78 @@
   </form>
 </p-dialog>
 
-
 <!-- Progress Spinner -->
 
 <!-- The Modal -->
-<div id="myModal" class="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" [ngStyle]="{'display': isModalVisible ? 'flex' : 'none'}">
-  <!-- Modal content -->
-  <div class="modal-content relative bg-white rounded shadow-lg w-11/12 md:w-3/4 lg:w-1/2 p-4">
-    <!-- Overlay for loading spinner -->
-    <div *ngIf="isLoading" class="modal-progress-overlay absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10">
-      <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
-    </div>
-    <span class="close absolute top-2 right-2 text-2xl cursor-pointer" (click)="hideModal()">&times;</span>
-    <div *ngIf="!filePreview" class="flex items-center justify-center w-full">
-      <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50  dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-          <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-          </svg>
-          <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span></p>
-          <p class="text-xs text-gray-500 dark:text-gray-400">MP4, AVI, MOV (MAX. 10MB)</p>
-        </div>
-        <input id="dropzone-file" type="file" class="hidden" (change)="onFileSelected($event)" accept="video/*" />
-      </label>
-    </div>
-    <div *ngIf="filePreview" class="preview mt-4 flex items-center justify-center">
-      <video [src]="filePreview" controls muted class="w-full h-auto"></video>
-    </div>
-    <div *ngIf="filePreview" class="flex justify-center mt-4">
-      <button
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-        (click)="submitFile()"
+
+<div class="card flex justify-content-center">
+  <p-dialog
+    header="Upload Shorts"
+    [modal]="true"
+    [(visible)]="_isModalVisible"
+    [style]="{ width: '35rem' }"
+  >
+    <div
+      class="modal-content relative bg-white rounded shadow-lg w-11/12 md:w-3/4 lg:w-1/2 p-4"
+    >
+      <!-- Overlay for loading spinner -->
+      <div
+        *ngIf="_isLoading"
+        class="modal-progress-overlay absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10"
       >
-        Submit
-      </button>
+        <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+      </div>
+      <div *ngIf="!_filePreview" class="flex items-center justify-center w-full">
+        <label
+          for="dropzone-file"
+          class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+        >
+          <div class="flex flex-col items-center justify-center pt-5 pb-6">
+            <svg
+              class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 16"
+            >
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+              />
+            </svg>
+            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+              <span class="font-semibold">Click to upload</span>
+            </p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              MP4, AVI, MOV (MAX. 10MB)
+            </p>
+          </div>
+          <input
+            id="dropzone-file"
+            type="file"
+            class="hidden"
+            (change)="onFileSelected($event)"
+            accept="video/*"
+          />
+        </label>
+      </div>
+      <div
+        *ngIf="_filePreview"
+        class="preview mt-4 flex items-center justify-center"
+      >
+        <video [src]="_filePreview" controls muted class="w-full h-auto"></video>
+      </div>
+      <div *ngIf="_filePreview" class="flex justify-center mt-4">
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          (click)="submitFile()"
+        >
+          Submit
+        </button>
+      </div>
     </div>
-  </div>
+  </p-dialog>
 </div>

@@ -3,22 +3,21 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { signupCredential } from '../../../model/auth';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
   styleUrl: './otp.component.scss',
 })
 export class OtpComponent implements OnInit, OnDestroy {
-  private _otpSubscription!: Subscription ;
-  private _resendOtpSubscription!: Subscription ;
-  otpform!: FormGroup;
-  start: boolean = true;
-  value: number = 60;
-  stop: boolean = false;
-  intervaltimer!: any;
-  fb: any;
+  private readonly _destroy$ = new Subject<void>();
+  _otpform!: FormGroup;
+  _start: boolean = true;
+  _value: number = 60;
+  _stop: boolean = false;
+  _intervaltimer!: any;
   constructor(
     private _fb: FormBuilder,
     private _service: AccountService,
@@ -27,7 +26,7 @@ export class OtpComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.otpform = this._fb.group({
+    this._otpform = this._fb.group({
       digit1: [
         '',
         [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
@@ -57,31 +56,34 @@ export class OtpComponent implements OnInit, OnDestroy {
     console.log('storage value', localStorage);
   }
   otpsubmit() {
-    console.log(this.otpform.value);
-    this._otpSubscription = this._service.otp(this.otpform.value).subscribe({
-      next: (res) => {
-        console.log('response after otp', res);
-        if (res && res.message) {
-          this._toastr.success(res.message);
-          this._router.navigate(['/login']);
-          this.otpform.reset();
-        }
-      },
-      error: (err) => {
-        if (err && err.error.message) {
-          this._toastr.error(err.error.message);
-          this.otpform.reset();
-        }
-      },
-    });
+    console.log(this._otpform.value);
+    this._service
+      .otp(this._otpform.value)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          console.log('response after otp', res);
+          if (res && res.message) {
+            this._toastr.success(res.message);
+            this._router.navigate(['/login']);
+            this._otpform.reset();
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toastr.error(err.error.message);
+            this._otpform.reset();
+          }
+        },
+      });
   }
   timer() {
-    this.intervaltimer = setInterval(() => {
-      if (this.start && !this.stop && this.value > 0) {
-        this.value--;
-      } else if (this.value === 0) {
-        this.stop = true;
-        clearInterval(this.intervaltimer);
+    this._intervaltimer = setInterval(() => {
+      if (this._start && !this._stop && this._value > 0) {
+        this._value--;
+      } else if (this._value === 0) {
+        this._stop = true;
+        clearInterval(this._intervaltimer);
       }
     }, 1000);
   }
@@ -91,25 +93,28 @@ export class OtpComponent implements OnInit, OnDestroy {
     const userdata: string | null = localStorage.getItem('userMail');
     if (userdata !== null) {
       const user = JSON.parse(userdata);
-     this._resendOtpSubscription= this._service.resendotp(user).subscribe({
-        next: (res) => {
-          if (res && res.message) {
-            this._toastr.success(res.message);
-            localStorage.removeItem('userMail');
-          }
-        },
-        error: (err) => {
-          if (err && err.error.message) {
-            this._toastr.error(err.error.message);
-          }
-        },
-      });
+      this._service
+        .resendotp(user)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (res) => {
+            if (res && res.message) {
+              this._toastr.success(res.message);
+              localStorage.removeItem('userMail');
+            }
+          },
+          error: (err) => {
+            if (err && err.error.message) {
+              this._toastr.error(err.error.message);
+            }
+          },
+        });
     }
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.intervaltimer);
-    this._otpSubscription?.unsubscribe();
-    this._resendOtpSubscription?.unsubscribe()
+    clearInterval(this._intervaltimer);
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

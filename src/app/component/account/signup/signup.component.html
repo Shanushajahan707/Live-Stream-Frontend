@@ -1,7 +1,7 @@
 <div class="min-h-screen flex items-center justify-center bg-gray-900">
   <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
     <h2 class="text-3xl font-bold mb-8 text-white">Sign Up</h2>
-    <form class="text-white" [formGroup]="signup" (ngSubmit)="onsubmit()">
+    <form class="text-white" [formGroup]="_signup" (ngSubmit)="onsubmit()">
       <div class="mb-4">
         <label
           for="username"
@@ -17,19 +17,19 @@
           placeholder="Enter your username"
         />
         <div
-          *ngIf="signup.get('username')?.errors?.['required'] &&  (signup.get('username')?.touched)"
+          *ngIf="_signup.get('username')?.errors?.['required'] &&  (_signup.get('username')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Username is required
         </div>
         <div
-          *ngIf="signup.get('username')?.errors?.['minlength'] && (signup.get('username')?.touched)"
+          *ngIf="_signup.get('username')?.errors?.['minlength'] && (_signup.get('username')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Username must be atleast 2 characters
         </div>
         <div
-          *ngIf="signup.get('username')?.errors?.['maxlength'] && (signup.get('username')?.touched)"
+          *ngIf="_signup.get('username')?.errors?.['maxlength'] && (_signup.get('username')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Username cannot exceed 20 charcters
@@ -48,19 +48,19 @@
           placeholder="Enter your email"
         />
         <div
-          *ngIf="signup.get('email')?.errors?.['required'] &&  (signup.get('email')?.touched)"
+          *ngIf="_signup.get('email')?.errors?.['required'] &&  (_signup.get('email')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Email is required
         </div>
         <div
-          *ngIf="signup.get('email')?.errors?.['email'] && (signup.get('email')?.touched)"
+          *ngIf="_signup.get('email')?.errors?.['email'] && (_signup.get('email')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Invalid email format
         </div>
         <div
-          *ngIf="signup.get('email')?.errors?.['emailInvalid'] && (signup.get('email')?.touched)"
+          *ngIf="_signup.get('email')?.errors?.['emailInvalid'] && (_signup.get('email')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Check email format
@@ -129,19 +129,19 @@
           </a>
         </div>
         <div
-          *ngIf="signup.get('password')?.errors?.['required'] && (signup.get('password')?.touched)"
+          *ngIf="_signup.get('password')?.errors?.['required'] && (_signup.get('password')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Password is required
         </div>
         <div
-          *ngIf="signup.get('password')?.errors?.['maxlength'] && (signup.get('password')?.touched)"
+          *ngIf="_signup.get('password')?.errors?.['maxlength'] && (_signup.get('password')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Password cannot exceed 20 characters
         </div>
         <div
-          *ngIf="signup.get('password')?.errors?.['pattern'] && (signup.get('password')?.touched)"
+          *ngIf="_signup.get('password')?.errors?.['pattern'] && (_signup.get('password')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           Password must include upper, lower, and digit
@@ -161,7 +161,7 @@
           placeholder="Select your date of birth"
         />
         <div
-          *ngIf="signup.get('dateofbirth')?.errors?.['required'] && (signup.get('dateofbirth')?.touched)"
+          *ngIf="_signup.get('dateofbirth')?.errors?.['required'] && (_signup.get('dateofbirth')?.touched)"
           class="text-red-500 text-xs mt-1"
         >
           dateofbirth is required
@@ -169,7 +169,7 @@
       </div>
       <button
         type="submit"
-        [disabled]="signup.invalid"
+        [disabled]="_signup.invalid"
         class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
       >
         Sign Up

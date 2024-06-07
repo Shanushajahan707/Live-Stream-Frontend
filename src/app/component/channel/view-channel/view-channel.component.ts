@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { ChannelData } from '../../../model/auth';
 import { ChannelService } from '../../../service/channel.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-view-channel',
@@ -11,11 +12,11 @@ import { Subscription } from 'rxjs';
   styleUrl: './view-channel.component.scss',
 })
 export class ViewChannelComponent implements OnInit, OnDestroy {
-  private _onGetFollowChannelSubscription!: Subscription;
-  channelId!: string;
-  selectedContent!: string;
-  followChannel!: ChannelData;
-  responsiveOptions: any[] | undefined;
+  private readonly _destroy$ = new Subject<void>();
+  _channelId!: string;
+  _selectedContent: string = 'shorts';
+  _followChannel!: ChannelData;
+  _responsiveOptions: any[] | undefined;
 
   constructor(
     private _route: ActivatedRoute,
@@ -25,15 +26,16 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this._route.paramMap.subscribe((params) => {
-      this.channelId = params.get('id') as string;
-      console.log('channel id: ', this.channelId);
-      this._onGetFollowChannelSubscription = this._channelService
-        .onGetFollowChannel(this.channelId)
+      this._channelId = params.get('id') as string;
+      console.log('channel id: ', this._channelId);
+      this._channelService
+        .onGetFollowChannel(this._channelId)
+        .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (res) => {
             if (res && res.message) {
               this._toaster.success(res.message);
-              this.followChannel = res.channel;
+              this._followChannel = res.channel;
             }
           },
           error: (err) => {
@@ -43,7 +45,7 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
           },
         });
     });
-    this.responsiveOptions = [
+    this._responsiveOptions = [
       {
         breakpoint: '1199px',
         numVisible: 1,
@@ -62,7 +64,36 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
     ];
   }
 
+  onVideoPlay(videoItem: any) {
+    console.log('played' + videoItem);
+    const formdata = new FormData();
+    formdata.append('videourl', videoItem);
+    this._channelService
+      .onUpdateViews(formdata, this._followChannel._id)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._followChannel.video.forEach((video) => {
+              const updatedVideo = res.channel.video.find(
+                (v) => v.url === video.url
+              );
+              if (updatedVideo) {
+                video.views = updatedVideo.views;
+              }
+            });
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
+  }
+
   ngOnDestroy(): void {
-    this._onGetFollowChannelSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

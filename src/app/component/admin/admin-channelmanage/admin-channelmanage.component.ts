@@ -2,27 +2,24 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ChannelData, Follower, User } from '../../../model/auth';
 import { ChannelmanageService } from '../../../service/channelmanage.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-import { HttpStatusCode } from '@angular/common/http';
-
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-admin-channelmanage',
   templateUrl: './admin-channelmanage.component.html',
   styleUrl: './admin-channelmanage.component.scss',
 })
 export class AdminChannelmanageComponent implements OnInit, OnDestroy {
-  private _getChannelSubscription!: Subscription;
-  private _blockChannelSubscription!: Subscription;
-  private _getUserDataSubsciption!: Subscription;
-
-  channels: ChannelData[] = [];
-  currentPage = 1;
-  itemsPerPage = 1;
-  totalPages = 0;
-  followers: Follower[] = [];
-  isVisible = false;
-  user!: User;
-  isUserDataVisible: boolean = false;
+  private readonly _destroy$ = new Subject<void>();
+  _channels: ChannelData[] = [];
+  _currentPage = 1;
+  _itemsPerPage = 1;
+  _totalPages = 0;
+  _followers: Follower[] = [];
+  _isVisible = false;
+  _profileVisible = false;
+  _user!: User;
+  _isUserDataVisible: boolean = false;
   constructor(
     private _channelService: ChannelmanageService,
     private _toaster: ToastrService,
@@ -34,16 +31,17 @@ export class AdminChannelmanageComponent implements OnInit, OnDestroy {
   }
 
   getChannels() {
-    this._getChannelSubscription = this._channelService
-      .getChannels(this.currentPage, this.itemsPerPage)
+    this._channelService
+      .getChannels(this._currentPage, this._itemsPerPage)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           console.log('channels', res);
           if (res && res.message) console.log(res.channels);
 
-          this.channels = res.channels;
-          console.log('all channels', this.channels);
-          this.totalPages = Math.ceil(res.totalcount / this.itemsPerPage);
+          this._channels = res.channels;
+          console.log('all channels', this._channels);
+          this._totalPages = Math.ceil(res.totalcount / this._itemsPerPage);
           this._toaster.success(res.message);
         },
         error: (err) => {
@@ -55,23 +53,24 @@ export class AdminChannelmanageComponent implements OnInit, OnDestroy {
   }
 
   nextPage() {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
+    if (this._currentPage < this._totalPages) {
+      this._currentPage++;
       this.getChannels();
     }
   }
 
   prevPage() {
-    if (this.currentPage > 1) {
-      this.currentPage--;
+    if (this._currentPage > 1) {
+      this._currentPage--;
       this.getChannels();
     }
   }
 
   toggleBlockStatus(channel: ChannelData) {
     console.log('the toggleled channels is', channel);
-    this._blockChannelSubscription = this._service
+    this._service
       .blockChannel(channel._id)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
@@ -87,26 +86,27 @@ export class AdminChannelmanageComponent implements OnInit, OnDestroy {
   }
   viewFollowers(channel: ChannelData) {
     console.log('channel', channel);
-    this.followers = channel.followers;
-    console.log('followers', this.followers);
+    this._followers = channel.followers;
+    console.log('followers', this._followers);
     this.showModal();
   }
   showModal() {
-    this.isVisible = true;
+    this._isVisible = true;
   }
 
   closeModal() {
-    this.isVisible = false;
-    this.isUserDataVisible = false;
+    this._isVisible = false;
+    this._isUserDataVisible = false;
   }
   showUserDetails(userId: string) {
-    this.isUserDataVisible = true;
-    this._getUserDataSubsciption = this._channelService
+    this._isUserDataVisible = true;
+    this._channelService
       .getUserData(userId)
+      .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
-            this.user = res.userData;
+            this._user = res.userData;
             this._toaster.show(res.message);
           }
         },
@@ -119,8 +119,7 @@ export class AdminChannelmanageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._getUserDataSubsciption?.unsubscribe();
-    this._getChannelSubscription?.unsubscribe();
-    this._blockChannelSubscription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

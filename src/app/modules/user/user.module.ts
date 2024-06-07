@@ -28,7 +28,6 @@ import { ViewChannelComponent } from '../../component/channel/view-channel/view-
 import { MessageModule } from 'primeng/message';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
-
 @NgModule({
   declarations: [
     RecommendationComponent,
@@ -61,7 +60,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     CarouselModule,
     TagModule,
     MessageModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
   ],
   exports: [
     TooltipModule,

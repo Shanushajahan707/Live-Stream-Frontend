@@ -6,9 +6,9 @@ import {
   FormControl,
 } from '@angular/forms';
 import { AccountService } from '../../../service/account.service';
-import { NotExpr } from '@angular/compiler';
 import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-signup',
@@ -16,8 +16,8 @@ import { Subscription } from 'rxjs';
   styleUrl: './signup.component.scss',
 })
 export class SignupComponent implements OnInit, OnDestroy {
-  private _signupSubsription!: Subscription;
-  signup!: FormGroup;
+  private readonly _destroy$ = new Subject<void>();
+  _signup!: FormGroup;
   constructor(
     private _fb: FormBuilder,
     private _service: AccountService,
@@ -27,7 +27,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   public hidePassword = true;
 
   ngOnInit(): void {
-    this.signup = this._fb.group({
+    this._signup = this._fb.group({
       username: [
         '',
         [
@@ -52,30 +52,33 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
   }
   onsubmit() {
-    if (this.signup.valid) {
-      console.log(this.signup.value);
+    if (this._signup.valid) {
+      console.log(this._signup.value);
       this._toastr.warning('Processing');
-      const signupdata = JSON.stringify(this.signup.value);
+      const signupdata = JSON.stringify(this._signup.value);
       localStorage.setItem('userMail', signupdata);
-      this.sendSignupDate(this.signup.value);
+      this.sendSignupDate(this._signup.value);
     }
   }
 
   sendSignupDate(data: any) {
     console.log('valu', data);
-    this._signupSubsription = this._service.signup(data).subscribe({
-      next: (res) => {
-        if (res && res.message) {
-          this._toastr.success(res.message);
-          this.signup.reset();
-        }
-      },
-      error: (err) => {
-        if (err && err.error.message) {
-          this._toastr.error(err.error.message);
-        }
-      },
-    });
+    this._service
+      .signup(data)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._toastr.success(res.message);
+            this._signup.reset();
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toastr.error(err.error.message);
+          }
+        },
+      });
   }
   emailValidator(control: FormControl): { [s: string]: boolean } | null {
     const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -100,6 +103,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._signupSubsription?.unsubscribe();
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

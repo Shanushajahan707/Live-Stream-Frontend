@@ -8,87 +8,93 @@ import {
 import { SocketService } from '../../../service/socket.service';
 import { Router } from '@angular/router';
 import { DataPassingService } from '../../../service/data-passing.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-live',
   templateUrl: './live.component.html',
-  styleUrls: ['./live.component.scss'], // Note: styleUrl is deprecated in favor of styleUrls
+  styleUrls: ['./live.component.scss'],
 })
 export class LiveComponent implements OnInit, OnDestroy {
-  @ViewChild('remoteVideo') remoteVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChild('localVideo') localVideo!: ElementRef<HTMLVideoElement>;
-  private _currentDataSubscription!: Subscription;
-  private _remoteStreamSubscription!: Subscription;
-  private peer!: RTCPeerConnection;
-  private isScreenSharing: boolean = false;
-  isMicOn = true;
-  isVideoOn = true;
-  receivedData: { Livename: string; RoomId: number } = {
-    Livename: '',
-    RoomId: 0,
-  };
+  @ViewChild('remoteVideo') _remoteVideo!: ElementRef<HTMLVideoElement>;
+  @ViewChild('localVideo') _localVideo!: ElementRef<HTMLVideoElement>;
+  private _isScreenSharing: boolean = false;
+  private readonly _destroy$ = new Subject<void>();
+  _isMicOn = true;
+  _isVideoOn = true;
+  _livereceivedData!: { Livename: string; RoomId: number };
+  _joinreceivedData!: { Livename: string; RoomId: number };
+  _isViewing = false;
+  _joinlive = false;
+  _startlive = false;
+
   constructor(
     private _socketService: SocketService,
     private _router: Router,
     private _dataService: DataPassingService
-  ) {
-    this.peer = new RTCPeerConnection();
-  }
+  ) {}
 
   ngOnInit() {
-    this._currentDataSubscription = this._dataService.currentData.subscribe(
-      (data) => (this.receivedData = data)
-    );
+    this._dataService.currentData
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((data) => {
+        this._startlive = true;
+        this._livereceivedData = data;
+        if (data.RoomId > 0) {
+          console.log('start live ', data);
+          this.initializeConnection(this._livereceivedData.RoomId);
+        }
+      });
+
+    this._dataService.joinroom
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((data) => {
+        this._joinlive = true;
+        console.log('join live ', data);
+        this._joinreceivedData = data;
+        if (data.RoomId > 0) {
+          console.log('join live', this._joinreceivedData);
+          this.joinLiveStream(this._joinreceivedData.RoomId);
+        }
+      });
+
+    this._socketService.remoteStream$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((remoteStream) => {
+        const remoteVideoElement = this._remoteVideo.nativeElement;
+        remoteVideoElement.srcObject = remoteStream;
+      });
+  }
+
+  initializeConnection(RoomId: number) {
+    this._socketService.joinRoom(RoomId, 'broadcaster');
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
-        const localVideoElement = document.getElementById(
-          'localVideo'
-        ) as HTMLVideoElement;
-        if (localVideoElement instanceof HTMLVideoElement) {
-          localVideoElement.srcObject = stream;
-          console.log('Local stream assigned', stream);
-          this._socketService.handleAddTrack(stream);
-        } else {
-          console.log('Local video element not found');
-        }
+        const localVideoElement = this._localVideo.nativeElement;
+        localVideoElement.srcObject = stream;
+        this._socketService.handleAddTrack(stream);
       })
       .catch((error) => {
-        console.log('Error accessing local media devices', error);
-        throw error;
+        console.error('Error accessing local media devices', error);
       });
-    this._socketService.joinRoom(
-      this.receivedData.RoomId,
-      this.receivedData.Livename
-    );
+  }
 
-    this._remoteStreamSubscription = this._socketService.remoteStream$
-      .pipe()
-      .subscribe((remoteStream) => {
-        console.log('remote stream is', remoteStream);
-        const remoteVideoElement = document.getElementById(
-          'remoteVideo'
-        ) as HTMLVideoElement;
-        if (remoteVideoElement instanceof HTMLVideoElement) {
-          console.log('Remote video stream received');
-          remoteVideoElement.srcObject = remoteStream;
-        } else {
-          console.log('Remote video element not found');
-        }
-      });
-    document
-      .getElementById('screenShare')
-      ?.addEventListener('click', () => this.startScreenShare());
+  joinLiveStream(RoomId: number) {
+    if (this._joinreceivedData.RoomId) {
+      this._isViewing = true;
+      this._socketService.joinRoom(RoomId, 'viewer');
+    }
   }
 
   toggleScreenShare() {
-    if (this.isScreenSharing) {
+    if (this._isScreenSharing) {
       this.endScreenShare();
     } else {
       this.startScreenShare();
     }
-    this.isScreenSharing = !this.isScreenSharing;
+    this._isScreenSharing = !this._isScreenSharing;
   }
 
   startScreenShare() {
@@ -96,26 +102,17 @@ export class LiveComponent implements OnInit, OnDestroy {
       .getDisplayMedia({ video: true })
       .then((screenStream) => {
         const screenTrack = screenStream.getTracks()[0];
-        screenTrack.onended = () => {
-          this.endScreenShare();
-        };
+        screenTrack.onended = () => this.endScreenShare();
 
-        const localStream = this.localVideo.nativeElement
+        const localStream = this._localVideo.nativeElement
           .srcObject as MediaStream;
         const videoTrack = localStream.getVideoTracks()[0];
-        this._socketService.replaceTrack(videoTrack, screenTrack);
+        // this._socketService.handleReplaceTrack(videoTrack, screenTrack);
 
-        const screenVideoElement = document.getElementById(
-          'screenVideo'
-        ) as HTMLVideoElement;
-        screenVideoElement.style.display = 'block';
-        if (screenVideoElement) {
-          screenVideoElement.srcObject = screenStream;
-        }
-
+        this._remoteVideo.nativeElement.srcObject = screenStream;
         console.log('Screen sharing started', screenStream);
       })
-      .catch((error) => console.log('Error while sharing the screen', error));
+      .catch((error) => console.error('Error while sharing the screen', error));
   }
 
   endScreenShare() {
@@ -123,54 +120,40 @@ export class LiveComponent implements OnInit, OnDestroy {
       .getUserMedia({ video: true, audio: true })
       .then((localStream) => {
         const videoTrack = localStream.getVideoTracks()[0];
-        const currentStream = this.remoteVideo.nativeElement
+        const currentStream = this._localVideo.nativeElement
           .srcObject as MediaStream;
         const screenTrack = currentStream.getVideoTracks()[0];
-        console.log('currentStream', currentStream);
-        this._socketService.replaceTrack(screenTrack, videoTrack);
 
-        console.log('Screen sharing stopped, local video restored');
+        // this._socketService.handleReplaceTrack(screenTrack, videoTrack);
+        this._localVideo.nativeElement.srcObject = localStream;
+        console.log('Screen sharing ended');
       })
       .catch((error) =>
-        console.log('Error restoring local video stream', error)
+        console.error('Error while switching back to webcam', error)
       );
   }
+
   toggleMic() {
-    console.log('toggle mic');
-    this.isMicOn = !this.isMicOn;
-    const localStream = this.localVideo.nativeElement.srcObject as MediaStream;
-    localStream.getAudioTracks().forEach((track) => {
-      track.enabled = !track.enabled;
-    });
+    this._isMicOn = !this._isMicOn;
+    const localStream = this._localVideo.nativeElement.srcObject as MediaStream;
+    const audioTrack = localStream.getAudioTracks()[0];
+    audioTrack.enabled = this._isMicOn;
   }
 
   toggleVideo() {
-    console.log('toggle video');
-    this.isVideoOn = !this.isVideoOn;
-    const localStream = this.localVideo.nativeElement.srcObject as MediaStream;
-    localStream.getVideoTracks().forEach((track) => {
-      track.enabled = this.isVideoOn;
-    });
+    this._isVideoOn = !this._isVideoOn;
+    const localStream = this._localVideo.nativeElement.srcObject as MediaStream;
+    const videoTrack = localStream.getVideoTracks()[0];
+    videoTrack.enabled = this._isVideoOn;
   }
 
-  endCall() {
-    console.log('End call');
-    const localVideo = this.localVideo.nativeElement.srcObject as MediaStream;
-    const remoteVideo = this.remoteVideo.nativeElement.srcObject as MediaStream;
-    this.stopMediaStream(localVideo);
-    this.stopMediaStream(remoteVideo);
+  leaveRoom() {
     this._socketService.disconnect();
-    this._router.navigateByUrl('');
+    this._router.navigate(['']);
   }
 
-  stopMediaStream(stream: MediaStream | undefined) {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-    }
-  }
-
-  ngOnDestroy(): void {
-    this._currentDataSubscription?.unsubscribe();
-    this._remoteStreamSubscription?.unsubscribe();
+  ngOnDestroy() {
+    this._destroy$.next();
+    this._destroy$.complete();
   }
 }

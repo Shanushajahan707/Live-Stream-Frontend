@@ -1,4 +1,5 @@
 <div class="flex justify-evenly mb-4">
+  
   <button
     class="flex items-center text-white bg-blue-500 rounded-md px-4 py-2 hover:bg-blue-700"
   >
@@ -130,20 +131,21 @@
 
 
 <!-- carousel card from ngPrime -->
-<div class="card">
+<div class="card relative">
   <p-carousel 
-      [value]="recommendedChannels" 
+      [value]="_recommendedChannels" 
       [numVisible]="3" 
       [numScroll]="3" 
-      [responsiveOptions]="responsiveOptions" 
+      [responsiveOptions]="_responsiveOptions" 
    >
       <ng-template let-channel pTemplate="item">
         <div class="border p-2 m-3 rounded">
           <div class="relative">
             <img
+
               src="http://localhost:3000/channelBanner/{{ channel.banner }}"
               alt="Channel Image"
-              class="w-full h-32 rounded-lg mb-2 px-2"
+              class="w-full h-56 rounded-lg mb-2 px-10 relative z-10"
             />
             <div
               class="absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-50 w-full h-1/6"
