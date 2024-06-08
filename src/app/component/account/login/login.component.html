@@ -1,110 +1,90 @@
 <div class="h-screen flex items-center justify-center bg-gray-900">
-  <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg mb-24">
-    <h2 class="text-3xl font-bold mb-8 text-white">Login</h2>
-    <form [formGroup]="_loginForm" (ngSubmit)="onSubmit()">
-      <div class="mb-4">
-        <label for="email" class="block text-white text-sm font-semibold mb-2"
-          >Email</label
-        >
-        <input
-          type="text"
-          id="email"
-          name="email"
-          formControlName="email"
-          class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
-          placeholder="Enter your email"
-        />
-
-        <div
-          *ngIf="_loginForm.get('email')?.errors?.['required'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
-          class="text-red-500 text-xs mt-1"
-        >
-          Email is required
-        </div>
-        <div
-          *ngIf="_loginForm.get('email')?.errors?.['email'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
-          class="text-red-500 text-xs mt-1"
-        >
-          Invalid email format
-        </div>
-      </div>
-      <div class="mb-6">
-        <label
-          for="password"
-          class="block text-white text-sm font-semibold mb-2"
-          >Password</label
-        >
-        <input
-          type="password"
-          id="password"
-          formControlName="password"
-          name="password"
-          class="w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
-          placeholder="Enter your password"
-        />
-        <div
-          *ngIf="
-            _loginForm.get('password')?.invalid &&
-            (_loginForm.get('password')?.dirty ||
-              _loginForm.get('password')?.touched)
-          "
-          class="text-red-500 text-xs mt-1"
-        >
-          Password is required
-        </div>
-        <a
-          (click)="showDialog('top')"
-          class="text-blue-500 hover:text-blue-700 mt-2"
-          >Forgot Password?</a
-        >
-      </div>
-      <button
-        type="submit"
-        [disabled]="_loginForm.invalid"
-        class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
-      >
-        Login
-      </button>
-    </form>
-    <div class="mt-4 text-sm text-gray-300">
-      Don't have an account?
-      <a routerLink="/signup" class="text-blue-500 hover:text-blue-700"
-        >Sign up here</a
-      >
+  <div class="max-w-6xl w-full flex bg-gray-800 p-8 rounded-lg shadow-lg mb-24">
+    <!-- Left Side (GIF) -->
+    <div class="hidden md:block w-1/2 flex items-center justify-center">
+      <img src="assets\Images\Broadcast.gif" alt="Two Factor Authentication" class="w-full h-auto rounded">
     </div>
 
-    <!-- Google Login Button -->
-    <!-- <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
-      <button
-        class="w-full mt-4 bg-red-600 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-red-700 focus:outline-none focus:bg-red-700"
-      >
-     <img src="\assets\Images\google.png" alt="" class="h-7">
-     Sign in with google
-      </button>
-    </a> -->
-    <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
-      <button class="google-auth-btn" >
+    <!-- Right Side (Login Form) -->
+    <div class="w-full md:w-1/2 p-8 mt-5" >
+      <h1 class="text-xl font-bold mb-8 text-white flex justify-center">Login</h1>
+      <form [formGroup]="_loginForm" (ngSubmit)="onSubmit()">
+        <div class="mb-4">
+          <label for="email" class="block text-white text-sm font-semibold selection: mb-2">Email</label>
+          <input
+            type="text"
+            id="email"
+            name="email"
+            formControlName="email"
+            class="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
+            placeholder="Enter your email"
+          />
+          <div
+            *ngIf="_loginForm.get('email')?.errors?.['required'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Email is required
+          </div>
+          <div
+            *ngIf="_loginForm.get('email')?.errors?.['email'] && (_loginForm.get('email')?.dirty || _loginForm.get('email')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Invalid email format
+          </div>
+        </div>
+        <div class="mb-6">
+          <label for="password" class="block text-white text-sm font-semibold mb-2">Password</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            name="password"
+            class="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
+            placeholder="Enter your password"
+          />
+          <div
+            *ngIf="_loginForm.get('password')?.invalid && (_loginForm.get('password')?.dirty || _loginForm.get('password')?.touched)"
+            class="text-red-500 text-xs mt-1"
+          >
+            Password is required
+          </div>
+          <a (click)="showDialog('top')" class="text-blue-500 hover:text-blue-700 mt-2">Forgot Password?</a>
+        </div>
+        <button
+          type="submit"
+          [disabled]="_loginForm.invalid"
+          class="w-full bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+        >
+          Login
+        </button>
+      </form>
+      <div class="mt-4 text-sm text-gray-300">
+        Don't have an account?
+        <a routerLink="/signup" class="text-blue-500 hover:text-blue-700">Sign up here</a>
+      </div>
+
+      <!-- Google Login Button -->
+      <a href="http://localhost:3000/auth/google" (click)="googleclick($event)">
+        <button class="google-auth-btn">
           <img src="/assets/Images/google.png" alt="Google Authentication" class="google-logo h-7">
-          <span class="google-caption">Authenticate with Google</span>
-      </button>
-  </a>
-  
-  
+          <span class="google-caption">SigIn with Google</span>
+        </button>
+      </a>
+    </div>
   </div>
+  
+  <!-- Forgot Password Dialog -->
   <form [formGroup]="_registeredEmail" (ngSubmit)="forgotpass()">
-    
-  <p-dialog
-    header="Forgot Password"
-    [modal]="true"
-    [(visible)]="_visible"
-    [position]="_position"
-    [style]="{ width: '25rem' }"
-  >
-    <span class="p-text-secondary block mb-5">
-      Enter your Resgistered Email.
-    </span>
-    <div class="flex align-items-center gap-3 mb-5">
-        <label for="email" class="font-semibold w-6rem"> Email </label>
+    <p-dialog
+      header="Forgot Password"
+      [modal]="true"
+      [(visible)]="_visible"
+      [position]="_position"
+      [style]="{ width: '25rem' }"
+    >
+      <span class="p-text-secondary block mb-5">Enter your Registered Email.</span>
+      <div class="flex align-items-center gap-3 mb-5">
+        <label for="email" class="font-semibold w-6rem">Email</label>
         <input formControlName="registeredemail" pInputText id="email" class="flex-auto" autocomplete="off" />
       </div>
       <div class="flex justify-content-end gap-2">

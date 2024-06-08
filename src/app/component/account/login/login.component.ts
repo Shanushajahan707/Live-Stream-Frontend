@@ -1,12 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { HttpClient } from '@angular/common/http';
 import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { Subject, Subscription, flatMap } from 'rxjs';
-import { environment } from '../../../../enviorments/enviorment';
+import { Subject } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { loginCredential } from '../../../model/auth';
 import { Userstate } from '../../../store/userlogin/login-state';
