@@ -216,6 +216,7 @@
       >
         Login
       </button>
+      
       <button
         (click)="onsignup()"
         class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
@@ -343,6 +344,7 @@
         </p-dialog>
       </div>
     </ng-container>
+    <!-- search feature using debouncing -->
     <div class="form-control relative" *ngIf="islogged">
       <input
         [formControl]="searchControl"
@@ -372,9 +374,9 @@
                   *ngFor="let channel of serachResult"
                   class="px-3 py-3 rounded-lg text-gray-900 hover:bg-indigo-50 cursor-pointer z-40"
                 >
-                <a [routerLink]="['/channel/following', channel._id]" class="hover:underline" (click)="isFocused = false">
-                  {{ channel.channelName }}
-                </a>
+                  <a [routerLink]="['/channel/following', channel._id]" class="hover:underline" (click)="isFocused = false">
+                    {{ channel.channelName }}
+                  </a>
                 </div>
               </div>
             </div>
@@ -382,7 +384,7 @@
         </div>
       </div>
     </div>
-
+    
     <div *ngIf="islogged">
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">

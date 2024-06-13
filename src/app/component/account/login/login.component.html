@@ -1,7 +1,7 @@
 <div class="h-screen flex items-center justify-center bg-gray-900">
   <div class="max-w-6xl w-full flex bg-gray-800 p-8 rounded-lg shadow-lg mb-24">
     <!-- Left Side (GIF) -->
-    <div class="hidden md:block w-1/2 flex items-center justify-center">
+    <div class="hidden md:block w-1/2 items-center justify-center">
       <img src="assets\Images\Broadcast.gif" alt="Two Factor Authentication" class="w-full h-auto rounded">
     </div>
 
@@ -79,7 +79,7 @@
       header="Forgot Password"
       [modal]="true"
       [(visible)]="_visible"
-      [position]="_position"
+      [position]="'center'"
       [style]="{ width: '25rem' }"
     >
       <span class="p-text-secondary block mb-5">Enter your Registered Email.</span>

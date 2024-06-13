@@ -47,7 +47,7 @@
     </div>
 
     <!-- Input box for sending messages -->
-    <div class="p-4 bg-gray-800 flex items-center">
+    <div *ngIf="_isLogged" class="p-4 bg-gray-800 flex items-center">
         <input type="text" placeholder="Type your message..." class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"/>
         <button class="p-2 bg-blue-500 rounded-full text-white">
             <i class="fas fa-paper-plane"></i> <!-- Send icon -->

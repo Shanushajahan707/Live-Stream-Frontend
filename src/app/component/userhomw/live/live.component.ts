@@ -28,7 +28,15 @@ export class LiveComponent implements OnInit, OnDestroy {
   _isViewing = false;
   _joinlive = false;
   _startlive = false;
-
+  messages: { username: string; message: string; timestamp: Date }[] = [];
+  newMessage: string = '';
+  colors: string[] = [
+    'text-red-500',
+    'text-blue-500',
+    'text-green-500',
+    'text-yellow-500',
+    'text-purple-500',
+  ];
   constructor(
     private _socketService: SocketService,
     private _router: Router,
@@ -65,6 +73,12 @@ export class LiveComponent implements OnInit, OnDestroy {
         const remoteVideoElement = this._remoteVideo.nativeElement;
         remoteVideoElement.srcObject = remoteStream;
       });
+
+    this._socketService.chatMessages$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((message) => {
+        this.messages.push(message);
+      });
   }
 
   initializeConnection(RoomId: number) {
@@ -79,6 +93,12 @@ export class LiveComponent implements OnInit, OnDestroy {
       .catch((error) => {
         console.error('Error accessing local media devices', error);
       });
+  }
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this._socketService.sendMessage(this.newMessage);
+      this.newMessage = '';
+    }
   }
 
   joinLiveStream(RoomId: number) {
@@ -150,6 +170,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   leaveRoom() {
     this._socketService.disconnect();
     this._router.navigate(['']);
+  }
+  getColor(index: number) {
+    return this.colors[index % this.colors.length];
   }
 
   ngOnDestroy() {

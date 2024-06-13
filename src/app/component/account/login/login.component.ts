@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   _loginForm!: FormGroup;
   _value: string = '';
   _visible: boolean = false;
-  _position: string | any = 'center';
+  _position!: string  
   _registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
 
@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit, OnDestroy {
     private _service: AccountService,
     private _toastr: ToastrService,
     private _router: Router,
-    private CookieService: CookieService,
-    private store: Store<Userstate>
+    private _cookieService: CookieService,
+    private _store: Store<Userstate>
   ) {}
 
   ngOnInit(): void {
@@ -44,7 +44,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       registeredemail: [''],
     });
 
-    const authResponseCookie = this.CookieService.get('authResponse');
+    const authResponseCookie = this._cookieService.get('authResponse');
     if (authResponseCookie) {
       const authResponse = JSON.parse(authResponseCookie);
       if (authResponse.user) {
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('User:', authResponse.user);
         console.log('token:', JSON.stringify(authResponse.token));
         this._service.islogged$.next(true);
-        this.CookieService.delete('authResponse');
+        this._cookieService.delete('authResponse');
         this._router.navigate(['/userhome']);
       }
     }
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   sendLoginData(data: loginCredential) {
     if (data) {
       console.log('data', data);
-      this.store.dispatch(userLogin({ userData: data }));
+      this._store.dispatch(userLogin({ userData: data }));
     }
   }
 
@@ -137,6 +137,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (res && res.message) {
             this._toastr.success(res.message);
           }
+          localStorage.setItem('email',res.email)
         },
         error: (err) => {
           if (err && err.error.message) {

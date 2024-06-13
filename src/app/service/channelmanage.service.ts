@@ -19,19 +19,19 @@ export class ChannelmanageService {
 
   getChannels(page: number, limit: number): Observable<GetChannelResponse> {
     return this._http.get<GetChannelResponse>(
-      `${this.apiUrl}getchannels?page=${page}&limit=${limit}`
+      `${this.apiUrl}admin/getchannels?page=${page}&limit=${limit}`
     );
   }
   blockChannel(channelId: string): Observable<GetChannelResponse> {
     return this._http.put<GetChannelResponse>(
-      `${this.apiUrl}blockchannel/${channelId}`,
+      `${this.apiUrl}admin/blockchannel/${channelId}`,
       {}
     );
   }
 
   getUserData(userid: string): Observable<GetUserOne> {
     return this._http.get<GetUserOne>(
-      `${this.apiUrl}getUserProfileAdmin/${userid}`,
+      `${this.apiUrl}admin/getUserProfileAdmin/${userid}`,
       {}
     );
   }

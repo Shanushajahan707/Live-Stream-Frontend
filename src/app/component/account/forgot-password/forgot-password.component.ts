@@ -4,6 +4,7 @@ import { AccountService } from '../../../service/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-forgot-password',
@@ -18,7 +19,8 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
   constructor(
     private _fb: FormBuilder,
     private _service: AccountService,
-    private _toaster: ToastrService
+    private _toaster: ToastrService,
+    private _router: Router
   ) {}
 
   ngOnInit(): void {
@@ -28,7 +30,6 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
 
     this._changePasswordForm = this._fb.group(
       {
-        oldPassword: ['', Validators.required],
         newPassword: ['', [Validators.required, Validators.minLength(6)]],
         confirmPassword: ['', Validators.required],
       },
@@ -42,9 +43,24 @@ export class ForgotPasswordComponent implements OnInit, OnDestroy {
       : { mismatch: true };
   }
 
-  onChangePasswordSubmit(): void {
+  onChangePasswordSubmit() {
     if (this._changePasswordForm.valid) {
-      alert('Password changed successfully');
+      this._service
+        .changePassword(this._changePasswordForm.value)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (res) => {
+            if (res && res.message) {
+              this._toaster.success(res.message);
+            }
+            this._router.navigateByUrl('');
+          },
+          error: (err) => {
+            if (err && err.error.message) {
+              this._toaster.error(err.error.message);
+            }
+          },
+        });
     }
   }
   onOtpSubmit() {

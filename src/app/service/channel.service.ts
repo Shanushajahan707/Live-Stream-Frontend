@@ -22,25 +22,25 @@ export class ChannelService {
   apiUrl = environment.apiUrl;
 
   onLoadChannelInfo(): Observable<GetChannelInfo> {
-    return this._http.get<GetChannelInfo>(`${this.apiUrl}getchannel`);
+    return this._http.get<GetChannelInfo>(`${this.apiUrl}channel/getchannel`);
   }
 
   onUpdateChannel(channelDate: FormData): Observable<EditChannelInterface> {
     console.log('formdata is ', channelDate);
     console.log('fordata form the service', channelDate);
     return this._http.post<EditChannelInterface>(
-      `${this.apiUrl}updatechannel`,
+      `${this.apiUrl}channel/updatechannel`,
       channelDate
     );
   }
   onRecommededChannel(): Observable<GetRecommededChannel> {
     return this._http.get<GetRecommededChannel>(
-      `${this.apiUrl}recommendedchannels`
+      `${this.apiUrl}channel/recommendedchannels`
     );
   }
   onFollowChannel(followChannel: ChannelData): Observable<GetFollowResponse> {
     return this._http.post<GetFollowResponse>(
-      `${this.apiUrl}followchannel`,
+      `${this.apiUrl}channel/followchannel`,
       followChannel
     );
   }
@@ -48,7 +48,7 @@ export class ChannelService {
     unFollowChannel: ChannelData
   ): Observable<GetFollowResponse> {
     return this._http.post<GetFollowResponse>(
-      `${this.apiUrl}unfollowchannel`,
+      `${this.apiUrl}channel/unfollowchannel`,
       unFollowChannel
     );
   }
@@ -61,12 +61,12 @@ export class ChannelService {
   // }
   onGetFullFollowedchannels(): Observable<GetFullFollowedChannel> {
     return this._http.get<GetFullFollowedChannel>(
-      `${this.apiUrl}getfullfollowchannel`
+      `${this.apiUrl}channel/getfullfollowchannel`
     );
   }
   onGetFollowChannel(chanenlId: string): Observable<GetFollowResponse> {
     return this._http.get<GetFollowResponse>(
-      `${this.apiUrl}getfollowchannel/${chanenlId}`,
+      `${this.apiUrl}channel/getfollowchannel/${chanenlId}`,
       {}
     );
   }
@@ -76,7 +76,7 @@ export class ChannelService {
   ): Observable<GetUploadResponse> {
     console.log('videolfile form the service', videoFile.get('videoFile'));
     return this._http.post<GetUploadResponse>(
-      `${this.apiUrl}uploadshorts/${channelId}`,
+      `${this.apiUrl}channel/uploadshorts/${channelId}`,
       videoFile
     );
   }
@@ -85,12 +85,12 @@ export class ChannelService {
     channelId: string
   ): Observable<GetUpdateViewsResponse> {
     return this._http.put<GetUpdateViewsResponse>(
-      `${this.apiUrl}updateviews/${channelId}`,
+      `${this.apiUrl}channel/updateviews/${channelId}`,
       videoUrl
     );
   }
   search(query: string): Observable<GetSearchChannelResponse> {
     console.log('input',query);
-    return this._http.post<GetSearchChannelResponse>(`${this.apiUrl}searchchannel`, { query});
+    return this._http.post<GetSearchChannelResponse>(`${this.apiUrl}channel/searchchannel`, { query});
  }
 }

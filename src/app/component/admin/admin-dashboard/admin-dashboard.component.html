@@ -11,7 +11,7 @@
         <div
           class="h-10 w-10 bg-gray-500 rounded-full flex items-center justify-center text-white mr-4"
         >
-          100
+          {{ usersCount }}
         </div>
         <p class="text-gray-700">Total Users</p>
       </div>
@@ -23,13 +23,13 @@
         <div
           class="h-10 w-10 bg-gray-500 rounded-full flex items-center justify-center text-white mr-4"
         >
-          50
+          {{channelCount}}
         </div>
         <p class="text-gray-700">Total Channels</p>
       </div>
     </div>
     <!-- Live Streams -->
-    <div class="bg-white rounded-lg p-6 shadow-lg">
+    <!-- <div class="bg-white rounded-lg p-6 shadow-lg">
       <h2 class="text-lg font-semibold mb-4">Live Streams</h2>
       <div class="flex items-center">
         <div
@@ -39,13 +39,12 @@
         </div>
         <p class="text-gray-700">Total Live Streams</p>
       </div>
-    </div>
+    </div> -->
   </div>
   <div class="card">
     <p-chart type="bar" [data]="data" [options]="options" />
-</div>
-<div class="card">
-  <p-chart type="line" [data]="data" [options]="options" />
-</div>
-
+  </div>
+  <div class="card">
+    <p-chart type="line" [data]="data" [options]="options" />
+  </div>
 </div>

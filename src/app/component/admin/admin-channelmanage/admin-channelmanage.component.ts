@@ -13,7 +13,7 @@ export class AdminChannelmanageComponent implements OnInit, OnDestroy {
   private readonly _destroy$ = new Subject<void>();
   _channels: ChannelData[] = [];
   _currentPage = 1;
-  _itemsPerPage = 1;
+  _itemsPerPage = 3;
   _totalPages = 0;
   _followers: Follower[] = [];
   _isVisible = false;

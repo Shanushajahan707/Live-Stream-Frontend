@@ -1,5 +1,4 @@
 <div class="flex justify-evenly mb-4">
-  
   <button
     class="flex items-center text-white bg-blue-500 rounded-md px-4 py-2 hover:bg-blue-700"
   >
@@ -129,59 +128,55 @@
   </div>
 </div> -->
 
-
 <!-- carousel card from ngPrime -->
 <div class="card relative">
-  <p-carousel 
-      [value]="_recommendedChannels" 
-      [numVisible]="3" 
-      [numScroll]="3" 
-      [responsiveOptions]="_responsiveOptions" 
-   >
-      <ng-template let-channel pTemplate="item">
-        <div class="border p-2 m-3 rounded">
-          <div class="relative">
-            <img
-
-              src="http://localhost:3000/channelBanner/{{ channel.banner }}"
-              alt="Channel Image"
-              class="w-full h-56 rounded-lg mb-2 px-10 relative z-10"
-            />
-            <div
-              class="absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-50 w-full h-1/6"
-            ></div>
-          </div>
-          <div class="mt-2">
-            <p class="text-sm text-gray-400 font-semibold">
-              Channel Name: {{ channel.channelName }}
-            </p>
-            <p class="text-xs text-gray-500">
-              Followers: {{ channel.followers.length }}
-            </p>
-          </div>
-          <div class="mt-4 flex justify-between">
-           
-            <button
-              *ngIf="!isFollowing(channel)"
-              type="button"
-              (click)="follow(channel)"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Follow
-            </button>
-      
-      
-            <button
-              *ngIf="isFollowing(channel)"
-              type="button"
-              (click)="unFollow(channel)"
-              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Unfollow
-            </button>
-          </div>
+  <p-carousel
+    [value]="_recommendedChannels"
+    [numVisible]="3"
+    [numScroll]="3"
+    [responsiveOptions]="_responsiveOptions"
+  >
+    <ng-template let-channel pTemplate="item">
+      <div class="border p-2 m-3 rounded">
+        <div class="relative">
+          <img
+            src="http://localhost:3000/channelBanner/{{ channel.banner }}"
+            alt="Channel Image"
+            class="w-full h-56 rounded-lg mb-2 px-10 relative z-10"
+          />
+          <div
+            class="absolute bottom-0 left-0 bg-gradient-to-t from-black opacity-50 w-full h-1/6"
+          ></div>
         </div>
-          </ng-template>
+        <div class="mt-2">
+          <p class="text-sm text-gray-400 font-semibold">
+            Channel Name: {{ channel.channelName }}
+          </p>
+          <p class="text-xs text-gray-500">
+            Followers: {{ channel.followers.length }}
+          </p>
+        </div>
+        <div class="mt-4 flex justify-between">
+          <button
+            *ngIf="!isFollowing(channel)"
+            type="button"
+            (click)="follow(channel)"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Follow
+          </button>
+
+          <button
+            *ngIf="isFollowing(channel)"
+            type="button"
+            (click)="unFollow(channel)"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Unfollow
+          </button>
+        </div>
+      </div>
+    </ng-template>
   </p-carousel>
 </div>
 <!-- Recommended Lives from Game -->

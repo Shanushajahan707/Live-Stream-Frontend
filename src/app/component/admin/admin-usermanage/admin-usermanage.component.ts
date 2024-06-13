@@ -20,7 +20,7 @@ export class AdminUsermanageComponent implements OnInit, OnDestroy {
   users: User[] = [];
   visible: boolean = false;
   currentPage = 1;
-  itemsPerPage = 1;
+  itemsPerPage = 3;
   totalPages = 0;
 
   // In your component class

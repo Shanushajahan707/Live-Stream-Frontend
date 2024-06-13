@@ -26,6 +26,8 @@ export class OtpComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.timer();
+
     this._otpform = this._fb.group({
       digit1: [
         '',
@@ -52,7 +54,7 @@ export class OtpComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
       ],
     });
-    this.timer();
+  
     console.log('storage value', localStorage);
   }
   otpsubmit() {

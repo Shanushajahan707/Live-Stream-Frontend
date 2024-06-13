@@ -79,7 +79,7 @@
         <td
           class="px-6 py-4 whitespace-pre-wrap flex items-center justify-center"
         >
-          <label class="inline-flex items-center me-5 cursor-pointer">
+          <!-- <label class="inline-flex items-center me-5 cursor-pointer">
             <input
               type="checkbox"
               value=""
@@ -90,7 +90,11 @@
             <div
               class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-red-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-red-600"
             ></div>
-          </label>
+          </label> -->
+          <div class="bauble_box">
+            <input class="bauble_input" id="bauble_check" name="bauble" type="checkbox"  [checked]="channel.isblocked" (change)="toggleBlockStatus(channel)">
+            <label class="bauble_label" for="bauble_check" >Toggle</label>
+          </div>
         </td>
         <td class="px-6 py-4 whitespace-pre-wrap">
           {{ channel.video.length }}
@@ -98,12 +102,18 @@
         <td class="px-6 py-4 whitespace-pre-wrap">
           {{ channel.lives.length }}
         </td>
-        <td class="px-6 py-4 whitespace-pre-wrap">
-          <button
+        <td id="seefollowers" class="px-6 py-4 whitespace-pre-wrap">
+          <!-- <button
             class="btn bg-blue-500 p-3 rounded-md hover:bg-opacity-20 transition"
             (click)="viewFollowers(channel)"
           >
             See Followers
+          </button> -->
+       
+            <button (click)="viewFollowers(channel)">
+              <span>
+                Followers
+              </span>
           </button>
         </td>
       </tr>
@@ -176,22 +186,28 @@
     </p-dialog>
   </div>
 
-  <div class="pagination-controls flex justify-center items-center mt-4">
-    <button
+  <div id="pagination" class="pagination-controls flex justify-center items-center mt-4">
+    <!-- <button
       type="button"
       (click)="prevPage()"
       class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
     >
       Previous
-    </button>
-    <span class="text-white">Page {{ _currentPage }} of {{ _totalPages }}</span>
-    <button
+    </button> -->
+    <button   (click)="prevPage()">
+      Previous
+  </button>
+    <span class="text-white mx-3">Page {{ _currentPage }} of {{ _totalPages }}</span>
+    <!-- <button
       type="button"
       (click)="nextPage()"
       class="px-4 py-2 rounded-md bg-gray-800 text-gray-200 hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
     >
       Next
-    </button>
+    </button> -->
+    <button    (click)="nextPage()">
+      Next
+  </button>
   </div>
 
   <!-- <div class="modal" [class.show]="isVisible" (click)="closeModal()">

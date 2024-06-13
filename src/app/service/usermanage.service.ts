@@ -14,11 +14,11 @@ export class UsermanageService {
 
   getUsers(page: number, limit: number): Observable<GetUsersResponse> {
     return this._http.get<GetUsersResponse>(
-      `${this.apiUrl}getusers?page=${page}&limit=${limit}`
+      `${this.apiUrl}admin/getusers?page=${page}&limit=${limit}`
     );
   }
 
   blockuser(userid: string): Observable<any> {
-    return this._http.put(`${this.apiUrl}blockuser/${userid}`, {});
+    return this._http.put(`${this.apiUrl}admin/blockuser/${userid}`, {});
   }
 }

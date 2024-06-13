@@ -12,17 +12,23 @@ import { v4 as uuidv4 } from 'uuid';
 import { takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
 import { ChannelService } from '../../../service/channel.service';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit, OnDestroy {
   private readonly _destroy$ = new Subject<void>();
-  userName$: Observable<String | null>;
-  email$: Observable<String | null>;
+  userName$: Observable<string | null>;
+  email$: Observable<string | null>;
   myid!: string;
+  searchControl: FormControl = new FormControl('');
+  serachResult: ChannelData[] = [];
+  isFocused: boolean = false;
+  visible: boolean = false;
+  searchQuery$ = new Subject<string>();
 
   constructor(
     private _router: Router,
@@ -55,10 +61,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   _menuOpen = false;
   _dropdownOpen = false;
   _isMobileView = false;
-  searchControl: FormControl = new FormControl('');
-  serachResult!: ChannelData[];
-  isFocused: boolean = false;
-  visible: boolean = false;
 
   @HostListener('window:resize', ['$event'])
   ngOnInit(): void {
@@ -79,33 +81,42 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.checkWindowWidth();
     console.log('my uuid is', this.myid);
 
-    this.searchControl.valueChanges.subscribe((value) => {
-      this.performSearch(value);
-    });
+    this.searchControl.valueChanges
+      .pipe(
+        debounceTime(500), //delay for 5millisec for next keystroke
+        distinctUntilChanged(),
+        switchMap((query) => this._channelService.search(query))
+      )
+      .subscribe({
+        next: (res) => {
+          if (res && res.channels) {
+            this.serachResult = res.channels;
+            console.log('channelserach', this.serachResult);
+          }
+        },
+      });
   }
+
   onlogin() {
     this._router.navigate(['/login']);
   }
+
   onsignup() {
     this._router.navigate(['/signup']);
   }
- 
-  test() {
-    console.log('clicked');
-    // this.service.test().subscribe((res) => {
-    //   console.log('response', res);
-    // });
-  }
-  showDialog(){
-    this.visible = true;
 
+  showDialog() {
+    this.visible = true;
   }
+
   livepage() {
     this._visible = true;
   }
+
   joinpage() {
     this._jvisible = true;
   }
+
   createRoom() {
     if (this._Livename && this._RoomId) {
       this._visible = false;
@@ -140,6 +151,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this._menuOpen = true; // Ensure menu is open on larger screens
     }
   }
+
   toggleMenu() {
     this._menuOpen = !this._menuOpen;
   }
@@ -148,26 +160,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this._dropdownOpen = !this._dropdownOpen;
   }
 
-  performSearch(query: string) {
-    this._channelService.search(query).subscribe({
-      next: (res) => {
-        if (res && res.channels) {
-          this.serachResult = res.channels;
-          console.log('channelserach', this.serachResult);
-        }
-      },
-    });
-  }
   onFocus() {
     this.isFocused = true;
-    this.showDialog()
-
+    this.showDialog();
   }
+
   onBlur() {
     this.isFocused = false;
-  }
-  navigatechannel(channelId: string){
-    console.log('navigate to channelId: ', channelId);
   }
 
   stopBlur(event: MouseEvent) {

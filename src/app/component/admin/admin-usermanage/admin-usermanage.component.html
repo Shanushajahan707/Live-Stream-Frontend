@@ -96,10 +96,10 @@
       <!-- Add more rows as needed -->
     </tbody>
   </table>
-  <div class="pagination-controls">
+  <div id="pagination" class="pagination-controls mt-3">
     <button
       type="button"
-      class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out"
+      class="px-4 py-2 border border-gray-300  text-red-500 transition duration-150 ease-in-out"
       (click)="prevPage()"
     >
       Previous
@@ -107,7 +107,7 @@
     <span class="mx-2">Page {{ currentPage }} of {{ totalPages }}</span>
     <button
       type="button"
-      class="px-4 py-2 border border-gray-300 hover:bg-gray-400 hover:text-white transition duration-150 ease-in-out"
+      class="px-4 py-2 border border-gray-300  text-red-500 transition duration-150 ease-in-out"
       (click)="nextPage()"
     >
       Next

@@ -9,7 +9,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
   let _service = inject(AccountService);
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('refreshToken');
 
   // Check if token exists
   if (!token) {
@@ -32,7 +32,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
       return false;
     } else {
       if (decodedToken.role == 'user') {
-        await _service.userIsBlocked().subscribe({
+         _service.userIsBlocked().subscribe({
           next: (res) => {
             console.log('response in the guard', res);
             if (res) {

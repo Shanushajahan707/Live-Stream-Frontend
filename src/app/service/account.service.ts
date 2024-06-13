@@ -3,6 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../enviorments/enviorment';
 import {
+  GetChangePasswordResponse,
+  GetForgotPassOtpResponse,
+  GetForgotPassResponse,
   GetIsBlockedResponse,
   GetRefreshTokenResponse,
   LoginResponse,
@@ -17,17 +20,15 @@ import {
   providedIn: 'root',
 })
 export class AccountService implements OnInit {
-  onLoadChannelInfo() {
-    throw new Error('Method not implemented.');
-  }
+
 
   apiUrl = environment.apiUrl;
+  GoogleUrl = environment.GOOGLE_URL;
   islogged$ = new BehaviorSubject<Boolean>(false);
   isAdmin$ = new BehaviorSubject<Boolean>(false);
   private isLoggedInSubject: BehaviorSubject<boolean> =
     new BehaviorSubject<boolean>(false);
 
-  private GOOGLE_URL = 'https://accounts.google.com/o/oauth2/v2/auth?';
   constructor(private _http: HttpClient) {
     const token = localStorage.getItem('token');
     if (token) {
@@ -49,12 +50,15 @@ export class AccountService implements OnInit {
   login(formData: loginCredential): Observable<LoginResponse> {
     return this._http.post<LoginResponse>(`${this.apiUrl}loginuser`, formData);
   }
-  forgotUrl(formData: any): Observable<any> {
-    return this._http.post<any>(`${this.apiUrl}forgoturl`, formData);
+  forgotUrl(formData: FormData): Observable<GetForgotPassResponse> {
+    return this._http.post<GetForgotPassResponse>(
+      `${this.apiUrl}forgoturl`,
+      formData
+    );
   }
 
   googleAuth(): Observable<any> {
-    return this._http.get<any>(`${this.GOOGLE_URL}auth/google`);
+    return this._http.get<any>(`${this.GoogleUrl}auth/google`);
   }
   signup(formData: signupCredential): Observable<SignupResponse> {
     return this._http.post<SignupResponse>(`${this.apiUrl}signup`, formData);
@@ -71,13 +75,33 @@ export class AccountService implements OnInit {
   // }
   refreshToken(): Observable<GetRefreshTokenResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
-    return this._http.post<GetRefreshTokenResponse>(`${this.apiUrl}refreshtoken`, { refreshToken });
+    return this._http.post<GetRefreshTokenResponse>(
+      `${this.apiUrl}refreshtoken`,
+      { refreshToken }
+    );
   }
 
-  forgotPasswordOtp(otpValue: number): Observable<any> {
-    return this._http.post<any>(`${this.apiUrl}forgotpasswordotp`, {
-      otpValue,
-    });
+  forgotPasswordOtp(otpValue: number): Observable<GetForgotPassOtpResponse> {
+    const email = localStorage.getItem('email');
+    return this._http.post<GetForgotPassOtpResponse>(
+      `${this.apiUrl}forgotpasswordotp`,
+      {
+        otpValue,
+        email,
+      }
+    );
+  }
+  changePassword(
+    changePasswordForm: FormData
+  ): Observable<GetChangePasswordResponse> {
+    const email = localStorage.getItem('email');
+    return this._http.put<GetChangePasswordResponse>(
+      `${this.apiUrl}changepassword`,
+      {
+        changePasswordForm,
+        email,
+      }
+    );
   }
   userIsBlocked(): Observable<GetIsBlockedResponse> {
     return this._http.get<GetIsBlockedResponse>(`${this.apiUrl}userisblocked`);

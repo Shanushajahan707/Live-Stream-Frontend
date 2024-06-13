@@ -3,7 +3,6 @@
   <div class="flex flex-1">
     <!-- Video Section -->
 
-    
     <div
       class="flex flex-col lg:flex-row w-full lg:w-3/4 p-4 lg:p-24 bg-black relative"
     >
@@ -29,7 +28,6 @@
             {{ livereceivedData.RoomId }} -
             <span class="text-green-500">Live Name:</span>
             {{ livereceivedData.Livename }} -->
-            
           </div>
           <video
             id="localVideo"
@@ -68,8 +66,44 @@
 
     <!-- Chat Section -->
     <div class="p-6 hidden lg:flex w-full lg:w-1/4 flex-col bg-gray-900">
-      <div class="h-full overflow-y-auto flex-1">
-        <app-chat></app-chat>
+      <div class="h-full flex-1">
+        <!-- <app-chat></app-chat> -->
+
+        <div class="flex flex-col h-96 flex-1 overflow-y-scroll text-green-100">
+          <!-- Sample messages -->
+          <div
+            *ngFor="let message of messages; let i = index"
+            class="flex flex-col my-2"
+          >
+            <!-- Username and message content -->
+            <div
+              class="flex flex-col items-start px-4 py-2 rounded-lg shadow-md"
+            >
+              <span class="font-semibold">{{ message.username }}</span>
+              <span [ngClass]="getColor(i)" class="text-sm">{{
+                message.message
+              }}</span>
+            </div>
+            <span class="text-xs text-gray-500 pl-4">{{
+              message.timestamp
+            }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 bg-gray-800 flex items-center">
+        <input
+          [(ngModel)]="newMessage"
+          type="text"
+          placeholder="Type your message..."
+          class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"
+        />
+        <button
+          (click)="sendMessage()"
+          class="p-2 bg-blue-500 rounded-full text-white"
+        >
+          <i class="fas fa-paper-plane"></i>
+          <!-- Send icon -->
+        </button>
       </div>
     </div>
   </div>
@@ -101,16 +135,21 @@
       <!-- Video mute/unmute icon -->
     </button>
 
-    <button (click)="toggleScreenShare()" id="screenShare" class="bg-gray-700 p-2 rounded-full text-white">
+    <button
+      (click)="toggleScreenShare()"
+      id="screenShare"
+      class="bg-gray-700 p-2 rounded-full text-white"
+    >
       <i class="fas fa-desktop"></i>
       <!-- Screenshare icon -->
     </button>
 
-    <button (click)="leaveRoom()" class="bg-red-500 p-2 rounded-full text-white">
+    <button
+      (click)="leaveRoom()"
+      class="bg-red-500 p-2 rounded-full text-white"
+    >
       <i class="fas fa-phone-slash"></i>
       <!-- Call hang icon -->
     </button>
   </div>
 </div>
-
-

@@ -126,3 +126,23 @@ export interface GetSearchChannelResponse {
   message: string;
   channels: ChannelData[];
 }
+
+export interface GetForgotPassResponse {
+  message: string;
+  email: string;
+}
+export interface GetForgotPassOtpResponse {
+  message: string;
+  otpvalue: boolean;
+}
+export interface GetChangePasswordResponse {
+  message: string;
+}
+
+ 
+
+export interface ChatMessage {
+  username: string;
+  message: string;
+  timestamp: string;
+}
