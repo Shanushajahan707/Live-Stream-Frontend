@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../enviorments/enviorment';
+import { environment } from '../../../environments/environment';
 import {
   ChannelData,
   GetChannelResponse,
   GetUserOne,
   GetUsersResponse,
-} from '../model/auth';
+} from '../../model/auth';
 
 @Injectable({
   providedIn: 'root',

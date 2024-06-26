@@ -1,0 +1,140 @@
+<app-admin-header></app-admin-header>
+<app-admin-sidebar></app-admin-sidebar>
+<!-- Content -->
+<div class="ml-64 p-8 mt-20">
+  <button
+    *ngIf="channelSubscriptionPlan.length === 0"
+    (click)="showModal()"
+    class="bg-red-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:shadow-lg hover-red-shadow"
+  >
+    Add Plan
+  </button>
+
+  <!-- Table -->
+  <table class="min-w-full">
+    <thead>
+      <tr>
+        <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">ID</th>
+        <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Month</th>
+        <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Price</th>
+        <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Description</th>
+        <th class="px-6 py-3 bg-gray-800 text-left text-xs leading-4 font-medium text-gray-300 uppercase tracking-wider">Subscribed Users</th>
+      </tr>
+    </thead>
+    <tbody class="bg-gray-700 text-yellow-100 divide-y divide-gray-600 items-center justify-center">
+      <tr *ngFor="let item of channelSubscriptionPlan; let i = index">
+        <td class="px-6 py-4">{{ i + 1 }}</td>
+        <td class="px-6 py-4">{{ item.month }}<span> Month</span></td>
+        <td class="px-6 py-4">₹{{ item.price }}</td>
+        <td class="px-6 py-4">
+          <ul>
+            <li *ngFor="let desc of item.description; let j = index">{{ j + 1 }}. {{ desc.desc }}</li>
+          </ul>
+        </td>
+        <td class="px-6 py-4">
+          <button class="bg-red-600 p-2 rounded-lg">See User</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+</div>
+
+<dialog [open]="isModalVisible" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Add Subscription Plan</h3>
+    <form [formGroup]="subscriptionForm" (ngSubmit)="addSubscription()">
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Month</span>
+        </label>
+        <input
+          type="text"
+          formControlName="month"
+          class="input input-bordered"
+        />
+        <div
+          *ngIf="
+            subscriptionForm.get('month')?.invalid &&
+            subscriptionForm.get('month')?.touched
+          "
+          class="text-red-500"
+        >
+          <div *ngIf="subscriptionForm.get('month')?.errors?.['required']">
+            Month is required.
+          </div>
+          <div *ngIf="subscriptionForm.get('month')?.errors?.['max']">
+            Month must be less than or equal to 12.
+          </div>
+          <div *ngIf="subscriptionForm.get('month')?.errors?.['pattern']">
+            Month must be an integer.
+          </div>
+        </div>
+      </div>
+      <div class="form-control">
+        <label class="label">
+          <span class="label-text">Price</span>
+        </label>
+        <input
+          type="text"
+          formControlName="price"
+          class="input input-bordered"
+        />
+        <div
+          *ngIf="
+            subscriptionForm.get('price')?.invalid &&
+            subscriptionForm.get('price')?.touched
+          "
+          class="text-red-500"
+        >
+          <div *ngIf="subscriptionForm.get('price')?.errors?.['required']">
+            Price is required.
+          </div>
+          <div *ngIf="subscriptionForm.get('price')?.errors?.['min']">
+            Price must be a positive number.
+          </div>
+        </div>
+      </div>
+      <div formArrayName="description">
+        <div
+          *ngFor="
+            let description of descriptionControls.controls;
+            let i = index
+          "
+          [formGroupName]="i"
+          class="form-control"
+        >
+          <label class="label">
+            <span class="label-text">Description {{ i + 1 }}</span>
+          </label>
+          <input
+            type="text"
+            formControlName="desc"
+            class="input input-bordered"
+          />
+          <div
+            *ngIf="
+              description.get('desc')?.invalid &&
+              description.get('desc')?.touched
+            "
+            class="text-red-500"
+          >
+            <div *ngIf="description.get('desc')?.errors?.['required']">
+              Description is required.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-action">
+        <button type="button" class="btn" (click)="addDescriptionField()">
+          Add Description
+        </button>
+        <button type="submit" class="btn" [disabled]="subscriptionForm.invalid">
+          Add
+        </button>
+        <button type="button" class="btn" (click)="closeModal()">Close</button>
+      </div>
+    </form>
+  </div>
+</dialog>

@@ -28,6 +28,14 @@ import { ViewChannelComponent } from '../../component/channel/view-channel/view-
 import { MessageModule } from 'primeng/message';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MenuModule } from 'primeng/menu';
+import { ViewsubscriptionplanComponent } from '../../component/subscription/viewsubscriptionplan/viewsubscriptionplan.component';
+import { SubscriptionsidebarComponent } from '../../component/subscription/subscriptionsidebar/subscriptionsidebar.component';
+import { SubscriptionComponent } from '../../component/subscription/subscription/subscription.component';
+import { WebsitesubscriptionviewComponent } from '../../component/userhomw/websitesubscriptionview/websitesubscriptionview.component';
+import { NgxPayPalModule } from 'ngx-paypal';
+import { SubscribedmembersComponent } from '../../component/subscription/subscribedmembers/subscribedmembers.component';
+import { RevenuechartComponent } from '../../component/subscription/revenuechart/revenuechart.component';
+import { ChartModule } from 'primeng/chart';
 @NgModule({
   declarations: [
     RecommendationComponent,
@@ -43,6 +51,13 @@ import { MenuModule } from 'primeng/menu';
     LiveComponent,
     FollowedChannelComponent,
     ViewChannelComponent,
+    ViewsubscriptionplanComponent,
+    SubscriptionsidebarComponent,
+    SubscriptionComponent,
+    WebsitesubscriptionviewComponent,
+    SubscribedmembersComponent,
+    RevenuechartComponent
+
   ],
   imports: [
     UserSideRoutingModule,
@@ -62,6 +77,8 @@ import { MenuModule } from 'primeng/menu';
     MessageModule,
     ProgressSpinnerModule,
     MenuModule,
+    NgxPayPalModule,
+    ChartModule
   ],
   exports: [
     TooltipModule,

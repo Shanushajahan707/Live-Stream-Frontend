@@ -209,15 +209,17 @@
     </a>
   </div>
   <div class="flex-none gap-2">
-    <ng-container *ngIf="!islogged">
+    <ng-container id="loginbtn" *ngIf="!islogged">
       <button
+        id="loginbtn"
         (click)="onlogin()"
         class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
       >
         Login
       </button>
-      
+
       <button
+        id="loginbtn"
         (click)="onsignup()"
         class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
       >
@@ -232,6 +234,7 @@
       </button>
       <button
         routerLink="/channel/following"
+        [routerLinkActive]="['active-link']"
         class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent"
       >
         Following
@@ -306,8 +309,8 @@
           <span class="p-text-secondary block mb-5">
             Update your join Live information.
           </span>
-          <div class="flex align-items-center gap-3 mb-3">
-            <label for="username" class="font-semibold w-6rem">Livename</label>
+          <!-- <div class="flex align-items-center gap-3 mb-5">
+            <label for="email" class="font-semibold w-6rem">RoomId:</label>
             <input
               pInputText
               id="username"
@@ -316,7 +319,7 @@
               [(ngModel)]="_jLivename"
               autocomplete="off"
             />
-          </div>
+          </div> -->
           <div class="flex align-items-center gap-3 mb-5">
             <label for="email" class="font-semibold w-6rem">RoomId:</label>
             <input
@@ -374,7 +377,11 @@
                   *ngFor="let channel of serachResult"
                   class="px-3 py-3 rounded-lg text-gray-900 hover:bg-indigo-50 cursor-pointer z-40"
                 >
-                  <a [routerLink]="['/channel/following', channel._id]" class="hover:underline" (click)="isFocused = false">
+                  <a
+                    [routerLink]="['/channel/following', channel._id]"
+                    class="hover:underline"
+                    (click)="isFocused = false"
+                  >
                     {{ channel.channelName }}
                   </a>
                 </div>
@@ -384,7 +391,7 @@
         </div>
       </div>
     </div>
-    
+
     <div *ngIf="islogged">
       <div class="dropdown dropdown-end">
         <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
@@ -403,9 +410,18 @@
           <li class="flex">
             <a
               routerLink="/channel/mychannel"
+              [routerLinkActive]="['active-link']"
               class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
               >Channel
               <i class="pi pi-youtube" style="font-size: 1.4rem"></i>
+            </a>
+          </li>
+          <li class="flex">
+            <a
+              routerLink="/subscription"
+              [routerLinkActive]="['active-link']"
+              class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
+              >Subscription
             </a>
           </li>
           <li>

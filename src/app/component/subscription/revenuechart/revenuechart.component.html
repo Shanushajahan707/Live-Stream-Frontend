@@ -1,0 +1,12 @@
+<div class="card">
+    <p *ngIf="overallData">Total Payment: {{ totalPayment | currency:'INR' }}</p>
+    <p-chart *ngIf="overallData; else noDataTemplate" type="line" [data]="overallData" [options]="options"></p-chart>
+    <div *ngIf="overallData">
+    </div>
+  </div>
+  
+  <ng-template #noDataTemplate>
+    <p-chart type="line" [options]="options"></p-chart>
+    <p *ngIf="!monthlySubscription">No data available to show</p>
+  </ng-template>
+  

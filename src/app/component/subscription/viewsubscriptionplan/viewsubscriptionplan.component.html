@@ -1,0 +1,11 @@
+<div class="flex flex-col items-center">
+  <div class="w-full flex justify-center"></div>
+  <div id="pricing-table" class="clear w-full flex items-center justify-center flex-wrap">
+      <div *ngFor="let plan of channelPlans" class="plan h-72">
+          <h3>{{ plan.month }} Month<span>₹{{ plan.price }}</span></h3>
+          <ul>
+              <li *ngFor="let desc of plan.description; let j = index">{{ j + 1 }}. {{ desc.desc }}</li>
+          </ul>
+      </div>
+  </div>
+</div>

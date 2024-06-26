@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../enviorments/enviorment';
+import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import {
   ChannelData,
@@ -12,7 +12,7 @@ import {
   GetSearchChannelResponse,
   GetUpdateViewsResponse,
   GetUploadResponse,
-} from '../model/auth';
+} from '../../model/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -90,7 +90,10 @@ export class ChannelService {
     );
   }
   search(query: string): Observable<GetSearchChannelResponse> {
-    console.log('input',query);
-    return this._http.post<GetSearchChannelResponse>(`${this.apiUrl}channel/searchchannel`, { query});
- }
+    console.log('input', query);
+    return this._http.post<GetSearchChannelResponse>(
+      `${this.apiUrl}channel/searchchannel`,
+      { query }
+    );
+  }
 }

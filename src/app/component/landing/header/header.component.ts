@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountService } from '../../../service/account.service';
-import { DataPassingService } from '../../../service/data-passing.service';
+import { AccountService } from '../../../service/user/account.service';
+import { DataPassingService } from '../../../service/user/data-passing.service';
 import { ChannelData, User } from '../../../model/auth';
 import { jwtDecode } from 'jwt-decode';
 import { Store, select } from '@ngrx/store';
@@ -11,7 +11,7 @@ import { Observable, Subject, Subscription, map } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
-import { ChannelService } from '../../../service/channel.service';
+import { ChannelService } from '../../../service/user/channel.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({
@@ -70,13 +70,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       if (this._jwttoken) {
         const decode = jwtDecode(this._jwttoken);
         this._userData = decode as User;
-        console.log('userdata from the header', this._userData);
+        // console.log('userdata from the header', this._userData);
       }
     });
     this._service.isAdmin$.subscribe((res) => {
       this.isadmin = this._service.isAdmin();
     });
     console.log('logged', this.islogged);
+    console.log('adminloggged', this.isadmin);
 
     this.checkWindowWidth();
     console.log('my uuid is', this.myid);
@@ -132,7 +133,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   joinRoom() {
-    if (this._jLivename && this._jRoomId) {
+    if (this._jRoomId) {
       this._jvisible = false;
       const data = {
         Livename: this._jLivename,

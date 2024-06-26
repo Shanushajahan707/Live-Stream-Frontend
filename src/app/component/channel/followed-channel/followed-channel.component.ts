@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChannelData } from '../../../model/auth';
-import { ChannelService } from '../../../service/channel.service';
+import { ChannelService } from '../../../service/user/channel.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -50,7 +50,7 @@ export class FollowedChannelComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           if (err && err.error.message) {
-            this._toaster.error(err.error.message);
+            // this._toaster.error(err.error.message);
           }
         },
       });

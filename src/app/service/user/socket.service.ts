@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { User } from '../model/auth';
-
+import { User } from '../../model/auth';
 @Injectable({
   providedIn: 'root',
 })
@@ -11,14 +10,14 @@ export class SocketService {
   private _socket: Socket;
   private _remoteId!: string;
   roomid!: number;
-  username!:string
+  username!: string;
   private remoteStreamSubject = new Subject<MediaStream>();
   remoteStream$ = this.remoteStreamSubject.asObservable();
 
   private chatMessagesSubject = new Subject<{
     username: string;
     message: string;
-    timestamp:Date
+    timestamp: Date;
   }>();
   chatMessages$ = this.chatMessagesSubject.asObservable();
 
@@ -54,17 +53,21 @@ export class SocketService {
   joinRoom(room: number, role: string) {
     const token = localStorage.getItem('token');
     if (token) {
-      const decodetoken:User = jwtDecode(token);
-      const data = { room, role,username:decodetoken.username };
+      const decodetoken: User = jwtDecode(token);
+      const data = { room, role, username: decodetoken.username };
       this.roomid = data.room;
-      this.username=decodetoken.username
+      this.username = decodetoken.username;
       console.log('join room', data);
       this._socket.emit('join room', data);
     }
   }
   sendMessage(message: string) {
     const room = this.roomid;
-    this._socket.emit('chat message', { room, message,username:this.username });
+    this._socket.emit('chat message', {
+      room,
+      message,
+      username: this.username,
+    });
   }
 
   handleChatMessages() {

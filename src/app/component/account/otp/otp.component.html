@@ -100,12 +100,12 @@
         >
           Verify OTP
         </button>
-        <span>
+        <span *ngIf="_value">
           <span class="text-red-500 font-semibold mt-2 text-lg">Estimated Time is: {{ _value }}</span>
         </span>
         
       </form>
-      <div class="mt-4 text-sm text-gray-300">
+      <div *ngIf="!_value" class="mt-4 text-sm text-gray-300">
         Didn't receive the code?
         <button
           *ngIf="_stop"

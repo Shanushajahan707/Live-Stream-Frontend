@@ -1,9 +1,7 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ToastrService } from 'ngx-toastr';
-import { AccountService } from '../service/account.service';
+import { AccountService } from '../service/user/account.service';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
@@ -32,7 +30,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
       return false;
     } else {
       if (decodedToken.role == 'user') {
-         _service.userIsBlocked().subscribe({
+        _service.userIsBlocked().subscribe({
           next: (res) => {
             console.log('response in the guard', res);
             if (res) {
@@ -149,7 +147,7 @@ export const authGuardForLoggedUsers: CanActivateFn = (route, state) => {
         router.navigateByUrl('/userhome');
         return false;
       } else if (decodedToken.role == 'Admin') {
-        router.navigateByUrl('/admin');
+        router.navigateByUrl('admin/dashboard');
         return false;
       }
     }

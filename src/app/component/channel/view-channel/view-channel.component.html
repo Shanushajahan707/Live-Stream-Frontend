@@ -3,7 +3,7 @@
 
   <div class="w-full md:w-3/4 m-7">
     <!-- Banner of the channel -->
-    <div class="relative mb-4">
+    <div class="relative mb-4" *ngIf="_followChannel">
       <img
         src="http://localhost:3000/channelBanner/{{ _followChannel.banner }}?"
         class="w-full rounded-sm h-56 md:h-64 lg:h-72"
@@ -16,7 +16,10 @@
       /> -->
     </div>
     <!-- Profile with channel name and followers -->
-    <div class="flex items-center justify-between p-4 bg-gray-800">
+    <div
+      class="flex items-center justify-between p-4 bg-gray-800"
+      *ngIf="_followChannel"
+    >
       <div class="flex items-center justify-between">
         <div class="relative">
           <img
@@ -32,22 +35,54 @@
           <span class="text-lg text-white font-bold ml-2">{{
             _followChannel.channelName
           }}</span>
-          <span class="font-bold ml-2"
-            >Followers:
-            {{ _followChannel && _followChannel.followers.length }}</span
-          >
+          <span class="font-bold ml-2">
+            Followers:
+            {{ _followChannel && _followChannel.followers.length }}
+          </span>
         </div>
         <div *ngIf="_followChannel.isblocked !== true"></div>
 
         <!-- Edit Icon -->
       </div>
-      <button
-        disabled
-        type="button"
-        class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-      >
-        {{ _followChannel.isblocked ? "Blocked" : "Active" }}
-      </button>
+
+      <div class="flex items-center">
+        <!-- Subscribe Button with Conditional Rendering -->
+        <div class="cursor-pointer">
+          <ng-container *ngIf="!isMember">
+            <div id="Subscribe" class="flex flex-row mx-6">
+              <button class="button" (click)="openModal()">
+                Subscribe
+                <svg fill="currentColor" viewBox="0 0 24 24" class="icon">
+                  <path
+                    clip-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="isMember">
+            <div id="PaymentSuccess" class="flex flex-row mx-6">
+              <button
+                class="button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+              >
+                Subscription Added
+              </button>
+            </div>
+          </ng-container>
+        </div>
+
+        <div class="cursor-pointer">
+          <button
+            disabled
+            type="button"
+            class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+          >
+            {{ _followChannel.isblocked ? "Blocked" : "Active" }}
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Content of the session -->
@@ -94,7 +129,7 @@
           Your browser does not support the video tag.
         </video> -->
       <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
-      <div class="card">
+      <div class="card" *ngIf="_followChannel">
         <!-- Check if followChannel.video is available and has at least one item -->
         <ng-container *ngIf="_followChannel.video.length; else singleVideo">
           <p-carousel
@@ -105,12 +140,12 @@
           >
             <ng-template let-channel pTemplate="item">
               <video
-              #target
-              class="h-44 w-45"
-              [src]="channel.url"
-              controls
-              muted
-              (play)="onVideoPlay(channel.url)"
+                #target
+                class="h-44 w-45"
+                [src]="channel.url"
+                controls
+                muted
+                (play)="onVideoPlay(channel.url)"
               ></video>
               <span>{{ channel.views }} Views</span>
             </ng-template>
@@ -122,11 +157,11 @@
           <video
             #target
             class="video-js h-44 w-45"
+            muted
             src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
             controls
-            muted
             playsinline
-            preload="none"
+            [muted]="true"
           ></video>
         </ng-template>
       </div>
@@ -141,3 +176,78 @@
     </div>
   </div>
 </div>
+
+<!-- Main Payment Dialog -->
+<!-- Main Payment Dialog -->
+<dialog id="my_modal_1" class="modal" #myModal>
+  <div class="modal-box w-11/12 max-w-5xl">
+    <div *ngIf="showPayPal">
+      <ngx-paypal class="bg-red-500" [config]="payPalConfig"></ngx-paypal>
+    </div>
+    <div class="text-xl text-red-500 font-semibold" *ngIf="showSuccess">
+      Payment Successful!
+    </div>
+    <div class="text-xl text-red-500 font-semibold" *ngIf="showCancel">
+      Payment Cancelled!
+    </div>
+    <div class="text-xl text-red-500 font-semibold" *ngIf="showError">
+      An Error Occurred!
+    </div>
+    <h1 class="font-bold text-lg">
+      Join our family through seamless payments!
+    </h1>
+
+    <div class="flex flex-col items-center">
+      <div
+        id="pricing-table"
+        class="clear w-full flex items-center justify-center flex-wrap"
+      >
+        <div
+          *ngFor="let plan of _channelPlans; let i = index"
+          class="plan h-80"
+        >
+          <button id="Payment" (click)="selectPlan(plan, i)">
+            <span>Make Payment</span>
+          </button>
+          <div
+            id="paypal-button-container-{{ i }}"
+            *ngIf="_selectedPlan && _selectedPlan._id === plan._id"
+          ></div>
+          <h3>
+            {{ plan.month }} Month<span>₹{{ plan.price }}</span>
+          </h3>
+          <ul>
+            <li *ngFor="let desc of plan.description; let j = index">
+              {{ j + 1 }}. {{ desc.desc }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </div>
+</dialog>
+
+<!-- Payment Method Selection Dialog -->
+<dialog id="paymentMethodDialog" class="modal" #paymentMethodModal>
+  <div class="modal-box w-11/12 max-w-5xl">
+    <h2 class="font-bold text-lg">Choose Payment Method</h2>
+    <button
+      class="button text-red-400 mx-2"
+      (click)="selectPaymentMethod('paypal')"
+    >
+      Pay with PayPal
+    </button>
+    <button
+      class="button text-red-400 mx-2"
+      (click)="selectPaymentMethod('razorpay')"
+    >
+      Pay with Razorpay
+    </button>
+    <form method="dialog" class="modal-backdrop">
+      <button>close</button>
+    </form>
+  </div>
+</dialog>

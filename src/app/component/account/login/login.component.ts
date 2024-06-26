@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AccountService } from '../../../service/account.service';
+import { AccountService } from '../../../service/user/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   _loginForm!: FormGroup;
   _value: string = '';
   _visible: boolean = false;
-  _position!: string  
+  _position!: string;
   _registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
 
@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit, OnDestroy {
           if (res && res.message) {
             this._toastr.success(res.message);
           }
-          localStorage.setItem('email',res.email)
+          localStorage.setItem('email', res.email);
         },
         error: (err) => {
           if (err && err.error.message) {

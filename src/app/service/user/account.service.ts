@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../enviorments/enviorment';
+import { environment } from '../../../environments/environment';
 import {
   GetChangePasswordResponse,
   GetForgotPassOtpResponse,
@@ -14,14 +14,12 @@ import {
   SignupResponse,
   loginCredential,
   signupCredential,
-} from '../model/auth';
+} from '../../model/auth';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService implements OnInit {
-
-
   apiUrl = environment.apiUrl;
   GoogleUrl = environment.GOOGLE_URL;
   islogged$ = new BehaviorSubject<Boolean>(false);
@@ -57,8 +55,8 @@ export class AccountService implements OnInit {
     );
   }
 
-  googleAuth(): Observable<any> {
-    return this._http.get<any>(`${this.GoogleUrl}auth/google`);
+  googleAuth(): Observable<string> {
+    return this._http.get<string>(`${this.GoogleUrl}auth/google`);
   }
   signup(formData: signupCredential): Observable<SignupResponse> {
     return this._http.post<SignupResponse>(`${this.apiUrl}signup`, formData);
@@ -111,6 +109,6 @@ export class AccountService implements OnInit {
     return !!localStorage.getItem('token');
   }
   isAdmin() {
-    return false;
+    return !!localStorage.getItem('admindata');
   }
 }

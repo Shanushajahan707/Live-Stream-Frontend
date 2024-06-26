@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ChannelData, Follower, User } from '../../../model/auth';
-import { ChannelmanageService } from '../../../service/channelmanage.service';
+import { ChannelmanageService } from '../../../service/admin/channelmanage.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

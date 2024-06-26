@@ -1,0 +1,9 @@
+<div class="w-full h-screen flex">
+  <!-- Hide recommendation on small devices -->
+  <div class="hidden sm:block w-2/12">
+    <app-subscriptionsidebar />
+  </div>
+  <div class="w-10/12 bg-gray-900 text-red-700 flex flex-col justify-center">
+    <router-outlet />
+  </div>
+</div>

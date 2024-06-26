@@ -1,11 +1,11 @@
 import { Component, DoCheck, OnDestroy } from '@angular/core';
-import { AccountService } from '../../../service/account.service';
+import { AccountService } from '../../../service/user/account.service';
 import { Store, select } from '@ngrx/store';
 import { UserState } from '../../../store/userlogin/login-reducer';
 import { Observable, Subject, map } from 'rxjs';
 import { selectUser } from '../../../store/userlogin/login-selector';
 import { User } from '../../../model/auth';
-import  { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 

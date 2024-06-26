@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { UsermanageService } from '../../../service/usermanage.service';
+import { UsermanageService } from '../../../service/admin/usermanage.service';
 import { ToastrService } from 'ngx-toastr';
 import { User } from '../../../model/auth';
 import { Subject, Subscription } from 'rxjs';

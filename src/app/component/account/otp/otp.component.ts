@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AccountService } from '../../../service/account.service';
+import { AccountService } from '../../../service/user/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
@@ -54,7 +54,7 @@ export class OtpComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.minLength(1), Validators.maxLength(1)],
       ],
     });
-  
+
     console.log('storage value', localStorage);
   }
   otpsubmit() {

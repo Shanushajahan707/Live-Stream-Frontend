@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { PrimeNGConfig } from 'primeng/api';
 import { Observable, Subscription } from 'rxjs';
-import { DateService } from './service/date.service';
-import { AccountService } from './service/account.service';
+import { DateService } from './service/user/date.service';
+import { AccountService } from './service/user/account.service';
 
 @Component({
   selector: 'app-root',

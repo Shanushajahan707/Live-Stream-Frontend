@@ -14,6 +14,11 @@ import { SidebarModule } from 'primeng/sidebar';
 import { AdminRoutingModule } from './admin-side-routing.module';
 import { ChartModule } from 'primeng/chart';
 import { EmailpipePipe } from '../../pipe/emailpipe.pipe';
+import { AdminwebsitesubscriptionComponent } from '../../component/admin/adminwebsitesubscription/adminwebsitesubscription.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { AdminchannelsubscriptionComponent } from '../../component/admin/adminchannelsubscription/adminchannelsubscription.component';
+import { AdminMembershipComponent } from '../../component/admin/admin-membership/admin-membership.component';
+
 @NgModule({
   declarations: [
     AdminHomeComponent,
@@ -23,6 +28,9 @@ import { EmailpipePipe } from '../../pipe/emailpipe.pipe';
     AdminDashboardComponent,
     AdminChannelmanageComponent,
     EmailpipePipe,
+    AdminwebsitesubscriptionComponent,
+    AdminchannelsubscriptionComponent,
+    AdminMembershipComponent,
   ],
   imports: [
     AdminRoutingModule,
@@ -33,6 +41,7 @@ import { EmailpipePipe } from '../../pipe/emailpipe.pipe';
     InputTextModule,
     SidebarModule,
     ChartModule,
+    ReactiveFormsModule,
   ],
   exports: [
     DialogModule,

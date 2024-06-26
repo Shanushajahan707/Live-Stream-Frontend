@@ -4,22 +4,29 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, iif } from 'rxjs';
 import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
-import { AccountService } from '../service/account.service';
+import { AccountService } from '../service/user/account.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
+    null
+  );
 
-  constructor(private authService: AccountService,private toaster:ToastrService) {}
+  constructor(
+    private authService: AccountService,
+    private toaster: ToastrService
+  ) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     const token = localStorage.getItem('token');
     if (token) {
       request = this.addToken(request, token);
@@ -37,13 +44,15 @@ export class AuthInterceptor implements HttpInterceptor {
   private addToken(request: HttpRequest<any>, token: string) {
     return request.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
+  private handle401Error(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
     if (!this.isRefreshing) {
       this.isRefreshing = true;
       this.refreshTokenSubject.next(null);
@@ -52,15 +61,15 @@ export class AuthInterceptor implements HttpInterceptor {
         switchMap((res: any) => {
           localStorage.setItem('token', res.accessToken);
           this.isRefreshing = false;
-          if(res.message){
-            this.toaster.show(res.message)
+          if (res.message) {
+            this.toaster.show(res.message);
           }
           this.refreshTokenSubject.next(res.accessToken);
           return next.handle(this.addToken(request, res.accessToken));
         }),
         catchError((error) => {
           this.isRefreshing = false;
-          return throwError(()=>error);
+          return throwError(() => error);
         }),
         finalize(() => {
           this.isRefreshing = false;
@@ -68,9 +77,9 @@ export class AuthInterceptor implements HttpInterceptor {
       );
     } else {
       return this.refreshTokenSubject.pipe(
-        filter(token => token != null),
+        filter((token) => token != null),
         take(1),
-        switchMap(jwt => {
+        switchMap((jwt) => {
           return next.handle(this.addToken(request, jwt));
         })
       );

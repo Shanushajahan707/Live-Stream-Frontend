@@ -26,6 +26,10 @@ export interface User {
 interface IsAdminResponse {
   isAdmin: boolean;
 }
+export interface BlockUserResponse {
+  message: string;
+  user: User;
+}
 
 export interface LoginResponse {
   message: string;
@@ -66,8 +70,136 @@ export interface ChannelData {
     views: number;
     _id?: string;
   }[];
-  lives: string[];
+  isLive: boolean;
+  lastDateOfLive: Date;
   isblocked: boolean;
+  liveRoom?: string;
+}
+export interface SubscriptionData {
+  _id: string;
+  month: number;
+  price: number;
+}
+
+export interface ChannelSubscriptionData {
+  _id: string;
+  month: number;
+  price: number;
+  description: { desc: string }[];
+}
+export interface ChannelSubscriptionDataAdminResponse {
+  _id: string;
+  month: number;
+  price: number;
+  description: { desc: string }[];
+}
+export interface WebsiteSubscriptionData {
+  _id: string;
+  month: number;
+  price: number;
+  description: { desc: string }[];
+}
+export interface WebsiteSubscriptionDataAdminResponse {
+  message: string;
+  plan: SubscriptionData[];
+}
+export interface WebsiteSubscriptionInsertionResponse {
+  message: string;
+  newplan: SubscriptionData[];
+}
+export interface GetallWebsiteSubscriptionAdminResponse {
+  message: string;
+  plan: SubscriptionData[];
+}
+export interface GetallChannelSubscriptionAdminResponse {
+  message: string;
+  plan: ChannelSubscriptionData[];
+}
+export interface ChannelSubscriptionInsertionResponse {
+  message: string;
+  plan: SubscriptionData[];
+
+} 
+export interface AdminWebsiteNembership {
+  message: string;
+  members: AdminWalletSummary[];
+  wallet:number
+}
+
+export interface WebsiteSubscriptionResponse {
+  websiteSubscription: WebsiteSubscriptionData[];
+  message: string;
+}
+export interface ChannelSubscriptionResponse {
+  channelPlans: ChannelSubscriptionData[];
+  message: string;
+}
+export interface IsChannelSubscribedMemberResponse {
+  isMember: boolean;
+  message: string;
+}
+export interface ChannelSubscriptionResponse {
+  isMember: boolean;
+  payment: boolean;
+  message: string;
+}
+export interface WebsiteSubscriptionResponse {
+  isMember: boolean;
+  payment: boolean;
+  message: string;
+}
+export interface WebsiteTrailOverResponse {
+  isTrailOver: boolean;
+  message: string;
+}
+export interface MonthlySubscription {
+  [key: string]: number;
+}
+export interface MonthlySubscriptionAdminDash {
+  message: string;
+  monthlySubscription: MonthlySubscription;
+}
+export interface MonthlySubscriptionChartResponse {
+  revenue: MonthlySubscription;
+  totalAmount:number
+  message: string;
+}
+
+export interface ChannelSubscriptionUsers {
+  _id: string;
+  members: {
+    userId: string;
+    userChannelId: string;
+    channelPlanId: string;
+  };
+  createdAt: Date;
+}
+
+export interface ChannelSubscriptionMembers {
+  members: ChannelSubscriptionUsers[];
+  totalcount: number;
+  message: string;
+}
+
+export interface DashboardUserCount {
+  message: string;
+  userCount: number;
+}
+export interface DashboardChannelCount {
+  message: string;
+  channelCount: number;
+}
+
+export interface AdminWalletSummary {
+  _id: string;
+  adminId: string;
+  userId: {
+    username: string;
+  };
+  amount: number;
+  createdAt: Date;
+  month: number;
+  endsIn: Date;
 }
 
 export interface GetChannelResponse {
@@ -138,8 +270,26 @@ export interface GetForgotPassOtpResponse {
 export interface GetChangePasswordResponse {
   message: string;
 }
+export interface GetUpdateLiveInfoResponse {
+  message: string;
+}
+export interface GetRecommmendedLivesReponse {
+  message: string;
+  recommendedLives: ChannelData[];
+}
 
- 
+export interface Dataset {
+  label: string;
+  data: number[];
+  fill: boolean;
+  borderColor: string;
+  tension: number;
+}
+
+export interface OverallData {
+  labels: string[];
+  datasets: Dataset[];
+}
 
 export interface ChatMessage {
   username: string;

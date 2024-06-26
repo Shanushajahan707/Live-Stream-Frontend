@@ -1,28 +1,28 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { onClose } from 'david-ui-angular/lib/types/componentTypes/chip';
-import { AccountService } from '../../../service/account.service';
+import { AccountService } from '../../../service/user/account.service';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../../../model/auth';
 
 @Component({
   selector: 'app-blocked-account',
   templateUrl: './blocked-account.component.html',
-  styleUrl: './blocked-account.component.scss'
+  styleUrl: './blocked-account.component.scss',
 })
-export class BlockedAccountComponent implements OnInit,OnDestroy {
-  isBlocked:boolean=true
-  constructor(private _router:Router,private _service:AccountService) {}
+export class BlockedAccountComponent implements OnInit, OnDestroy {
+  isBlocked: boolean = true;
+  constructor(private _router: Router, private _service: AccountService) {}
 
   buttonColor = 'rgb(59, 130, 246)';
   private colorChangeInterval: any;
-   userdata!:User
+  userdata!: User;
 
   ngOnInit() {
     this.startColorChange();
-    const token = localStorage.getItem('token')
-    const decode=jwtDecode(token as string)
-    this.userdata=decode as User
+    const token = localStorage.getItem('token');
+    const decode = jwtDecode(token as string);
+    this.userdata = decode as User;
     this._service.islogged$.next(false);
     console.log(this._service.islogged$);
   }
@@ -34,7 +34,7 @@ export class BlockedAccountComponent implements OnInit,OnDestroy {
   startColorChange() {
     this.colorChangeInterval = setInterval(() => {
       this.buttonColor = this.getRandomColor();
-    }, 1000); 
+    }, 1000);
   }
 
   stopColorChange() {
@@ -52,8 +52,8 @@ export class BlockedAccountComponent implements OnInit,OnDestroy {
 
   goBack() {
     console.log('Go Back button clicked');
-    localStorage.removeItem('token')
-    this._service.islogged$.next(false)
-    this._router.navigateByUrl('')
+    localStorage.removeItem('token');
+    this._service.islogged$.next(false);
+    this._router.navigateByUrl('');
   }
 }

@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DashboardmanageService } from '../../../service/dashboardmanage.service';
+import { DashboardmanageService } from '../../../service/admin/dashboardmanage.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { OverallData } from '../../../model/auth';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -12,7 +13,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   data: any;
   options: any;
   usersCount!: number;
-  channelCount!: number;
+  channelCount!: number;  
+  monthlySubscription: { [key: string]: number } = {};
+  overallData!:OverallData
   private readonly _destroy$ = new Subject<void>();
   constructor(
     private _dashService: DashboardmanageService,
@@ -43,6 +46,23 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         next: (res) => {
           if (res && res.message && res.channelCount) {
             this.channelCount = res.channelCount;
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
+
+    this._dashService
+      .getDashboardData()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this.monthlySubscription=res.monthlySubscription
+            this.getDashboardData()
           }
         },
         error: (err) => {
@@ -111,6 +131,37 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       },
     };
   }
+
+  getDashboardData(){
+    const documentStyle = getComputedStyle(document.documentElement);
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const colors = [
+      '--blue-500',
+      '--green-500',
+      '--pink-500',
+      '--orange-500',
+      '--purple-500',
+    ];
+
+    const overallLabels = Object.keys(this.monthlySubscription).sort();
+    const overallDataPoints = overallLabels.map(
+      (label) => this.monthlySubscription[label]
+    );
+
+    this.overallData = {
+      labels: overallLabels,
+      datasets: [
+        {
+          label: 'Overall Monthly Enrollments',
+          data: overallDataPoints,
+          fill: false,
+          borderColor: documentStyle.getPropertyValue('--blue-500'),
+          tension: 0.4,
+        },
+      ],
+    };
+  }
+  
 
   ngOnDestroy(): void {
     this._destroy$.next();

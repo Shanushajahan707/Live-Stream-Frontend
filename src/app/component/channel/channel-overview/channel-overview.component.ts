@@ -5,7 +5,7 @@ import {
   ElementRef,
   OnDestroy,
 } from '@angular/core';
-import { ChannelService } from '../../../service/channel.service';
+import { ChannelService } from '../../../service/user/channel.service';
 import { ChannelData } from '../../../model/auth';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';

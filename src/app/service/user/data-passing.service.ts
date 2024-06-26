@@ -19,7 +19,7 @@ export class DataPassingService {
     RoomId: 0,
   });
   currentData = this.dataSource.asObservable();
-  private joinRoom = new BehaviorSubject<LiveData>({ Livename: '', RoomId: 0 });
+  private joinRoom = new BehaviorSubject<JoinLive>({ Livename: '', RoomId: 0 });
   joinroom = this.joinRoom.asObservable();
   constructor() {}
 
