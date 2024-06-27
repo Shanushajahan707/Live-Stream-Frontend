@@ -10,11 +10,16 @@ import { ActivatedRoute } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ChannelData, ChannelSubscriptionData } from '../../../model/auth';
+import {
+  ChannelData,
+  ChannelSubscriptionData,
+  LiveHistory,
+} from '../../../model/auth';
 import { ChannelService } from '../../../service/user/channel.service';
 import { SubscriptionService } from '../../../service/user/subscription.service';
 import { IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
 import { environment } from '../../../../environments/environment';
+import { LiveService } from '../../../service/user/live.service';
 declare var Razorpay: any;
 
 @Component({
@@ -36,6 +41,9 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
   razorPayKey: string = environment.razorKey;
   paypalClient: string = environment.paypalClientId;
   isPaymentSuccess!: string;
+  liveHistory: LiveHistory[] = [];
+  liveHistoryWithUsernames: any[] = [];
+
   public payPalConfig?: IPayPalConfig;
   public showSuccess: boolean = false;
   public showCancel: boolean = false;
@@ -52,7 +60,8 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
     private _route: ActivatedRoute,
     private _channelService: ChannelService,
     private _toaster: ToastrService,
-    private _channelSubscription: SubscriptionService
+    private _channelSubscription: SubscriptionService,
+    private _liveService: LiveService
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +77,7 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
             if (res && res.message) {
               this._toaster.success(res.message);
               this._followChannel = res.channel;
+              console.log(this._followChannel);
             }
           },
           error: (err) => {
@@ -253,6 +263,23 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
     this.showError = false;
     this.showPayPal = false;
     this.showRazorpay = false;
+  }
+
+  liveHistorys() {
+    this._liveService
+      .fetchLiveHistory(this._followChannel) // Replace with the actual channel ID
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res ) {
+            this.liveHistory =res.liveHistory }
+        },
+        error: (err: any) => {
+          if (err && err.error.message) {
+            console.error(err.error.message);
+          }
+        },
+      });
   }
 
   private options: any = {

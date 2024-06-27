@@ -209,7 +209,7 @@
             </p>
           </div>
           <div class="mt-4 flex justify-between items-center">
-            <button
+            <!-- <button
               *ngIf="!isFollowing(channel)"
               type="button"
               (click)="follow(channel)"
@@ -225,7 +225,7 @@
               class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             >
               Unfollow
-            </button>
+            </button> -->
         
             <div [ngClass]="{'live-container': channel.isLive}">
               <div *ngIf="channel.isLive" class="flex">

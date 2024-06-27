@@ -174,6 +174,27 @@ export interface ChannelSubscriptionUsers {
   };
   createdAt: Date;
 }
+export interface LiveHistory {
+  readonly _id?: string;
+  channelId: {
+    channelName:string
+  };
+  startDate: Date;
+  startTime: Date;
+  endTime: Date;
+  roomId: number;
+  streamerName: User["_id"];
+  viewerIds: {
+    username: string;
+  }[];
+  liveName:string
+  viewerCount: number[];
+  duration: number;
+  viewerNames?: string; // New field to hold the concatenated viewer names
+
+}
+
+
 
 export interface ChannelSubscriptionMembers {
   members: ChannelSubscriptionUsers[];

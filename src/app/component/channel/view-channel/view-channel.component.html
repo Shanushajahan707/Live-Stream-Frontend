@@ -103,6 +103,7 @@
           type="radio"
           id="live"
           name="content"
+          (click)="liveHistorys()"
           [(ngModel)]="_selectedContent"
           value="live"
         />
@@ -166,14 +167,58 @@
         </ng-template>
       </div>
     </div>
+    <!-- <div id="liveContainer" class="content-container" *ngIf="_selectedContent === 'live' && isMember">
+      <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
+      <div class="live-history-container" *ngIf="liveHistory && liveHistory.length > 0">
+        <div *ngFor="let live of liveHistory" class="live-history-item">
+          <h3>Live Name: {{ live.streamerName }}</h3>
+          <p>Channel: {{ live.channelId.channelName }}</p>
+          <p>Start Date: {{ live.startDate | date: 'shortDate' }}</p>
+          <p>Start Time: {{ live.startTime | date: 'shortTime' }}</p>
+          <p *ngIf="live.endTime">End Time: {{ live.endTime | date: 'shortTime' }}</p>
+          <p>Viewer Count: {{ live.viewerCount }}</p>
+          <p>Room ID: {{ live.roomId }}</p>
+          <p>Viewers: {{ live.viewerNames }}</p>
+        </div>
+      </div>
+    </div> -->
 
-    <div
-      id="liveContainer"
-      class="content-container"
-      *ngIf="_selectedContent === 'live'"
-    >
-      <p>This is where your live videos will be displayed.</p>
+
+    <div id="liveContainer" class="content-container" *ngIf="_selectedContent === 'live' && isMember;" class="card" >
+      <!-- Check if followChannel.video is available and has at least one item -->
+      <ng-container *ngIf="liveHistory.length; else singleVideo">
+        <p-carousel
+          [value]="liveHistory"
+          [numVisible]="3"
+          [numScroll]="3"
+          [responsiveOptions]="_responsiveOptions"
+        >
+          <ng-template let-live pTemplate="item">
+            <h3>Live Name: {{ live.liveName }}</h3>
+            <p>Channel: {{ live.channelId.channelName }}</p>
+            <p>Start Date: {{ live.startDate | date: 'shortDate' }}</p>
+            <p>Start Time: {{ live.startTime | date: 'shortTime' }}</p>
+            <p *ngIf="live.endTime">End Time: {{ live.endTime | date: 'shortTime' }}</p>
+            <p>Viewer Count: {{ live.viewerCount }}</p>
+            <p>Room ID: {{ live.roomId }}</p>
+            <p>Viewers: <ul>
+              <li *ngFor="let user of live.viewerIds"> {{user.username}}</li>
+            </ul>
+
+          </ng-template>
+        </p-carousel>
+      </ng-container>
+
+      <!-- Template for single video when followChannel.video is not available or empty -->
+      <ng-template *ngIf="_selectedContent !== 'live' && !isMember">
+        <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
+      </ng-template>
+      <ng-template #singleVideo>
+        <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
+      </ng-template>
     </div>
+
+    
   </div>
 </div>
 

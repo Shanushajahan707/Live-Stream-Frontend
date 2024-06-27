@@ -10,10 +10,16 @@ import { Router } from '@angular/router';
 import { DataPassingService } from '../../../service/user/data-passing.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ChannelData } from '../../../model/auth';
+import {
+  ChannelData,
+  ChannelSubscriptionUsers,
+  User,
+} from '../../../model/auth';
 import { LiveService } from '../../../service/user/live.service';
 import { ToastrService } from 'ngx-toastr';
 import { SocketService } from '../../../service/user/socket.service';
+import { SubscriptionService } from '../../../service/user/subscription.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-live',
@@ -34,7 +40,10 @@ export class LiveComponent implements OnInit, OnDestroy {
   _startlive = false;
   messages: { username: string; message: string; timestamp: Date }[] = [];
   newMessage: string = '';
+  streamingId!: string;
   channelData!: ChannelData;
+  subscribers: ChannelSubscriptionUsers[] = [];
+  decodetoken!: User;
   colors: string[] = [
     'text-red-500',
     'text-blue-500',
@@ -47,7 +56,8 @@ export class LiveComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _dataService: DataPassingService,
     private _liveServive: LiveService,
-    private _toaster: ToastrService
+    private _toaster: ToastrService,
+    private _subscriptionService: SubscriptionService
   ) {}
 
   ngOnInit() {
@@ -130,6 +140,44 @@ export class LiveComponent implements OnInit, OnDestroy {
           },
         });
 
+      this._liveServive
+        .getAllSubscribedMember()
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              this.subscribers = res.members;
+              console.log(this.subscribers);
+            }
+          },
+          error: (err) => {
+            if (err && err.error.message) {
+              console.log('eror', err.error.message);
+              this._toaster.error(err.error.message);
+            }
+          },
+        });
+
+      this._liveServive
+        .updateLiveHistoryInfo(this._livereceivedData.Livename,this._livereceivedData.RoomId)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              console.log(res);
+              this.streamingId = res.liveId;
+              console.log('streaming id is', this.streamingId);
+            }
+          },
+          error: (err) => {
+            if (err && err.error.message) {
+              console.log('eror', err.error.message);
+              this._toaster.error(err.error.message);
+            }
+          },
+        });
+
+
       this._socketService.joinRoom(RoomId, 'broadcaster');
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -147,6 +195,13 @@ export class LiveComponent implements OnInit, OnDestroy {
     }
   }
 
+  getSubscriberPlan(username: string): number | null {
+    const subscriber = this.subscribers.find(
+      (subscriber) => subscriber.members.userId === username
+    );
+    return subscriber ? parseInt(subscriber.members.channelPlanId) : null;
+  }
+
   sendMessage() {
     if (this.newMessage.trim()) {
       this._socketService.sendMessage(this.newMessage);
@@ -157,6 +212,29 @@ export class LiveComponent implements OnInit, OnDestroy {
   joinLiveStream(RoomId: number) {
     if (this._joinreceivedData.RoomId) {
       this._isViewing = true;
+      const token = localStorage.getItem('token');
+      if (token) {
+        this.decodetoken = jwtDecode(token);
+      }
+      this._liveServive
+        .updateLiveHistoryUserInfo(RoomId, this.decodetoken._id)
+        .pipe(takeUntil(this._destroy$))
+        .subscribe({
+          next: (res) => {
+            if (res) {
+              console.log(res);
+              this.streamingId = res.liveId;
+              console.log('streaming id is', this.streamingId);
+            }
+          },
+          error: (err) => {
+            if (err && err.error.message) {
+              console.log('eror', err.error.message);
+              this._toaster.error(err.error.message);
+            }
+          },
+        });
+
       this._socketService.joinRoom(RoomId, 'viewer');
     }
   }
@@ -232,6 +310,25 @@ export class LiveComponent implements OnInit, OnDestroy {
           }
           this._toaster.info('Live Ended');
           this._router.navigate(['']);
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            console.log('eror', err.error.message);
+            this._toaster.error(err.error.message);
+          }
+        },
+      });
+
+      this._liveServive
+      .updateLiveHistoryEndInfo(this._livereceivedData.RoomId)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res) {
+            console.log(res);
+            this.streamingId = res.liveId;
+            console.log('streaming id is', this.streamingId);
+          }
         },
         error: (err) => {
           if (err && err.error.message) {
