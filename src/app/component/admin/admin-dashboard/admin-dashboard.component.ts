@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DashboardmanageService } from '../../../service/admin/dashboardmanage.service';
+import { DashboardmanageService } from '../../../service/admin/dashboard/dashboardmanage.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { OverallData } from '../../../model/auth';
+import { OverallData, individualData } from '../../../model/auth';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,9 +13,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   data: any;
   options: any;
   usersCount!: number;
-  channelCount!: number;  
+  channelCount!: number;
   monthlySubscription: { [key: string]: number } = {};
-  overallData!:OverallData
+  individualMonthlySubscription: { [key: string]: { [key: string]: number}}={};
+  overallData!: OverallData;
+  individualData!:individualData
   private readonly _destroy$ = new Subject<void>();
   constructor(
     private _dashService: DashboardmanageService,
@@ -61,8 +63,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res && res.message) {
-            this.monthlySubscription=res.monthlySubscription
-            this.getDashboardData()
+            this.monthlySubscription = res.monthlySubscription;
+            this.individualMonthlySubscription=res.individualPlanSubscriptions
+            this.getDashboardData();
           }
         },
         error: (err) => {
@@ -132,7 +135,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  getDashboardData(){
+  getDashboardData() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const colors = [
@@ -160,8 +163,32 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
         },
       ],
     };
+
+    const datasets = [];
+    let colorIndex = 0;
+
+    for (const datelabel in this.individualMonthlySubscription) {
+      const courseMonthlyEnrollments = this.individualMonthlySubscription[datelabel];
+      const courseLabels = overallLabels;
+      const courseData = courseLabels.map(label => courseMonthlyEnrollments[label] || 0);
+
+      datasets.push({
+        label: `${datelabel}`,
+        data: courseData,
+        fill: false,
+        borderColor: documentStyle.getPropertyValue(colors[colorIndex % colors.length]),
+        tension: 0.4
+      });
+
+      colorIndex++;
+    }
+
+    this.individualData = {
+      labels: overallLabels,
+      datasets
+    };
+
   }
-  
 
   ngOnDestroy(): void {
     this._destroy$.next();

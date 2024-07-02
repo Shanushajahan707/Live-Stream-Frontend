@@ -1,7 +1,7 @@
 import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
-import { AccountService } from '../service/user/account.service';
+import { AccountService } from '../service/user/account/account.service';
 
 export const authGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
@@ -23,7 +23,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     // Check if token has expired
     const currentTime = Math.floor(Date.now() / 1000);
     if (decodedToken.exp < currentTime) {
-      console.log('here the expire');
+      // console.log('here the expire');
       localStorage.removeItem('token');
       _service.islogged$.next(false);
       router.navigateByUrl('');
@@ -32,11 +32,11 @@ export const authGuard: CanActivateFn = async (route, state) => {
       if (decodedToken.role == 'user') {
         _service.userIsBlocked().subscribe({
           next: (res) => {
-            console.log('response in the guard', res);
+            // console.log('response in the guard', res);
             if (res) {
               if (res.isBlocked == true) {
                 _service.islogged$.next(false);
-                console.log('usr blocked', res);
+                // console.log('usr blocked', res);
                 router.navigateByUrl('/blocked-account');
                 return false;
               } else {

@@ -7,18 +7,19 @@ import {
 } from '@angular/core';
 
 import { Router } from '@angular/router';
-import { DataPassingService } from '../../../service/user/data-passing.service';
+import { DataPassingService } from '../../../service/user/data/data-passing.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import {
   ChannelData,
   ChannelSubscriptionUsers,
+  Message,
   User,
 } from '../../../model/auth';
-import { LiveService } from '../../../service/user/live.service';
+import { LiveService } from '../../../service/user/live/live.service';
 import { ToastrService } from 'ngx-toastr';
-import { SocketService } from '../../../service/user/socket.service';
-import { SubscriptionService } from '../../../service/user/subscription.service';
+import { SocketService } from '../../../service/user/socket/socket.service';
+import { SubscriptionService } from '../../../service/user/subscription/subscription.service';
 import { jwtDecode } from 'jwt-decode';
 
 @Component({
@@ -38,12 +39,17 @@ export class LiveComponent implements OnInit, OnDestroy {
   _isViewing = false;
   _joinlive = false;
   _startlive = false;
-  messages: { username: string; message: string; timestamp: Date }[] = [];
+  messages: Message[] = [];
   newMessage: string = '';
   streamingId!: string;
   channelData!: ChannelData;
   subscribers: ChannelSubscriptionUsers[] = [];
   decodetoken!: User;
+  mediaRecorder: any;
+  audioChunks: any[] = [];
+  audioBlob: Blob | null = null;
+  audioUrl: string | null = null;
+  isRecording: boolean = false;
   colors: string[] = [
     'text-red-500',
     'text-blue-500',
@@ -159,7 +165,10 @@ export class LiveComponent implements OnInit, OnDestroy {
         });
 
       this._liveServive
-        .updateLiveHistoryInfo(this._livereceivedData.Livename,this._livereceivedData.RoomId)
+        .updateLiveHistoryInfo(
+          this._livereceivedData.Livename,
+          this._livereceivedData.RoomId
+        )
         .pipe(takeUntil(this._destroy$))
         .subscribe({
           next: (res) => {
@@ -176,7 +185,6 @@ export class LiveComponent implements OnInit, OnDestroy {
             }
           },
         });
-
 
       this._socketService.joinRoom(RoomId, 'broadcaster');
       navigator.mediaDevices
@@ -202,11 +210,43 @@ export class LiveComponent implements OnInit, OnDestroy {
     return subscriber ? parseInt(subscriber.members.channelPlanId) : null;
   }
 
-  sendMessage() {
-    if (this.newMessage.trim()) {
-      this._socketService.sendMessage(this.newMessage);
-      this.newMessage = '';
-    }
+  sendMessage(message: string, messageType: 'text' | 'audio') {
+    this._socketService.sendMessage(message, messageType);
+  }
+
+  startRecording() {
+    this.isRecording=true
+    console.log('recording started');
+    this._toaster.info('recording started')
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        this.mediaRecorder = new MediaRecorder(stream);
+        this.mediaRecorder.start();
+        this.mediaRecorder.ondataavailable = (e: any) => {
+          this.audioChunks.push(e.data);
+        };
+      })
+      .catch(err => console.error('Error accessing media devices.', err));
+  }
+  
+  stopRecording() {
+    this.isRecording=false
+    console.log('recording stopped');
+    this._toaster.info('recording stopped')
+  
+    this.mediaRecorder.stop();
+    this.mediaRecorder.onstop = () => {
+      this.audioBlob = new Blob(this.audioChunks, { type: 'audio/mpeg' });
+      const reader = new FileReader();
+  
+      reader.onload = () => {
+        const base64AudioMessage = reader.result as string;
+        this._socketService.sendMessage(base64AudioMessage, 'audio');
+        this.audioChunks = []; // Clear the audio chunks for the next recording
+      };
+  
+      reader.readAsDataURL(this.audioBlob); // Convert the Blob to a base64 string
+    };
   }
 
   joinLiveStream(RoomId: number) {
@@ -319,7 +359,7 @@ export class LiveComponent implements OnInit, OnDestroy {
         },
       });
 
-      this._liveServive
+    this._liveServive
       .updateLiveHistoryEndInfo(this._livereceivedData.RoomId)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
@@ -327,6 +367,7 @@ export class LiveComponent implements OnInit, OnDestroy {
           if (res) {
             console.log(res);
             this.streamingId = res.liveId;
+            this._toaster.info('live history updated')
             console.log('streaming id is', this.streamingId);
           }
         },

@@ -15,11 +15,11 @@ import {
   ChannelSubscriptionData,
   LiveHistory,
 } from '../../../model/auth';
-import { ChannelService } from '../../../service/user/channel.service';
-import { SubscriptionService } from '../../../service/user/subscription.service';
+import { ChannelService } from '../../../service/user/channel/channel.service';
+import { SubscriptionService } from '../../../service/user/subscription/subscription.service';
 import { IPayPalConfig, ICreateOrderRequest } from 'ngx-paypal';
 import { environment } from '../../../../environments/environment';
-import { LiveService } from '../../../service/user/live.service';
+import { LiveService } from '../../../service/user/live/live.service';
 declare var Razorpay: any;
 
 @Component({
@@ -43,6 +43,7 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
   isPaymentSuccess!: string;
   liveHistory: LiveHistory[] = [];
   liveHistoryWithUsernames: any[] = [];
+  isPaymentFailed: boolean = false;
 
   public payPalConfig?: IPayPalConfig;
   public showSuccess: boolean = false;
@@ -101,7 +102,6 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           if (err && err.error.message) {
-            console.log('error', err.error.message);
           }
         },
       });
@@ -132,6 +132,7 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
 
   selectPlan(plan: ChannelSubscriptionData, index: number): void {
     this._selectedPlan = plan;
+    this.isPaymentFailed = false;
     this.paymentMethodModal.nativeElement.showModal();
   }
 
@@ -240,19 +241,21 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
         console.log('OnCancel', data, actions);
         this.showCancel = true;
         this._toaster.info('Payment cancelled');
-        this.resetStatus();
+        this.isPaymentFailed = true;
         this.myModal.nativeElement.close(); // Close the modal on payment cancellation
+        this.resetStatus();
       },
       onError: (err) => {
         console.log('OnError', err);
         this.showError = true;
         this._toaster.error('Payment error');
+        this.isPaymentFailed = true;
         this.resetStatus();
         this.myModal.nativeElement.close(); // Close the modal on error
       },
       onClick: (data, actions) => {
         console.log('onClick', data, actions);
-        this.resetStatus();
+        // this.resetStatus();
       },
     };
   }
@@ -271,8 +274,9 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
-          if (res ) {
-            this.liveHistory =res.liveHistory }
+          if (res) {
+            this.liveHistory = res.liveHistory;
+          }
         },
         error: (err: any) => {
           if (err && err.error.message) {
@@ -352,8 +356,8 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
     this.showSuccess = false;
     this.showCancel = true;
     this.showError = true;
+    this.isPaymentFailed = true;
     this._toaster.error('Payment failed');
-    this.resetStatus();
   }
 
   openModal() {

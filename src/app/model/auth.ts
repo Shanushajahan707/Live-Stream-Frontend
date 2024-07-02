@@ -155,9 +155,13 @@ export interface WebsiteTrailOverResponse {
 export interface MonthlySubscription {
   [key: string]: number;
 }
+export interface individualMonthlySubscription {
+  [key: string]: { [key: string]: number }
+}
 export interface MonthlySubscriptionAdminDash {
   message: string;
   monthlySubscription: MonthlySubscription;
+  individualPlanSubscriptions:individualMonthlySubscription
 }
 export interface MonthlySubscriptionChartResponse {
   revenue: MonthlySubscription;
@@ -194,11 +198,20 @@ export interface LiveHistory {
 
 }
 
+export interface LiveHistoryResponse{
+  liveHistory:LiveHistory[]
+  message:string
+}
+
 
 
 export interface ChannelSubscriptionMembers {
   members: ChannelSubscriptionUsers[];
   totalcount: number;
+  message: string;
+}
+export interface LiveUpdateResponse {
+  liveId: string;
   message: string;
 }
 
@@ -312,8 +325,27 @@ export interface OverallData {
   datasets: Dataset[];
 }
 
+export interface individualData {
+  labels: string[];
+  datasets: Dataset[];
+}
+
+
+
 export interface ChatMessage {
   username: string;
   message: string;
   timestamp: string;
+  type: 'text' | 'audio';
+  audioUrl?: string;
+
 }
+
+export interface Message {
+  username: string;
+  message: string;
+  timestamp: Date;
+  type: 'text' | 'audio';
+  audioUrl?: string;
+}
+

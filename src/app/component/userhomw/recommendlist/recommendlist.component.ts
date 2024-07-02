@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ChannelService } from '../../../service/user/channel.service';
+import { ChannelService } from '../../../service/user/channel/channel.service';
 import { ToastrService } from 'ngx-toastr';
 import { ChannelData, User } from '../../../model/auth';
 import { jwtDecode } from 'jwt-decode';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { LiveService } from '../../../service/user/live.service';
+import { LiveService } from '../../../service/user/live/live.service';
 
 @Component({
   selector: 'app-recommendlist',

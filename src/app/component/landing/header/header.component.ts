@@ -1,7 +1,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountService } from '../../../service/user/account.service';
-import { DataPassingService } from '../../../service/user/data-passing.service';
+import { AccountService } from '../../../service/user/account/account.service';
+import { DataPassingService } from '../../../service/user/data/data-passing.service';
 import { ChannelData, User } from '../../../model/auth';
 import { jwtDecode } from 'jwt-decode';
 import { Store, select } from '@ngrx/store';
@@ -11,7 +11,7 @@ import { Observable, Subject, Subscription, map } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { takeUntil } from 'rxjs/operators';
 import { FormControl } from '@angular/forms';
-import { ChannelService } from '../../../service/user/channel.service';
+import { ChannelService } from '../../../service/user/channel/channel.service';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 @Component({

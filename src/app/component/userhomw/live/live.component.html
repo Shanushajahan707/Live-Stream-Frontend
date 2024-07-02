@@ -67,8 +67,6 @@
     <!-- Chat Section -->
     <div class="p-6 hidden lg:flex w-full lg:w-1/4 flex-col bg-gray-900">
       <div class="h-full flex-1">
-        <!-- <app-chat></app-chat> -->
-
         <div class="flex flex-col h-96 flex-1 overflow-y-scroll text-green-100">
           <!-- Sample messages -->
           <div *ngFor="let message of messages; let i = index" class="flex flex-col my-2">
@@ -82,14 +80,20 @@
                   <span *ngIf="plan === 12">🌟🌟🌟</span> <!-- Badge for 12 months -->
                 </ng-container>
               </span>
-              <span [ngClass]="getColor(i)" class="text-sm">{{ message.message }}</span>
+              <ng-container *ngIf="message.type === 'text'">
+                <span [ngClass]="getColor(i)" class="text-sm">{{ message.message }}</span>
+              </ng-container>
+              <ng-container *ngIf="message.type === 'audio'">
+                <audio controls>
+                  <source [src]="message.audioUrl" type="audio/mpeg">
+                </audio>
+              </ng-container>
             </div>
-            <span class="text-xs text-gray-500 pl-4">{{ message.timestamp }}</span>
+            <span class="text-xs text-gray-500 pl-4">{{ message.timestamp | date:'short' }}</span>
           </div>
-          
-          
         </div>
       </div>
+    
       <div class="p-4 bg-gray-800 flex items-center">
         <input
           [(ngModel)]="newMessage"
@@ -97,15 +101,28 @@
           placeholder="Type your message..."
           class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"
         />
-        <button
-          (click)="sendMessage()"
-          class="p-2 bg-blue-500 rounded-full text-white"
-        >
-          <i class="fas fa-paper-plane"></i>
-          <!-- Send icon -->
+        <button (click)="sendMessage(newMessage, 'text')" class="p-2 bg-blue-500 rounded-full text-white">
+          <i class="fas fa-paper-plane"></i> <!-- Send icon -->
+        </button>
+    
+        <!-- Recording indicator -->
+        <div *ngIf="isRecording" class="flex items-center justify-center p-2 mx-2 text-white bg-red-500 rounded-full">
+          <i class="fas fa-circle-notch fa-spin"></i>
+          <span class="ml-2">Recording...</span>
+        </div>
+    
+        <button *ngIf="!isRecording" (click)="startRecording()" class="p-2 bg-green-500 rounded-full text-white">
+          <i class="fas fa-microphone"></i> <!-- Microphone icon -->
+        </button>
+        <button *ngIf="isRecording" (click)="stopRecording()" class="p-2 bg-red-500 rounded-full text-white">
+          <i class="fas fa-stop"></i> <!-- Stop icon -->
         </button>
       </div>
     </div>
+    
+    
+    
+    
   </div>
   <!-- <div id="screenShareContainer" class="hidden">
     <video

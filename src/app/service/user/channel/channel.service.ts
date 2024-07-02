@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
 import {
   ChannelData,
@@ -12,7 +12,7 @@ import {
   GetSearchChannelResponse,
   GetUpdateViewsResponse,
   GetUploadResponse,
-} from '../../model/auth';
+} from '../../../model/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -95,5 +95,12 @@ export class ChannelService {
       `${this.apiUrl}channel/searchchannel`,
       { query }
     );
+  }
+  exceldata(startDate: string, endDate: string): Observable<Blob> {
+    let url = `${this.apiUrl}channel/revenue-chart`;
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+    return this._http.get(url, { responseType: 'blob' });
   }
 }

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { SubscriptionmanageService } from '../../../service/admin/subscriptionmanage.service';
+import { SubscriptionmanageService } from '../../../service/admin/subscription/subscriptionmanage.service';
 
 @Component({
   selector: 'app-adminchannelsubscription',

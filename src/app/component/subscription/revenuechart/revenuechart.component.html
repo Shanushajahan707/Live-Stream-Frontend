@@ -1,12 +1,29 @@
-<div class="card">
-    <p *ngIf="overallData">Total Payment: {{ totalPayment | currency:'INR' }}</p>
-    <p-chart *ngIf="overallData; else noDataTemplate" type="line" [data]="overallData" [options]="options"></p-chart>
-    <div *ngIf="overallData">
-    </div>
+<div class="card mx-4">
+  <p class="text-white" *ngIf="overallData">
+    Total Payment: <span class="text-red-600 text-base font-bold">{{ totalPayment | currency : "INR" }}</span>
+  </p>
+  <div class="date-picker-container">
+    <label class="text-white" for="startDate">Start Date:</label>
+    <input class="mx-2 rounded-md" type="date" id="startDate" #startDateInput />
+    <label class="text-white" for="endDate">End Date:</label>
+    <input class="mx-2 rounded-md" type="date" id="endDate" #endDateInput />
+    <button
+      class="bg-red-400 p-3 ms-4 rounded-md"
+      (click)="downloadExcelReport(startDateInput.value, endDateInput.value)"
+    >
+      Download Excel Report
+    </button>
   </div>
-  
-  <ng-template #noDataTemplate>
-    <p-chart type="line" [options]="options"></p-chart>
-    <p *ngIf="!monthlySubscription">No data available to show</p>
-  </ng-template>
-  
+  <p-chart
+    *ngIf="overallData; else noDataTemplate"
+    type="line"
+    [data]="overallData"
+    [options]="options"
+  ></p-chart>
+  <div *ngIf="overallData"></div>
+</div>
+
+<ng-template #noDataTemplate>
+  <p-chart type="line" [options]="options"></p-chart>
+  <p *ngIf="!monthlySubscription">No data available to show</p>
+</ng-template>

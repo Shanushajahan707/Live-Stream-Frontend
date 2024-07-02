@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, iif } from 'rxjs';
 import { catchError, switchMap, filter, take, finalize } from 'rxjs/operators';
-import { AccountService } from '../service/user/account.service';
+import { AccountService } from '../service/user/account/account.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable()

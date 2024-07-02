@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { jwtDecode } from 'jwt-decode';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { User } from '../../model/auth';
+import { User } from '../../../model/auth';
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +18,9 @@ export class SocketService {
     username: string;
     message: string;
     timestamp: Date;
-  }>();
+    type: 'text' | 'audio';
+    audioUrl?: string;
+    }>();
   chatMessages$ = this.chatMessagesSubject.asObservable();
 
   peer = new RTCPeerConnection({
@@ -61,20 +63,31 @@ export class SocketService {
       this._socket.emit('join room', data);
     }
   }
-  sendMessage(message: string) {
+  sendMessage(message: string, messageType: 'text' | 'audio') {
     const room = this.roomid;
     this._socket.emit('chat message', {
       room,
       message,
       username: this.username,
+      messageType
     });
   }
+  
 
   handleChatMessages() {
     this._socket.on('chat message', (data) => {
-      this.chatMessagesSubject.next(data);
+      console.log('Chat data from the signaling server', data);
+      const { username, message, messageType, timestamp, audioUrl } = data;
+      this.chatMessagesSubject.next({ 
+        username, 
+        message: messageType === 'audio' ? '' : message, 
+        timestamp: new Date(timestamp), 
+        type: messageType, 
+        audioUrl: messageType === 'audio' ? audioUrl : undefined 
+      });
     });
   }
+  
   handleUserJoined() {
     this._socket.on('user joined', (data) => {
       console.log('user joined', data.role, data.id);

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { SubscriptionService } from '../../../service/user/subscription.service';
+import { SubscriptionService } from '../../../service/user/subscription/subscription.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { ChannelSubscriptionData } from '../../../model/auth';
@@ -36,5 +36,9 @@ export class ViewsubscriptionplanComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+  generateColor(index: number): string {
+    const hue = (index * 137.508) % 360;
+    return `hsl(${hue}, 70%, 50%)`;
   }
 }

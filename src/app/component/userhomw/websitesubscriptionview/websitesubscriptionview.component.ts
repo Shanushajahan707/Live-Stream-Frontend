@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { SubscriptionService } from '../../../service/user/subscription.service';
+import { SubscriptionService } from '../../../service/user/subscription/subscription.service';
 import { SubscriptionData } from '../../../model/auth';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { onClose } from 'david-ui-angular/lib/types/componentTypes/chip';
-import { AccountService } from '../../../service/user/account.service';
+import { AccountService } from '../../../service/user/account/account.service';
 import { jwtDecode } from 'jwt-decode';
 import { User } from '../../../model/auth';
 

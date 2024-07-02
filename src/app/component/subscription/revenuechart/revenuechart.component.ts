@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { SubscriptionService } from '../../../service/user/subscription.service';
+import { SubscriptionService } from '../../../service/user/subscription/subscription.service';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { OverallData } from '../../../model/auth';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver'; // Ensure this line remains
+import { ChannelService } from '../../../service/user/channel/channel.service';
 
 @Component({
   selector: 'app-revenuechart',
@@ -15,23 +18,26 @@ export class RevenuechartComponent {
   overallData!: OverallData;
   options: any;
   monthlySubscription: { [key: string]: number } = {};
-  totalPayment!:number
+  totalPayment!: number;
+
+
   constructor(
-    private _channelService: SubscriptionService,
-    private _toaster: ToastrService
+    private _subscription: SubscriptionService,
+    private _toaster: ToastrService,
+    private _channelService:ChannelService
+
   ) {}
 
   ngOnInit() {
-    this._channelService
+    this._subscription
       .getRevenueChart()
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res) {
             this._toaster.success(res.message);
-            console.log(res.revenue);
             this.monthlySubscription = res.revenue;
-            this.totalPayment=res.totalAmount
+            this.totalPayment = res.totalAmount;
             this.setUpChartData();
           }
         },
@@ -112,4 +118,43 @@ export class RevenuechartComponent {
       ],
     };
   }
+  downloadExcelReport(startDate: string, endDate: string) {
+    if (!startDate || !endDate) {
+      this._toaster.error('Please select both start and end dates.');
+      return;
+    }
+  
+    this._channelService.exceldata(startDate, endDate)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (blob: Blob) => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const excelBuffer = new Uint8Array(arrayBuffer);
+            const blobData = new Blob([excelBuffer], { type: 'application/octet-stream' });
+            saveAs(blobData, 'RevenueReport.xlsx');
+          };
+          reader.readAsArrayBuffer(blob);
+        },
+        error: (err) => {
+          if (err && err.error && err.error.message) {
+            this._toaster.error(err.error.message);
+          } else {
+            this._toaster.error('An error occurred while downloading the Excel report.');
+            console.error('Error in downloading Excel report:', err);
+          }
+        },
+      });
+  }
+  
+  formatDataForExcel(revenue: any) {
+    const data = [];
+    for (const [key, value] of Object.entries(revenue)) {
+      data.push({ Month: key, Revenue: value });
+    }
+    return data;
+  }
+  
+
 }

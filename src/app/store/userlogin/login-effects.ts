@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, ofType, createEffect } from '@ngrx/effects';
 import { catchError, of, exhaustMap, map, tap } from 'rxjs';
 import * as AuthActions from '../userlogin/login-action';
-import { AccountService } from '../../service/user/account.service';
+import { AccountService } from '../../service/user/account/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';

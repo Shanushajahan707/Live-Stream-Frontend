@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import {
   GetChangePasswordResponse,
   GetForgotPassOtpResponse,
@@ -14,7 +14,7 @@ import {
   SignupResponse,
   loginCredential,
   signupCredential,
-} from '../../model/auth';
+} from '../../../model/auth';
 
 @Injectable({
   providedIn: 'root',

@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { PrimeNGConfig } from 'primeng/api';
 import { Observable, Subscription } from 'rxjs';
-import { DateService } from './service/user/date.service';
-import { AccountService } from './service/user/account.service';
+import { DateService } from './service/user/data/date.service';
+import { AccountService } from './service/user/account/account.service';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _accountService: AccountService
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
     initFlowbite();
     this.primengConfig.ripple = true;
     this.currentTime$ = this._dateService.getCurrentTime();

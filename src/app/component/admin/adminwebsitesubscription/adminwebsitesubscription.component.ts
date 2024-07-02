@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { SubscriptionmanageService } from '../../../service/admin/subscriptionmanage.service';
+import { SubscriptionmanageService } from '../../../service/admin/subscription/subscriptionmanage.service';
 import { ToastrService } from 'ngx-toastr';
 import { SubscriptionData } from '../../../model/auth';
 @Component({

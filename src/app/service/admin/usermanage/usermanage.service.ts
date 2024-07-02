@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { BlockUserResponse, GetUsersResponse, User } from '../../model/auth';
+import { BlockUserResponse, GetUsersResponse, User } from '../../../model/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +19,9 @@ export class UsermanageService {
   }
 
   blockuser(userid: string): Observable<BlockUserResponse> {
-    return this._http.put<BlockUserResponse>(`${this.apiUrl}admin/blockuser/${userid}`, {});
+    return this._http.put<BlockUserResponse>(
+      `${this.apiUrl}admin/blockuser/${userid}`,
+      {}
+    );
   }
 }
