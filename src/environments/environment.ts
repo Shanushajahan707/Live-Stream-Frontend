@@ -1,5 +1,5 @@
 export const environment = {
-    production: false,
+    production: true,
     apiUrl: 'http://localhost:3000/',
     GOOGLE_URL : 'https://accounts.google.com/o/oauth2/v2/auth?',
     razorKey:"rzp_test_I5igMZcnHQiPyk",
