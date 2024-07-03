@@ -31,7 +31,6 @@
     "file-saver": "^2.0.5",
     "flowbite": "^2.3.0",
     "ngx-cookie-service": "^17.1.0",
-    "ngx-emoji": "^0.2.10",
     "ngx-paypal": "^11.0.0",
     "ngx-toastr": "^18.0.0",
     "primeicons": "^7.0.0",
