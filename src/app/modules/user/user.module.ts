@@ -36,6 +36,8 @@ import { NgxPayPalModule } from 'ngx-paypal';
 import { SubscribedmembersComponent } from '../../component/subscription/subscribedmembers/subscribedmembers.component';
 import { RevenuechartComponent } from '../../component/subscription/revenuechart/revenuechart.component';
 import { ChartModule } from 'primeng/chart';
+import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { SidebarModule } from 'primeng/sidebar';
 @NgModule({
   declarations: [
     RecommendationComponent,
@@ -78,7 +80,9 @@ import { ChartModule } from 'primeng/chart';
     ProgressSpinnerModule,
     MenuModule,
     NgxPayPalModule,
-    ChartModule
+    ChartModule,
+    PickerModule,
+    SidebarModule
   ],
   exports: [
     TooltipModule,

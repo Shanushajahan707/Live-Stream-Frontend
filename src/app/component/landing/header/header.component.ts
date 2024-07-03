@@ -119,17 +119,24 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   createRoom() {
-    if (this._Livename && this._RoomId) {
+    if (this._Livename) {
       this._visible = false;
+    const  _roomId=this.generateRandomRoomId()
       const data = {
         Livename: this._Livename,
-        RoomId: this._RoomId,
+        RoomId: _roomId,
       };
       this._dataService.changeData(data);
       this._router.navigateByUrl('live');
     } else {
       console.error('Livename and RoomId are required.');
     }
+  }
+
+ private generateRandomRoomId(): number {
+    const min = 10000; 
+    const max = 99999999; 
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
   joinRoom() {

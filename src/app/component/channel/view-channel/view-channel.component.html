@@ -1,7 +1,7 @@
-<div class="flex flex-col md:flex-row bg-gray-800 h-screen">
+<div class="flex flex-col md:flex-row bg-gray-800 h-full">
   <div class="mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
 
-  <div class="w-full md:w-3/4 m-7">
+  <div class="w-full md:w-3/4 md:m-7 mb-7 md:mb-20">
     <!-- Banner of the channel -->
     <div class="relative mb-4" *ngIf="_followChannel">
       <img
@@ -21,9 +21,9 @@
       *ngIf="_followChannel"
     >
       <div class="flex items-center justify-between">
-        <div class="relative">
+        <div class="relative md:w-16 w-12">
           <img
-            class="w-14 h-14 rounded-full"
+            class="md:w-14 h-14 md:h-14 rounded-full"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
             alt=""
           />
@@ -32,7 +32,7 @@
           ></span>
         </div>
         <div class="flex flex-col ml-2">
-          <span class="text-lg text-white font-bold ml-2">{{
+          <span class="md:text-lg text-sm text-white font-bold ml-2">{{
             _followChannel.channelName
           }}</span>
           <span class="font-bold ml-2">
@@ -45,12 +45,12 @@
         <!-- Edit Icon -->
       </div>
 
-      <div class="flex items-center">
+      <div class="md:flex md:items-center flex-row pb-4">
         <!-- Subscribe Button with Conditional Rendering -->
         <div class="cursor-pointer">
           <ng-container *ngIf="!isMember">
             <div id="Subscribe" class="flex flex-row mx-6">
-              <button class="button" (click)="openModal()">
+              <button class="button w-24 md:28" (click)="openModal()">
                 Subscribe
                 <svg fill="currentColor" viewBox="0 0 24 24" class="icon">
                   <path
@@ -82,7 +82,7 @@
           </button>
           </ng-container>
         </div>
-        <div class="cursor-pointer ms-3">
+        <div class="cursor-pointer ms-3 hidden md:block">
           <button
             disabled
             type="button"
@@ -125,19 +125,7 @@
       class="content-container"
       *ngIf="_selectedContent === 'shorts'"
     >
-      <!-- <ul>
-        <li *ngFor="let video of channel?.video; else noVideo">
-          <video controls>
-            <source [src]="video" type="video/mp4">
-            Your browser does not support the video tag.
-          </video>
-        </li>
-      </ul>  -->
-      <!--      
-        <video class="h-29 w-7" controls autoplay muted>
-          <source src="" type="video/mp4">
-          Your browser does not support the video tag.
-        </video> -->
+    
       <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
       <div class="card" *ngIf="_followChannel">
         <!-- Check if followChannel.video is available and has at least one item -->
@@ -176,21 +164,7 @@
         </ng-template>
       </div>
     </div>
-    <!-- <div id="liveContainer" class="content-container" *ngIf="_selectedContent === 'live' && isMember">
-      <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
-      <div class="live-history-container" *ngIf="liveHistory && liveHistory.length > 0">
-        <div *ngFor="let live of liveHistory" class="live-history-item">
-          <h3>Live Name: {{ live.streamerName }}</h3>
-          <p>Channel: {{ live.channelId.channelName }}</p>
-          <p>Start Date: {{ live.startDate | date: 'shortDate' }}</p>
-          <p>Start Time: {{ live.startTime | date: 'shortTime' }}</p>
-          <p *ngIf="live.endTime">End Time: {{ live.endTime | date: 'shortTime' }}</p>
-          <p>Viewer Count: {{ live.viewerCount }}</p>
-          <p>Room ID: {{ live.roomId }}</p>
-          <p>Viewers: {{ live.viewerNames }}</p>
-        </div>
-      </div>
-    </div> -->
+  
 
 
     <div id="liveContainer" class="content-container" *ngIf="_selectedContent === 'live' && isMember;" class="card" >
@@ -279,7 +253,7 @@
       </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-      <button>close</button>
+      <button class="close-btn">Close</button>
     </form>
   </div>
 </dialog>

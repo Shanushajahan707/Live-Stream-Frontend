@@ -50,6 +50,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   audioBlob: Blob | null = null;
   audioUrl: string | null = null;
   isRecording: boolean = false;
+  showEmojiPicker: boolean = false;
   colors: string[] = [
     'text-red-500',
     'text-blue-500',
@@ -79,23 +80,48 @@ export class LiveComponent implements OnInit, OnDestroy {
             this._dataService.currentData
               .pipe(takeUntil(this._destroy$))
               .subscribe((data) => {
-                this._startlive = true;
                 this._livereceivedData = data;
                 if (data.RoomId > 0) {
-                  console.log('start live ', data);
+                  // console.log('start live ', data);
+                  localStorage.setItem(
+                    'roomId',
+                    this._livereceivedData.RoomId.toString()
+                  );
+                  console.log('start live', this._livereceivedData);
+
+                  this._startlive = true;
                   this.initializeConnection(this._livereceivedData.RoomId);
+                } else {
+                  // console.log('else called');
+                  const roomId = localStorage.getItem('roomId') as string;
+                  // console.log("rooomid",roomId);
+                  if (roomId) {
+                    this._startlive = true;
+                    this.initializeConnection(parseInt(roomId));
+                  }
                 }
               });
 
             this._dataService.joinroom
               .pipe(takeUntil(this._destroy$))
               .subscribe((data) => {
-                this._joinlive = true;
-                console.log('join live ', data);
+                // console.log('join live ', data);
                 this._joinreceivedData = data;
                 if (data.RoomId > 0) {
+                  localStorage.setItem(
+                    'joinRoom',
+                    this._joinreceivedData.RoomId.toString()
+                  );
+                  this._joinlive = true;
                   console.log('join live', this._joinreceivedData);
                   this.joinLiveStream(this._joinreceivedData.RoomId);
+                } else {
+                  const roomId = localStorage.getItem('joinRoom') as string;
+                  console.log(roomId);
+                  if (roomId) {
+                    this._joinlive = true;
+                    this.joinLiveStream(parseInt(roomId));
+                  }
                 }
               });
 
@@ -123,10 +149,10 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   initializeConnection(RoomId: number) {
     const currentDate = new Date();
-    console.log('date', this.channelData.lastDateOfLive);
+    // console.log('date', this.channelData.lastDateOfLive);
     const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
-    console.log('currentData ', currentDate);
-    console.log('last date ', lastDateOfLive);
+    // console.log('currentData ', currentDate);
+    // console.log('last date ', lastDateOfLive);
     localStorage.setItem('payment-required', this.channelData._id);
     if (lastDateOfLive > currentDate) {
       this._liveServive
@@ -175,7 +201,7 @@ export class LiveComponent implements OnInit, OnDestroy {
             if (res) {
               console.log(res);
               this.streamingId = res.liveId;
-              console.log('streaming id is', this.streamingId);
+              // console.log('streaming id is', this.streamingId);
             }
           },
           error: (err) => {
@@ -201,6 +227,8 @@ export class LiveComponent implements OnInit, OnDestroy {
       this._toaster.error('Your trial is over');
       this._router.navigate(['/subscriptionplan']);
     }
+
+    // console.log('is create ', this._startlive);
   }
 
   getSubscriberPlan(username: string): number | null {
@@ -212,39 +240,48 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   sendMessage(message: string, messageType: 'text' | 'audio') {
     this._socketService.sendMessage(message, messageType);
+    this.newMessage = '';
+  }
+  toggleEmojiPicker() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
+
+  addEmoji(event: any) {
+    this.newMessage += event.emoji.native;
   }
 
   startRecording() {
-    this.isRecording=true
+    this.isRecording = true;
     console.log('recording started');
-    this._toaster.info('recording started')
-    navigator.mediaDevices.getUserMedia({ audio: true })
-      .then(stream => {
+    this._toaster.info('recording started');
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((stream) => {
         this.mediaRecorder = new MediaRecorder(stream);
         this.mediaRecorder.start();
         this.mediaRecorder.ondataavailable = (e: any) => {
           this.audioChunks.push(e.data);
         };
       })
-      .catch(err => console.error('Error accessing media devices.', err));
+      .catch((err) => console.error('Error accessing media devices.', err));
   }
-  
+
   stopRecording() {
-    this.isRecording=false
+    this.isRecording = false;
     console.log('recording stopped');
-    this._toaster.info('recording stopped')
-  
+    this._toaster.info('recording stopped');
+
     this.mediaRecorder.stop();
     this.mediaRecorder.onstop = () => {
       this.audioBlob = new Blob(this.audioChunks, { type: 'audio/mpeg' });
       const reader = new FileReader();
-  
+
       reader.onload = () => {
         const base64AudioMessage = reader.result as string;
         this._socketService.sendMessage(base64AudioMessage, 'audio');
         this.audioChunks = []; // Clear the audio chunks for the next recording
       };
-  
+
       reader.readAsDataURL(this.audioBlob); // Convert the Blob to a base64 string
     };
   }
@@ -277,6 +314,8 @@ export class LiveComponent implements OnInit, OnDestroy {
 
       this._socketService.joinRoom(RoomId, 'viewer');
     }
+
+    console.log('is join ', this._joinlive);
   }
 
   toggleScreenShare() {
@@ -340,6 +379,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   leaveRoom() {
     this._socketService.disconnect();
+
     this._liveServive
       .onUpdateStopLiveInfo()
       .pipe(takeUntil(this._destroy$))
@@ -367,7 +407,7 @@ export class LiveComponent implements OnInit, OnDestroy {
           if (res) {
             console.log(res);
             this.streamingId = res.liveId;
-            this._toaster.info('live history updated')
+            this._toaster.info('live history updated');
             console.log('streaming id is', this.streamingId);
           }
         },
@@ -378,6 +418,15 @@ export class LiveComponent implements OnInit, OnDestroy {
           }
         },
       });
+
+    localStorage.removeItem('roomId');
+    localStorage.removeItem('joinRoom');
+
+    if (this._localVideo.nativeElement) {
+      const localVideoElement = this._localVideo.nativeElement;
+      const localStream = localVideoElement.srcObject as MediaStream;
+      localStream.getTracks().forEach((track) => track.stop());
+    }
   }
   getColor(index: number) {
     return this.colors[index % this.colors.length];

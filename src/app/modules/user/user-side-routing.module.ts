@@ -28,7 +28,7 @@ const routes: Routes = [
   {
     path: 'subscriptionplan',
     component: WebsitesubscriptionviewComponent,
-    canActivate: [authGuard],
+    canActivate: [authGuard,subscriptionGuard],
   },
   {
     path: 'subscription',

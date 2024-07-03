@@ -1,4 +1,4 @@
-<div class="flex flex-col h-screen">
+<div class="flex flex-col h-full mb-20">
   <!-- Video and Chat Container -->
   <div class="flex flex-1">
     <!-- Video Section -->
@@ -95,15 +95,22 @@
       </div>
     
       <div class="p-4 bg-gray-800 flex items-center">
-        <input
-          [(ngModel)]="newMessage"
-          type="text"
-          placeholder="Type your message..."
-          class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"
-        />
+        <input [(ngModel)]="newMessage" type="text" placeholder="Type your message..." class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"/>
         <button (click)="sendMessage(newMessage, 'text')" class="p-2 bg-blue-500 rounded-full text-white">
           <i class="fas fa-paper-plane"></i> <!-- Send icon -->
         </button>
+    
+        <!-- Emoji Picker -->
+        <button (click)="toggleEmojiPicker()" class="p-2 bg-yellow-500 rounded-full text-white">
+          <i class="fas fa-smile"></i> <!-- Emoji icon -->
+        </button>
+    
+        <p-dialog header="Choose Emoji" [modal]="true" [(visible)]="showEmojiPicker" [style]="{ width: '25rem' }">
+          <div class="modal-content">
+            <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+          </div>
+        </p-dialog>
+    
     
         <!-- Recording indicator -->
         <div *ngIf="isRecording" class="flex items-center justify-center p-2 mx-2 text-white bg-red-500 rounded-full">
@@ -119,10 +126,6 @@
         </button>
       </div>
     </div>
-    
-    
-    
-    
   </div>
   <!-- <div id="screenShareContainer" class="hidden">
     <video
@@ -134,7 +137,7 @@
   </div> -->
   <!-- Control Buttons -->
   <div class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4 mb-10">
-    <button
+    <button  *ngIf="_startlive"
       class="bg-gray-700 p-2 rounded-full text-white"
       (click)="toggleMic()"
     >
@@ -143,7 +146,7 @@
       <!-- Call mute/unmute icon -->
     </button>
 
-    <button
+    <button *ngIf="_startlive"
       class="bg-gray-700 p-2 rounded-full text-white"
       (click)="toggleVideo()"
     >
@@ -152,7 +155,7 @@
       <!-- Video mute/unmute icon -->
     </button>
 
-    <button
+    <button *ngIf="_startlive"
       (click)="toggleScreenShare()"
       id="screenShare"
       class="bg-gray-700 p-2 rounded-full text-white"

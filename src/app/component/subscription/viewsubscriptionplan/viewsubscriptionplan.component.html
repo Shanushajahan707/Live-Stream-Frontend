@@ -1,6 +1,6 @@
-<div class="flex flex-col items-center">
+<div class="flex w-full flex-col items-center mb-20">
     <div class="w-full flex justify-center"></div>
-    <div id="pricing-table" class="clear w-full flex items-center justify-center flex-wrap">
+    <div id="pricing-table" class="clear md:w-full w-30 flex items-center justify-center flex-wrap">
       <div *ngFor="let plan of channelPlans; let i = index" class="plan h-72">
         <h3 [ngStyle]="{'color': generateColor(i)}">{{ plan.month }} Month<span>₹{{ plan.price }}</span></h3>
         <ul>

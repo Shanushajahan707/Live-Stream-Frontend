@@ -1,7 +1,7 @@
-<div class="flex flex-col md:flex-row bg-gray-800 h-screen">
+<div class="flex flex-col md:flex-row bg-gray-800 h-full mb-5">
   <div class="mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
 
-  <div class="w-full md:w-3/4 m-7">
+  <div class="w-full md:w-3/4 mb-10 md:m-7">
     <!-- Banner of the channel -->
     <div class="relative mb-4">
       <img
@@ -20,8 +20,8 @@
     <div class="flex items-center justify-between p-4 bg-gray-800">
       <div class="flex items-center justify-between">
         <div class="relative">
-          <img
-            class="w-14 h-14 rounded-full"
+          <img 
+            class="md:w-14 h-20 w-40 md:h-14 rounded-full"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
             alt=""
           />
@@ -65,7 +65,7 @@
             <i class="pi pi-upload mx-2"></i>Upload Shorts
           </button>
         </div>
-        <div *ngIf="_channel">
+        <div class="md:block hidden" *ngIf="_channel">
           <button
             disabled
             type="button"
@@ -184,22 +184,20 @@
       </div>
 
       <div
-        id="followContainer"
-        class="content-container"
-        *ngIf="_selectedContent === 'followers'"
-      >
-        <ul *ngIf="_channel.followers; else noFollowers">
-          <li
-            class="flex justify-around"
-            *ngFor="let follower of _channel.followers"
-          >
-            {{ follower.username }}
-          </li>
-        </ul>
-        <ng-template #noFollowers>
-          <p>No followers</p>
-        </ng-template>
-      </div>
+      id="followContainer"
+      class="content-container overflow-y-auto h-64" 
+      *ngIf="_selectedContent === 'followers'"
+    >
+      <ul *ngIf="_channel.followers; else noFollowers">
+        <li class="flex justify-around" *ngFor="let follower of _channel.followers">
+          {{ follower.username }}
+        </li>
+      </ul>
+      <ng-template #noFollowers>
+        <p>No followers</p>
+      </ng-template>
+    </div>
+    
     </div>
   </div>
 </div>

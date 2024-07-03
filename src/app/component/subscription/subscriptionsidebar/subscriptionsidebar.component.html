@@ -1,8 +1,53 @@
-<div id="viewport" class="flex h-screen transition-all duration-500">
-  <!-- Sidebar -->
+<div class="card flex justify-content-center">
+  <!-- Sidebar Toggle Button (Hamburger Menu) for Small Devices -->
+  <button
+    class="lg:hidden focus:outline-none"
+    (click)="sidebarVisible = !sidebarVisible"
+  >
+    <i class="fas fa-bars text-gray-300"></i>
+  </button>
+
+  <!-- Sidebar for Small Devices -->
+  <p-sidebar [(visible)]="sidebarVisible" class="lg:hidden">
+    <div id="viewport" class="flex md:h-screen transition-all duration-500">
+      <!-- Sidebar -->
+      <div id="sidebar" class="w-64 pt-6 h-full bg-gray-800 transition-all duration-500">
+        <ul class="nav">
+          <li>
+            <a (click)="subscriptionview()"
+              [routerLinkActive]="['active-link']"
+              class="flex items-center border-b border-gray-700 text-gray-300 py-4 px-6 hover:text-white"
+            >
+              <i class="fas fa-user-check mr-4"></i> Subscription View
+            </a>
+          </li>
+          <li>
+            <a
+            (click)="members()"
+              [routerLinkActive]="['active-link']"
+              class="flex items-center border-b border-gray-700 text-gray-300 py-4 px-6 hover:text-white"
+            >
+              <i class="fa-solid fa-user-plus mr-4"></i> Members
+            </a>
+          </li>
+          <li>
+            <a
+            (click)="revenue()"
+              [routerLinkActive]="['active-link']"
+              class="flex items-center border-b border-gray-700 text-gray-300 py-4 px-6 hover:text-white"
+            >
+              <i class="fa-solid fa-dollar-sign mr-4"></i> Revenue
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </p-sidebar>
+
+  <!-- Sidebar for Large Devices (Hidden on Small Devices) -->
   <div
-    id="sidebar"
-    class="w-64 pt-6 h-full bg-gray-800 transition-all duration-500"
+    id="sidebar-lg"
+    class="hidden lg:block w-64 pt-6 h-screen bg-gray-800 transition-all duration-500"
   >
     <ul class="nav">
       <li>
@@ -34,6 +79,7 @@
       </li>
     </ul>
   </div>
+
   <!-- Content -->
   <div id="content" class="flex-grow">
     <!-- Your content goes here -->

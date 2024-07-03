@@ -1,211 +1,11 @@
-<!-- <div
-  *ngIf="!isadmin"
-  class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-6 text-white"
->
-  <p class="text-2xl font-bold flex items-center">
-    <a routerLink="/userhome"> 
-      <img src="\assets\Images\logo.png" class="h-12 ms-4" alt="">
-     </a>
-  </p>
-  <div class="flex items-center">
-    <ng-container *ngIf="!islogged">
-      <button
-        (click)="onlogin()"
-        class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-      >
-        Login
-      </button>
-      <button
-        (click)="onsignup()"
-        class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
-      >
-        Signup
-      </button>
-    
-    </ng-container>
-    <ng-container *ngIf="islogged">
-      <button
-      class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent"
-    >
-      Category
-    </button>
-    <button
-      routerLink="/channel/following"
-      class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent"
-    >
-      Following
-    </button>
-    
-      <button
-        (click)="livepage()"
-        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl "
-      >
-        Start Live
-      </button>
-      <button
-        (click)="joinpage()"
-        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl "
-      >
-        Join Live
-      </button>
-      
-      <div class="card flex justify-content-center">
-        <p-button />
-        <p-dialog
-          header="Add Live Info"
-          [modal]="true"
-          [(visible)]="visible"
-          [style]="{ width: '25rem' }"
-        >
-          <span class="p-text-secondary block mb-5"
-            >Update your Live information.</span
-          >
-          <div class="flex align-items-center gap-3 mb-3">
-            <label for="username" class="font-semibold w-6rem">Livename</label>
-            <input
-              pInputText
-              id="username"
-              type="text"
-              class="flex-auto"
-              [(ngModel)]="Livename"
-              autocomplete="off"
-            />
-          </div>
-          <div class="flex align-items-center gap-3 mb-5">
-            <label for="email" class="font-semibold w-6rem">RooomId:</label>
-            <input
-              pInputText
-              id="email"
-              type="number"
-              class="flex-auto"
-              [(ngModel)]="RoomId"
-              autocomplete="off"
-            />
-          </div>
-          <div class="flex justify-content-end gap-2">
-            <p-button
-              class="text-red-700"
-              label="Cancel"
-              severity="secondary"
-              (click)="visible = false"
-            />
-            <p-button
-              class="text-green-700"
-              label="Start"
-              (click)="createRoom()"
-            />
-          </div>
-        </p-dialog>
-
-        <p-dialog
-          header="Add Live Info"
-          [modal]="true"
-          [(visible)]="jvisible"
-          [style]="{ width: '25rem' }"
-        >
-          <span class="p-text-secondary block mb-5"
-            >Update your join Live information.</span
-          >
-          <div class="flex align-items-center gap-3 mb-3">
-            <label for="username" class="font-semibold w-6rem">Livename</label>
-            <input
-              pInputText
-              id="username"
-              type="text"
-              class="flex-auto"
-              [(ngModel)]="jLivename"
-              autocomplete="off"
-            />
-          </div>
-          <div class="flex align-items-center gap-3 mb-5">
-            <label for="email" class="font-semibold w-6rem">RooomId:</label>
-            <input
-              pInputText
-              id="email"
-              type="number"
-              class="flex-auto"
-              [(ngModel)]="jRoomId"
-              autocomplete="off"
-            />
-          </div>
-          <div class="flex justify-content-end gap-2">
-            <p-button
-              class="text-red-700"
-              label="Cancel"
-              severity="secondary"
-              (click)="visible = false"
-            />
-            <p-button
-              class="text-green-700"
-              label="Start"
-              (click)="joinRoom()"
-            />
-          </div>
-        </p-dialog>
-      </div>
-    </ng-container>
-    <ng-container *ngIf="islogged">
-      <button
-        id="dropdownUserAvatarButton"
-        data-dropdown-toggle="dropdownAvatar"
-        class="flex text-sm bg-gray-800 rounded-full md:me-0 dark:focus:ring-gray-600"
-        type="button"
-      >
-        <span class="sr-only">Open user menu</span>
-        <i class="pi pi-user" style="font-size: 2rem"></i>
-      </button>
-
-      Dropdown menu
-      <div
-        id="dropdownAvatar"
-        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-      >
-        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-- <div>{{ userName$ | async }}</div>
-          <div class="font-medium truncate">{{ email$ | async }}</div> -->
-<!-- <div>{{ userData.username }}</div>
-          <div class="font-medium truncate">{{ userData.email }}</div>
-        </div>
-        <ul
-          class="py-2 text-sm text-gray-700 dark:text-gray-200"
-          aria-labelledby="dropdownUserAvatarButton"
-        >
-          <li class="items-center flex">
-            <a
-              routerLink="/channel/mychannel"
-              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >Channel
-
-              <i class="pi pi-youtube" style="font-size: 1.4rem"></i>
-            </a>
-          </li>
-          <li>
-            <a
-              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            >
-              Settings
-              <i class="pi pi-spin pi-cog" style="font-size: 1.4rem"></i>
-            </a>
-          </li>
-        </ul>
-        <div class="py-2">
-          <a
-            (click)="onlogout()"
-            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-          >
-            Sign out
-            <i class="pi pi-power-off" style="font-size: 1.4rem"></i>
-          </a>
-        </div>
-      </div>
-    </ng-container>
-  </div>
-</div> -->
-
-<div class="navbar bg-base-100 p-3 mt-2">
-  <div class="flex-1">
+<div class="navbar flex justify-between bg-base-100 p-3 mt-2">
+  <div class="flex">
     <a routerLink="/userhome">
-      <img src="/assets/Images/logo.png" class="h-12 ms-4" alt="logo" />
+      <img
+        src="/assets/Images/logo.png"
+        class="md:h-12 md:w-44 h-7 20 ms-4"
+        alt="logo"
+      />
     </a>
   </div>
   <div class="flex-none gap-2">
@@ -228,26 +28,21 @@
     </ng-container>
     <ng-container *ngIf="islogged">
       <button
-        class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent"
-      >
-        Category
-      </button>
-      <button
         routerLink="/channel/following"
         [routerLinkActive]="['active-link']"
-        class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent"
+        class="ml-4 text-xl rounded px-4 py-2 font-normal text-white bg-transparent md:block hidden"
       >
         Following
       </button>
       <button
         (click)="livepage()"
-        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl"
+        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl md:block hidden"
       >
         Start Live
       </button>
       <button
         (click)="joinpage()"
-        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl"
+        class="mr-2 rounded px-4 py-2 font-normal text-white text-xl md:block hidden"
       >
         Join Live
       </button>
@@ -274,17 +69,7 @@
               autocomplete="off"
             />
           </div>
-          <div class="flex align-items-center gap-3 mb-5">
-            <label for="email" class="font-semibold w-6rem">RoomId:</label>
-            <input
-              pInputText
-              id="email"
-              type="number"
-              class="flex-auto"
-              [(ngModel)]="_RoomId"
-              autocomplete="off"
-            />
-          </div>
+
           <div class="flex justify-content-end gap-2">
             <p-button
               class="text-red-700"
@@ -301,7 +86,7 @@
         </p-dialog>
 
         <p-dialog
-          header="Add Live Info"
+          header="Add Join Live Info"
           [modal]="true"
           [(visible)]="_jvisible"
           [style]="{ width: '25rem' }"
@@ -309,17 +94,7 @@
           <span class="p-text-secondary block mb-5">
             Update your join Live information.
           </span>
-          <!-- <div class="flex align-items-center gap-3 mb-5">
-            <label for="email" class="font-semibold w-6rem">RoomId:</label>
-            <input
-              pInputText
-              id="username"
-              type="text"
-              class="flex-auto"
-              [(ngModel)]="_jLivename"
-              autocomplete="off"
-            />
-          </div> -->
+
           <div class="flex align-items-center gap-3 mb-5">
             <label for="email" class="font-semibold w-6rem">RoomId:</label>
             <input
@@ -353,7 +128,7 @@
         [formControl]="searchControl"
         type="text"
         placeholder="Search"
-        class="input input-error w-full max-w-xs"
+        class="input input-error md:w-full w-20"
         (focus)="onFocus()"
         (blur)="onBlur()"
       />
@@ -414,6 +189,28 @@
               class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
               >Channel
               <i class="pi pi-youtube" style="font-size: 1.4rem"></i>
+            </a>
+          </li>
+          <li class="flex md:hidden">
+            <a
+              routerLink="/channel/following"
+              [routerLinkActive]="['active-link']"
+              class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
+              >Following
+            </a>
+          </li>
+          <li class="flex md:hidden">
+            <a
+              (click)="livepage()"
+              class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
+              >Start Live
+            </a>
+          </li>
+          <li class="flex md:hidden">
+            <a
+              (click)="joinpage()"
+              class="block px-4 py-2 hover:bg-gray-800 dark:hover:bg-gray-600 dark:hover:text-white"
+              >Join Live
             </a>
           </li>
           <li class="flex">
@@ -503,40 +300,3 @@
     </div>
   </div>
 </dialog>
-
-<!-- 
-<div class="flex items-center">
- 
-  <ng-container *ngIf="islogged">
-    <button
-      id="dropdownUserAvatarButton"
-      data-dropdown-toggle="dropdownAvatar"
-      class="flex text-sm bg-gray-800 rounded-full md:me-0 dark:focus:ring-gray-600"
-      type="button"
-    >
-      <span class="sr-only">Open user menu</span>
-      <i class="pi pi-user" style="font-size: 2rem"></i>
-    </button>
-
-    <div
-      id="dropdownAvatar"
-      class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-    >
-      <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-    <div>{{ userName$ | async }}</div>
-        <div class="font-medium truncate">{{ email$ | async }}</div> -->
-
-<!-- <div class="font-medium truncate">{{ userData.email }}</div>
-      </div>
-      <ul
-        class="py-2 text-sm text-gray-700 dark:text-gray-200"
-        aria-labelledby="dropdownUserAvatarButton"
-      >
-      
-      </ul>
-      <div class="py-2">
-      
-      </div>
-    </div>
-  </ng-container>
-</div>  -->
