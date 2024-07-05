@@ -32,7 +32,7 @@ export class SocketService {
   });
 
   constructor() {
-    this._socket = io('https://capturelive-shanushajahan707s-projects.vercel.app', {});
+    this._socket = io('https://onlineecart.shop', {});
     this._socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
     });
