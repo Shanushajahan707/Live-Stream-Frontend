@@ -6,7 +6,7 @@
     </div>
 
     <!-- Right Side (Login Form) -->
-    <div class="w-full md:w-1/2 p-8 mt-5" >
+    <div class="w-full md:w-1/2 p-8 mt-16" >
       <h1 class="text-xl font-bold mb-8 text-white flex justify-center">Login</h1>
       <form [formGroup]="_loginForm" (ngSubmit)="onSubmit()">
         <div class="mb-4">
@@ -16,7 +16,7 @@
             id="email"
             name="email"
             formControlName="email"
-            class="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
+            class="w-full px-3 py-2 rounded-lg text-white bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
             placeholder="Enter your email"
           />
           <div
@@ -39,7 +39,7 @@
             id="password"
             formControlName="password"
             name="password"
-            class="w-full px-3 py-2 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
+            class="w-full px-3 py-2 rounded-lg text-white bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500 bg-transparent"
             placeholder="Enter your password"
           />
           <div
