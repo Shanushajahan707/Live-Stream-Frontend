@@ -7,9 +7,11 @@ import {
   EditChannelInterface,
   GetChannelInfo,
   GetFollowResponse,
+  GetFollowResponseForHome,
   GetFullFollowedChannel,
   GetRecommededChannel,
   GetSearchChannelResponse,
+  GetTopChannelResponse,
   GetUpdateViewsResponse,
   GetUploadResponse,
 } from '../../../model/auth';
@@ -64,9 +66,9 @@ export class ChannelService {
       `${this.apiUrl}channel/getfullfollowchannel`
     );
   }
-  onGetFollowChannel(chanenlId: string): Observable<GetFollowResponse> {
+  onGetFollowChannel(channelId: string): Observable<GetFollowResponse> {
     return this._http.get<GetFollowResponse>(
-      `${this.apiUrl}channel/getfollowchannel/${chanenlId}`,
+      `${this.apiUrl}channel/getfollowchannel/${channelId}`,
       {}
     );
   }
@@ -103,4 +105,14 @@ export class ChannelService {
     }
     return this._http.get(url, { responseType: 'blob' });
   }
+  onGetFollowChannelForHome(): Observable<GetFollowResponseForHome> {
+    return this._http.get<GetFollowResponseForHome>(
+      `${this.apiUrl}channel/getfollowchannelid`
+    );
+  }
+
+  onGetTopChannelList():Observable<GetTopChannelResponse>{
+    return this._http.get<GetTopChannelResponse>(`${this.apiUrl}channel/getchannneltopchannel`)
+  }
+
 }

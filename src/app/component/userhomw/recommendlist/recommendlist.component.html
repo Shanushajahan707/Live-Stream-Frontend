@@ -1,4 +1,3 @@
-
 <!-- Recommended Channels -->
 <h2 class="text-xl font-bold mb-4">Recommended Channels</h2>
 
@@ -10,40 +9,62 @@
     [responsiveOptions]="_responsiveOptions"
   >
     <ng-template let-channel pTemplate="item">
-      <div class="border p-2 m-3 rounded">
+      <div class="p-2 m-3 rounded-xl card bg-black" id="livecard">
         <div class="relative">
           <img
-            src="https://onlineecart.shop/channelBanner/{{ channel.banner }}"
+            src="http://localhost:3000/channelBanner/{{ channel.banner }}"
             alt="Channel Image"
-            class="w-full h-56 rounded-lg mb-2 md:px-10 relative z-10"
+            class="w-full h-56 rounded-xl mb-2 relative z-10"
           />
         </div>
         <div class="mt-2">
-          <p class="text-sm text-gray-400 font-semibold">
+          <p class="text-sm text-white font-semibold">
             Channel Name: {{ channel.channelName }}
           </p>
-          <p class="text-xs text-gray-500">
+          <p class="text-xs text-white">
             Followers: {{ channel.followers.length }}
           </p>
         </div>
-        <div class="mt-4 flex justify-between items-center">
+        <!-- <div class="mt-4 flex justify-between items-center">
           <button
-            *ngIf="!isFollowing(channel)"
+            *ngIf="!channel.followers.includes(decodedToken._id); else unfollow"
             type="button"
             (click)="follow(channel)"
             class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             Follow
           </button>
-
+          <ng-template #unfollow>
+            
           <button
-            *ngIf="isFollowing(channel)"
+          type="button"
+          (click)="unFollow(channel)"
+          class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Unfollow
+        </button>
+          </ng-template>
+        </div> -->
+        <div class="mt-4 flex justify-between items-center">
+          <button
+            *ngIf=" _followedChannels.includes(channel._id);
+              else followw
+            "
             type="button"
             (click)="unFollow(channel)"
-            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+            class="bg-emerald-700 hover:bg-emarald-800 text-white font-bold py-2 px-4 rounded"
           >
-            Unfollow
+            unfollow
           </button>
+          <ng-template #followw>
+            <button
+              type="button"
+              (click)="follow(channel)"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+            >
+              follow
+            </button>
+          </ng-template>
         </div>
       </div>
     </ng-template>
@@ -67,12 +88,12 @@
       [responsiveOptions]="_responsiveOptions"
     >
       <ng-template let-channel pTemplate="item">
-        <div class="border p-2 m-3 rounded">
+        <div class="p-2 m-3 rounded-xl card bg-black" id="livecard">
           <div class="relative">
             <img
               src="http://localhost:3000/channelBanner/{{ channel.banner }}"
               alt="Channel Image"
-              class="w-full h-56 rounded-lg mb-2 md:px-10 relative z-10"
+              class="w-full h-56 rounded-xl mb-2 relative z-10"
             />
           </div>
           <div class="mt-2">

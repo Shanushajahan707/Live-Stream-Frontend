@@ -1,49 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChannelService } from '../../../service/user/channel/channel.service';
+import {  GetTrendingChannelResponse } from '../../../model/auth';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-recommendation',
   templateUrl: './recommendation.component.html',
   styleUrl: './recommendation.component.scss',
 })
-export class RecommendationComponent {
+export class RecommendationComponent implements OnInit, OnDestroy {
+  private readonly _destroy$ = new Subject<void>();
   showMenu: boolean = false;
+  _recommendations!: GetTrendingChannelResponse[];
 
-  toggleMenu() {
-    this.showMenu = !this.showMenu;
- }
+  constructor(private _channelService: ChannelService) {}
+  ngOnInit(): void {
+    this._channelService
+      .onGetTopChannelList()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
+            this._recommendations = res.channel;
+            console.log(res);
+          }
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            console.log(err.error.message);
+          }
+        },
+      });
+      
+  }
 
-  recommendations: any[] = [
-    {
-      avatar:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrijjw-xF369QwQgouTEJBEeOAq0cLETni17kfUVuUvw&simages.png', // Placeholder image
-      channelName: 'Channel A',
-      viewsCount: 1500,
-    },
-    {
-      avatar:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrijjw-xF369QwQgouTEJBEeOAq0cLETni17kfUVuUvw&simages.png', // Placeholder image
-      channelName: 'Channel B',
-      viewsCount: 800,
-    },
-    {
-      avatar:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrijjw-xF369QwQgouTEJBEeOAq0cLETni17kfUVuUvw&simages.png', // Placeholder image
-      channelName: 'Channel C',
-      viewsCount: 1200,
-    },
-    {
-      avatar:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrijjw-xF369QwQgouTEJBEeOAq0cLETni17kfUVuUvw&simages.png', // Placeholder image
-      channelName: 'Channel D',
-      viewsCount: 600,
-    },
-    {
-      avatar:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSrijjw-xF369QwQgouTEJBEeOAq0cLETni17kfUVuUvw&simages.png', // Placeholder image
-      channelName: 'Channel E',
-      viewsCount: 2000,
-    },
-  ];
-
-  
+  ngOnDestroy(): void {
+    this._destroy$.next();
+    this._destroy$.complete();
+  }
 }

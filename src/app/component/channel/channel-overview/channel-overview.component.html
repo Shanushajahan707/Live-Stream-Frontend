@@ -1,13 +1,13 @@
 <div class="flex flex-col md:flex-row bg-gray-800 h-full mb-5">
-  <div class="mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
+  <div class="md:w-64"><app-recommendation /></div>
 
-  <div class="w-full md:w-3/4 mb-10 md:m-7">
+  <div class="w-full md:w-3/4 md:m-7 mb-7 md:mb-20">
     <!-- Banner of the channel -->
-    <div class="relative mb-4">
+    <div class="relative mb-4 p-3  rounded-md bg-gray-900">
       <img
         *ngIf="_channel"
-        src="https://onlineecart.shop/channelBanner/{{ _channel.banner }}"
-        class="w-full rounded-sm h-56 md:h-64 lg:h-72 z-0"
+        src="http://localhost:3000/channelBanner/{{ _channel.banner }}"
+        class="rounded-sm w-full h-76 md:h-96"
         alt="Channel Banner"
       />
       <!-- <img
@@ -20,7 +20,7 @@
     <div class="flex items-center justify-between p-4 bg-gray-800">
       <div class="flex items-center justify-between">
         <div class="relative">
-          <img 
+          <img
             class="md:w-14 h-20 w-40 md:h-14 rounded-full"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
             alt=""
@@ -113,6 +113,12 @@
         </label>
       </div>
 
+
+
+
+
+
+
       <!-- Dynamic Content Display Based on Selection -->
       <div
         id="videosContainer"
@@ -135,7 +141,7 @@
         <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
         <div class="card">
           <!-- Check if followChannel.video is available and has at least one item -->
-          <ng-container *ngIf="_channel?.video?.length; else singleVideo">
+          <!-- <ng-container *ngIf="_channel?.video?.length; else singleVideo">
             <p-carousel
               [value]="_channel.video"
               [numVisible]="3"
@@ -158,8 +164,34 @@
                 </div>
               </ng-template>
             </p-carousel>
-          </ng-container>
+          </ng-container> -->
 
+          <p-carousel 
+          [value]="_channel.video" 
+          [numVisible]="1" 
+          [numScroll]="1" 
+          orientation="vertical" 
+          verticalViewPortHeight="360px">
+              <ng-template let-videoItem pTemplate="item">
+                  <div class="border-3 border-red-600 surface-border border-round m-2  flex justify-center">
+                    <div>
+      
+                    <video
+                          #target
+                          class="h-80 w-72"
+                          [src]="videoItem.url"
+                          controls
+                          muted
+                          (play)="onVideoPlay(videoItem.url)"
+                        ></video>
+                        <div class="video-info">
+                          <span class="font-semibold text-lg m-3">{{ videoItem.views }} Views</span>
+                        </div>
+                      </div>
+      
+                  </div>
+              </ng-template>
+      </p-carousel>
           <!-- Template for single video when followChannel.video is not available or empty -->
           <ng-template #singleVideo>
             <video
@@ -180,24 +212,26 @@
         class="content-container"
         *ngIf="_selectedContent === 'live'"
       >
-        <p>This is where your live videos will be displayed.</p>
+        <p>Live history not available uniil subscription😒  </p>
       </div>
 
       <div
-      id="followContainer"
-      class="content-container overflow-y-auto h-64" 
-      *ngIf="_selectedContent === 'followers'"
-    >
-      <ul *ngIf="_channel.followers; else noFollowers">
-        <li class="flex justify-around" *ngFor="let follower of _channel.followers">
-          {{ follower.username }}
-        </li>
-      </ul>
-      <ng-template #noFollowers>
-        <p>No followers</p>
-      </ng-template>
-    </div>
-    
+        id="followContainer"
+        class="content-container overflow-y-auto h-64"
+        *ngIf="_selectedContent === 'followers'"
+      >
+        <ul *ngIf="_channel.followers; else noFollowers">
+          <li
+            class="flex justify-around"
+            *ngFor="let follower of _channel.followers"
+          >
+            {{ follower.username }}
+          </li>
+        </ul>
+        <ng-template #noFollowers>
+          <p>No followers</p>
+        </ng-template>
+      </div>
     </div>
   </div>
 </div>
@@ -287,7 +321,10 @@
       >
         <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
       </div>
-      <div *ngIf="!_filePreview" class="flex items-center justify-center w-full">
+      <div
+        *ngIf="!_filePreview"
+        class="flex items-center justify-center w-full"
+      >
         <label
           for="dropzone-file"
           class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
@@ -328,7 +365,12 @@
         *ngIf="_filePreview"
         class="preview mt-4 flex items-center justify-center"
       >
-        <video [src]="_filePreview" controls muted class="w-full h-auto"></video>
+        <video
+          [src]="_filePreview"
+          controls
+          muted
+          class="w-full h-auto"
+        ></video>
       </div>
       <div *ngIf="_filePreview" class="flex justify-center mt-4">
         <button

@@ -10,10 +10,6 @@ button {
   transition: background-color 0.3s ease-in-out;
 }
 
-button:hover {
-  background-color: #007bff;
-}
-
 .swiper {
   width: 600px;
   height: 300px;
@@ -26,3 +22,10 @@ button:hover {
   border-radius: 5px;
   background-color: rgba(255, 0, 0, 0.1);
 }
+
+
+// #livecard{
+//   border: 1px lightcoral solid;
+//   border-radius: 1.2rem;
+// }
+

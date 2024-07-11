@@ -263,6 +263,22 @@ export interface GetFollowResponse {
   message: string;
   channel: ChannelData;
 }
+export interface GetFollowResponseForHome {
+  message: string;
+  channel: string[];
+}
+export interface GetTopChannelResponse {
+  message: string;
+  channel: GetTrendingChannelResponse[];
+}
+
+export interface GetTrendingChannelResponse {
+  channelName: string;
+  banner: string;
+  username:string,
+  followersCount: number;
+}
+
 
 export interface GetUserOne {
   userData: User;

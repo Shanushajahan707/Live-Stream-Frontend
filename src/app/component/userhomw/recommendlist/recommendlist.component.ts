@@ -14,26 +14,31 @@ import { LiveService } from '../../../service/user/live/live.service';
 })
 export class RecommendlistComponent implements OnInit, OnDestroy {
   constructor(
-    private _service: ChannelService,
     private _toaster: ToastrService,
-    private _liveService: LiveService
+    private _liveService: LiveService,
+    private _channelService: ChannelService
   ) {}
 
   private readonly _destroy$ = new Subject<void>();
   _recommendedChannels: ChannelData[] = [];
   _recommendedLives: ChannelData[] = [];
   _responsiveOptions: any[] | undefined;
+  userid!: string;
+  decodedToken!: any;
+  _followedChannels: string[]=[''];
 
   ngOnInit(): void {
-    this._service
+    this.userid = localStorage.getItem('token') as string;
+    this.decodedToken = jwtDecode(this.userid);
+    this._channelService
       .onRecommededChannel()
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
-            this._toaster.success(res.message);
+            // this._toaster.success(res.message);
+            // console.log('rec', res);
           }
-          // console.log('rec', res.recommendedChannels);
           this._recommendedChannels = res.recommendedChannels;
         },
         error: (err) => {
@@ -48,7 +53,7 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res) => {
           if (res && res.message) {
-            this._toaster.success(res.message);
+            // this._toaster.success(res.message);
           }
           // console.log('rec', res.recommendedChannels);
           this._recommendedLives = res.recommendedLives;
@@ -56,6 +61,26 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
         error: (err) => {
           if (err && err.error.message) {
             this._toaster.error(err.error.message);
+          }
+        },
+      });
+    this._channelService
+      .onGetFollowChannelForHome()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          console.log(res);
+          if (res && res.message) {
+            // this._toaster.success(res.message);
+          }
+          this._followedChannels=res.channel
+          console.log('rec 2', res.channel);
+          console.log(this._followedChannels);
+          console.log(this._followedChannels);
+        },
+        error: (err) => {
+          if (err && err.error.message) {
+            // this._toaster.error(err.error.message);
           }
         },
       });
@@ -80,15 +105,22 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
   }
 
   follow(channel: ChannelData) {
-    this._service
+    this._channelService
       .onFollowChannel(channel)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
+            console.log(res.channel);
             this._toaster.success(res.message);
             this._recommendedChannels = this._recommendedChannels.map((c) =>
               c._id === channel._id ? res.channel : c
+            );
+            this._followedChannels.push(channel._id)
+            console.log(this.decodedToken._id);
+            console.log(
+              channel.followers.includes(this.decodedToken._id),
+              ' respnse'
             );
           }
         },
@@ -101,15 +133,22 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
   }
 
   unFollow(channel: ChannelData) {
-    this._service
+    this._channelService
       .onUnFollowChannel(channel)
       .pipe(takeUntil(this._destroy$))
       .subscribe({
         next: (res) => {
           if (res && res.message) {
+            console.log(res.channel);
             this._toaster.success(res.message);
             this._recommendedChannels = this._recommendedChannels.map((c) =>
               c._id === channel._id ? res.channel : c
+            );
+            this._followedChannels=this._followedChannels.filter(id=>id!==channel._id)
+            console.log(this.decodedToken._id);
+            console.log(
+              channel.followers.includes(this.decodedToken._id),
+              ' respnse'
             );
           }
         },
@@ -121,9 +160,7 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
       });
   }
   isFollowing(channel: ChannelData): boolean {
-    const userid: string = localStorage.getItem('token') as string;
-    const decodedToken: any = jwtDecode(userid);
-    const isfollow = channel.followers.includes(decodedToken._id);
+    const isfollow = channel.followers.includes(this.decodedToken._id);
     return isfollow;
   }
 

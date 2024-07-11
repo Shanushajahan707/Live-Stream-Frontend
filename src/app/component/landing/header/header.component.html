@@ -1,12 +1,20 @@
-<div class="navbar flex justify-between bg-gray-900 p-3 py-4">
+<div class="navbar flex justify-between bg-gray-900 p-3 py-3.5">
   <div class="flex">
-    <a  *ngIf="islogged" routerLink="/userhome">
-      <img
-        src="/assets/Images/logo.png"
-        class="md:h-12 md:w-44 h-7 20 ms-4"
-        alt="logo"
-      />
-    </a>
+    <div class="flex justify-center items-center">
+      <div>
+        <a *ngIf="islogged" routerLink="/userhome">
+          <img
+            src="/assets/Images/videocam.svg"
+            class="md:h-9 h-7 20 ms-4"
+            alt="logo"
+          />
+        </a>
+      </div>
+
+      <div>
+        <p class="font-semibold text-lg  ps-3" id="Capturelogo">CAPTURE</p>
+      </div>
+    </div>
   </div>
   <div class="flex-none gap-2">
     <ng-container id="loginbtn" *ngIf="!islogged">
@@ -128,7 +136,7 @@
         [formControl]="searchControl"
         type="text"
         placeholder="Search"
-        class="input input-error md:w-full w-20"
+        class="input md:w-full w-20"
         (focus)="onFocus()"
         (blur)="onBlur()"
       />

@@ -1,12 +1,12 @@
-<div class="flex flex-col md:flex-row bg-gray-800 h-full">
+<div class="flex flex-col md:flex-row bg-gray-800 h-full mb-5">
   <div class="mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
 
   <div class="w-full md:w-3/4 md:m-7 mb-7 md:mb-20">
     <!-- Banner of the channel -->
-    <div class="relative mb-4" *ngIf="_followChannel">
+    <div class="relative mb-4 p-3  rounded-md bg-gray-900" *ngIf="_followChannel">
       <img
         src="https://onlineecart.shop/channelBanner/{{ _followChannel.banner }}?"
-        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
+        class="rounded-sm w-full h-76 md:h-96"
         alt="Channel Banner"
       />
       <!-- <img
@@ -130,24 +130,32 @@
       <div class="card" *ngIf="_followChannel">
         <!-- Check if followChannel.video is available and has at least one item -->
         <ng-container *ngIf="_followChannel.video.length; else singleVideo">
-          <p-carousel
-            [value]="_followChannel.video"
-            [numVisible]="3"
-            [numScroll]="3"
-            [responsiveOptions]="_responsiveOptions"
-          >
-            <ng-template let-channel pTemplate="item">
-              <video
-                #target
-                class="h-44 w-45"
-                [src]="channel.url"
-                controls
-                muted
-                (play)="onVideoPlay(channel.url)"
-              ></video>
-              <span>{{ channel.views }} Views</span>
-            </ng-template>
-          </p-carousel>
+          <p-carousel 
+          [value]="_followChannel.video" 
+          [numVisible]="1" 
+          [numScroll]="1" 
+          orientation="vertical" 
+          verticalViewPortHeight="360px">
+              <ng-template let-videoItem pTemplate="item">
+                  <div class="border-3 border-red-600 surface-border border-round m-2  flex justify-center">
+                    <div>
+      
+                    <video
+                          #target
+                          class="h-80 w-72"
+                          [src]="videoItem.url"
+                          controls
+                          muted
+                          (play)="onVideoPlay(videoItem.url)"
+                        ></video>
+                        <div class="video-info">
+                          <span class="font-semibold text-lg m-3">{{ videoItem.views }} Views</span>
+                        </div>
+                      </div>
+      
+                  </div>
+              </ng-template>
+      </p-carousel>
         </ng-container>
 
         <!-- Template for single video when followChannel.video is not available or empty -->

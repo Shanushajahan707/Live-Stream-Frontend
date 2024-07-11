@@ -6,7 +6,7 @@
 
 
 .active-link {
-  color: red;
+  color:  rgb(5 150 105);
   
 }
 
@@ -48,4 +48,12 @@
 
  #loginbtn:hover:before {
   transform: translateX(15em);
+}
+
+.navbar{
+  border-bottom: 4px rgb(0, 0, 0) solid;
+}
+
+#Capturelogo {
+    margin: initial !important; 
 }
