@@ -24,7 +24,7 @@ const routes: Routes = [
       { path: 'following/:id', component: ViewChannelComponent },
     ],
   },
-  { path: 'live', component: LiveComponent, canActivate: [authGuard] },
+  { path: 'live', component: LiveComponent },
   {
     path: 'subscriptionplan',
     component: WebsitesubscriptionviewComponent,
