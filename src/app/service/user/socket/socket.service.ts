@@ -3,7 +3,6 @@ import { jwtDecode } from 'jwt-decode';
 import { Subject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { User } from '../../../model/auth';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -21,7 +20,7 @@ export class SocketService {
     timestamp: Date;
     type: 'text' | 'audio';
     audioUrl?: string;
-  }>();
+    }>();
   chatMessages$ = this.chatMessagesSubject.asObservable();
 
   peer = new RTCPeerConnection({
@@ -33,7 +32,6 @@ export class SocketService {
   });
 
   constructor() {
-    // this._socket = io('http://localhost:3000', {});
     this._socket = io('https://onlineecart.shop', {});
     this._socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
@@ -65,31 +63,31 @@ export class SocketService {
       this._socket.emit('join room', data);
     }
   }
-
   sendMessage(message: string, messageType: 'text' | 'audio') {
     const room = this.roomid;
     this._socket.emit('chat message', {
       room,
       message,
       username: this.username,
-      messageType,
+      messageType
     });
   }
+  
 
   handleChatMessages() {
     this._socket.on('chat message', (data) => {
       console.log('Chat data from the signaling server', data);
       const { username, message, messageType, timestamp, audioUrl } = data;
-      this.chatMessagesSubject.next({
-        username,
-        message: messageType === 'audio' ? '' : message,
-        timestamp: new Date(timestamp),
-        type: messageType,
-        audioUrl: messageType === 'audio' ? audioUrl : undefined,
+      this.chatMessagesSubject.next({ 
+        username, 
+        message: messageType === 'audio' ? '' : message, 
+        timestamp: new Date(timestamp), 
+        type: messageType, 
+        audioUrl: messageType === 'audio' ? audioUrl : undefined 
       });
     });
   }
-
+  
   handleUserJoined() {
     this._socket.on('user joined', (data) => {
       console.log('user joined', data.role, data.id);
@@ -111,7 +109,7 @@ export class SocketService {
       .then((offer) => {
         return this.peer.setLocalDescription(offer).then(() => {
           console.log('local description set', offer);
-          this._socket.emit('offer', { id, offer });
+          this._socket.emit('offer', { id: id, offer });
         });
       })
       .catch((error) => console.error('createOffer error:', error));
@@ -153,10 +151,6 @@ export class SocketService {
     stream.getTracks().forEach((track) => {
       this.peer.addTrack(track, stream);
     });
-  }
-
-  setRemoteStream(stream: MediaStream) {
-    this.remoteStreamSubject.next(stream);
   }
 
   handleICECandidates() {

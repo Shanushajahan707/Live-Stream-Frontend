@@ -28,8 +28,8 @@ import { jwtDecode } from 'jwt-decode';
   styleUrls: ['./live.component.scss'],
 })
 export class LiveComponent implements OnInit, OnDestroy {
-  @ViewChild('localVideo', { static: true }) localVideo!: ElementRef<HTMLVideoElement>;
-  @ViewChild('remoteVideo', { static: true }) remoteVideo!: ElementRef<HTMLVideoElement>;
+  @ViewChild('remoteVideo') _remoteVideo!: ElementRef<HTMLVideoElement>;
+  @ViewChild('localVideo') _localVideo!: ElementRef<HTMLVideoElement>;
   private _isScreenSharing: boolean = false;
   private readonly _destroy$ = new Subject<void>();
   _isMicOn = true;
@@ -128,7 +128,7 @@ export class LiveComponent implements OnInit, OnDestroy {
             this._socketService.remoteStream$
               .pipe(takeUntil(this._destroy$))
               .subscribe((remoteStream) => {
-                const remoteVideoElement = this.remoteVideo.nativeElement;
+                const remoteVideoElement = this._remoteVideo.nativeElement;
                 remoteVideoElement.srcObject = remoteStream;
               });
 
@@ -216,7 +216,7 @@ export class LiveComponent implements OnInit, OnDestroy {
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((stream) => {
-          const localVideoElement = this.localVideo.nativeElement;
+          const localVideoElement = this._localVideo.nativeElement;
           localVideoElement.srcObject = stream;
           this._socketService.handleAddTrack(stream);
         })
@@ -334,12 +334,12 @@ export class LiveComponent implements OnInit, OnDestroy {
         const screenTrack = screenStream.getTracks()[0];
         screenTrack.onended = () => this.endScreenShare();
 
-        const localStream = this.localVideo.nativeElement.srcObject as MediaStream;
-        this._socketService.handleAddTrack(screenStream);
+        const localStream = this._localVideo.nativeElement
+          .srcObject as MediaStream;
+        const videoTrack = localStream.getVideoTracks()[0];
+        // this._socketService.handleReplaceTrack(videoTrack, screenTrack);
 
-        const combinedStream = new MediaStream([...localStream.getTracks(), screenTrack]);
-        this.remoteVideo.nativeElement.srcObject = combinedStream;
-        this._socketService.setRemoteStream(screenStream); // Set remote stream to screen share
+        this._remoteVideo.nativeElement.srcObject = screenStream;
         console.log('Screen sharing started', screenStream);
       })
       .catch((error) => console.error('Error while sharing the screen', error));
@@ -349,24 +349,30 @@ export class LiveComponent implements OnInit, OnDestroy {
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((localStream) => {
-        this._socketService.handleAddTrack(localStream);
-        this.localVideo.nativeElement.srcObject = localStream;
-        this._socketService.setRemoteStream(localStream); // Set remote stream back to camera
+        const videoTrack = localStream.getVideoTracks()[0];
+        const currentStream = this._localVideo.nativeElement
+          .srcObject as MediaStream;
+        const screenTrack = currentStream.getVideoTracks()[0];
+
+        // this._socketService.handleReplaceTrack(screenTrack, videoTrack);
+        this._localVideo.nativeElement.srcObject = localStream;
         console.log('Screen sharing ended');
       })
-      .catch((error) => console.error('Error while switching back to webcam', error));
+      .catch((error) =>
+        console.error('Error while switching back to webcam', error)
+      );
   }
 
   toggleMic() {
     this._isMicOn = !this._isMicOn;
-    const localStream = this.localVideo.nativeElement.srcObject as MediaStream;
+    const localStream = this._localVideo.nativeElement.srcObject as MediaStream;
     const audioTrack = localStream.getAudioTracks()[0];
     audioTrack.enabled = this._isMicOn;
   }
 
   toggleVideo() {
     this._isVideoOn = !this._isVideoOn;
-    const localStream = this.localVideo.nativeElement.srcObject as MediaStream;
+    const localStream = this._localVideo.nativeElement.srcObject as MediaStream;
     const videoTrack = localStream.getVideoTracks()[0];
     videoTrack.enabled = this._isVideoOn;
   }
@@ -416,8 +422,8 @@ export class LiveComponent implements OnInit, OnDestroy {
     localStorage.removeItem('roomId');
     localStorage.removeItem('joinRoom');
 
-    if (this.localVideo.nativeElement) {
-      const localVideoElement = this.localVideo.nativeElement;
+    if (this._localVideo.nativeElement) {
+      const localVideoElement = this._localVideo.nativeElement;
       const localStream = localVideoElement.srcObject as MediaStream;
       localStream.getTracks().forEach((track) => track.stop());
     }
