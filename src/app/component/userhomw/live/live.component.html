@@ -19,7 +19,7 @@
         ></video>
       </div>
       <!-- User's Video - positioned next to the right side of the main video tag -->
-      <div
+      <div  *ngIf="_startlive "
         class="w-full lg:w-56 lg:h-44 bg-black border border-gray-700 relative"
       >
         <div class="video-container">
@@ -30,6 +30,7 @@
             {{ livereceivedData.Livename }} -->
           </div>
           <video
+         
             id="localVideo"
             class="video-player"
             #localVideo
@@ -37,6 +38,7 @@
             autoplay
             muted
           ></video>
+          
           <div *ngIf="!_isVideoOn" class="video-off-message">
             The video feed is off
           </div>
