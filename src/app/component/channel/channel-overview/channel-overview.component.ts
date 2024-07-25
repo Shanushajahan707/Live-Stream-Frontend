@@ -115,12 +115,14 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
       console.log('this banner is', this._banner);
       formData.append('banner', this._banner);
       console.log('data is ', formData.get('banner'));
+      
+      this._channelForm.reset()
       this._service
-        .onUpdateChannel(formData)
-        .pipe(takeUntil(this._destroy$))
-        .subscribe({
-          next: (res) => {
-            if (res && res.message) {
+      .onUpdateChannel(formData)
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.message) {
               this._toaster.success(res.message);
             }
             console.log('updated info', res);
