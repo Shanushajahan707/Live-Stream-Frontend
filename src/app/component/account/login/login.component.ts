@@ -24,6 +24,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   _position!: string;
   _registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
+  loading = false;
+  acknowledge!:boolean
 
   constructor(
     private _fb: FormBuilder,
@@ -58,21 +60,61 @@ export class LoginComponent implements OnInit, OnDestroy {
         this._router.navigate(['/userhome']);
       }
     }
+
+    // this.ack()
+    
   }
 
   onSubmit() {
     if (this._loginForm.valid) {
+      this.loading = true; // Start the loader
       console.log('the form values are', this._loginForm.value);
       this.sendLoginData(this._loginForm.value);
     }
   }
-
+  
   sendLoginData(data: loginCredential) {
     if (data) {
       console.log('data', data);
-      this._store.dispatch(userLogin({ userData: data }));
+  
+      this.loading = true; // Start the loader
+  
+      const intervalId = setInterval(() => {
+        this.ack(); // Check for acknowledgment
+  
+        if (this.acknowledge) {
+          clearInterval(intervalId); // Stop checking if ack is true
+          this._store.dispatch(userLogin({ userData: data })); // Dispatch login
+          this.loading = false; // Stop the loader
+        }
+      }, 1000); // Check every second
+  
+      // Additional safeguard to stop the loader in case acknowledgment never happens
+      setTimeout(() => {
+        if (!this.acknowledge) {
+          clearInterval(intervalId);
+          console.error('Acknowledgment timeout. Please try again.');
+        }
+        this.loading = false;
+      }, 10000); // Timeout after 10 seconds
     }
   }
+  
+  ack() {
+    this._service.ack().pipe(takeUntil(this._destroy$)).subscribe({
+      next: (res => {
+        if (res && res.ack) {
+          console.log('ack response', res);
+          this.acknowledge = res.ack;
+        }
+      }),
+      error: (err => {
+        console.log(err.error);
+        this.loading = true; // Start the loader
+      })
+    });
+  }
+  
 
   // sendLoginData(data: loginCredential) {
   //   this.loginSubscription = this._service.login(data).subscribe({

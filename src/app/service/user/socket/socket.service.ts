@@ -64,7 +64,7 @@ export class SocketService {
       console.log('join room', data);
       this._socket.emit('join room', data);
     }
-  }
+  } 
 
   sendMessage(message: string, messageType: 'text' | 'audio') {
     const room = this.roomid;

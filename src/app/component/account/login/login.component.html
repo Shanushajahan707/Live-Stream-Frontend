@@ -71,6 +71,11 @@
         </button>
       </a> -->
     </div>
+    <div *ngIf="loading"
+    class="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 rounded-lg">
+    <div class="w-16 h-16 border-t-4 border-yellow-500 border-solid rounded-full animate-spin mb-2"></div>
+   
+  </div>
   </div>
   
   <!-- Forgot Password Dialog -->

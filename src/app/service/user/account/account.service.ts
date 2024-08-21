@@ -45,6 +45,9 @@ export class AccountService implements OnInit {
     this.isLoggedInSubject.next(value);
   }
 
+  ack(): Observable<{ack:boolean}> {
+    return this._http.get<{ack:boolean}>(`${this.apiUrl}ack`);
+  }
   login(formData: loginCredential): Observable<LoginResponse> {
     return this._http.post<LoginResponse>(`${this.apiUrl}loginuser`, formData);
   }
