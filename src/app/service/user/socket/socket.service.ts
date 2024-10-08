@@ -34,7 +34,7 @@ export class SocketService {
 
   constructor() {
     // this._socket = io('http://localhost:3000', {});
-    this._socket = io('https://onlineecart.shop', {});
+    this._socket = io('https://capturelive.onrender.com', {});
     this._socket.on('connect_error', (error) => {
       console.error('Socket connection error:', error);
     });
