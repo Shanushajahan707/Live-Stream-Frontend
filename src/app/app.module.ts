@@ -18,6 +18,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
 import { BlockedAccountComponent } from './component/account/blocked-account/blocked-account.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
+import { NotFoundComponent } from './component/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { PickerModule } from '@ctrl/ngx-emoji-mart';
     HeaderComponent,
     ForgotPasswordComponent,
     BlockedAccountComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,

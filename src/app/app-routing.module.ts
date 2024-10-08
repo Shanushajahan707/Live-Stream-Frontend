@@ -8,6 +8,7 @@ import { SignupComponent } from './component/account/signup/signup.component';
 import { OtpComponent } from './component/account/otp/otp.component';
 import { ForgotPasswordComponent } from './component/account/forgot-password/forgot-password.component';
 import { BlockedAccountComponent } from './component/account/blocked-account/blocked-account.component';
+import { NotFoundComponent } from './component/not-found/not-found.component';
 
 const routes: Routes = [
   {
@@ -49,6 +50,10 @@ const routes: Routes = [
     path: 'admin',
     loadChildren: () =>
       import('./modules/admin/admin.module').then((m) => m.AdminModule),
+  },
+  {
+    path: '**',
+    component: NotFoundComponent, 
   },
 ];
 
