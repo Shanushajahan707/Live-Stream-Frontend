@@ -4,6 +4,7 @@ import { ChannelService } from '../../../service/user/channel/channel.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-followed-channel',
@@ -14,6 +15,7 @@ export class FollowedChannelComponent implements OnInit, OnDestroy {
   private readonly _destroy$ = new Subject<void>();
   _responsiveOptions: any[] | undefined;
   _followedChannels: ChannelData[] = [];
+  _apiUrl:string=environment.apiUrl
   constructor(
     private _channelService: ChannelService,
     private _toaster: ToastrService

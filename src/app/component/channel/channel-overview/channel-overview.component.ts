@@ -11,6 +11,7 @@ import { FormGroup, Validators, FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-channel-overview',
   templateUrl: './channel-overview.component.html',
@@ -36,6 +37,7 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
   _filePreview: string | ArrayBuffer | null = null;
   _isLoading = false;
   _videoFile!: File;
+  _apiUrl:string=environment.apiUrl
 
   ngOnInit(): void {
     this._service
@@ -73,6 +75,8 @@ export class ChannelOverviewComponent implements OnInit, OnDestroy {
         numScroll: 1,
       },
     ];
+
+
   }
 
   showDialog() {

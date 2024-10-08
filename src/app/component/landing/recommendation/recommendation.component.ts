@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChannelService } from '../../../service/user/channel/channel.service';
 import {  GetTrendingChannelResponse } from '../../../model/auth';
 import { Subject, takeUntil } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-recommendation',
@@ -12,7 +13,7 @@ export class RecommendationComponent implements OnInit, OnDestroy {
   private readonly _destroy$ = new Subject<void>();
   showMenu: boolean = false;
   _recommendations!: GetTrendingChannelResponse[];
-
+  _apiUrl:string=environment.apiUrl
   constructor(private _channelService: ChannelService) {}
   ngOnInit(): void {
     this._channelService

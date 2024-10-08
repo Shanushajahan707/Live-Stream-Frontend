@@ -44,6 +44,7 @@ export class ViewChannelComponent implements OnInit, OnDestroy {
   liveHistory: LiveHistory[] = [];
   liveHistoryWithUsernames: any[] = [];
   isPaymentFailed: boolean = false;
+  apiUrl:string=environment.apiUrl
 
   public payPalConfig?: IPayPalConfig;
   public showSuccess: boolean = false;

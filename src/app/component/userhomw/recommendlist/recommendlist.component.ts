@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LiveService } from '../../../service/user/live/live.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-recommendlist',
@@ -26,7 +27,7 @@ export class RecommendlistComponent implements OnInit, OnDestroy {
   userid!: string;
   decodedToken!: any;
   _followedChannels: string[]=[''];
-
+_apiUrl:string=environment.apiUrl
   ngOnInit(): void {
     this.userid = localStorage.getItem('token') as string;
     this.decodedToken = jwtDecode(this.userid);

@@ -5,7 +5,7 @@
     <!-- Banner of the channel -->
     <div class="relative mb-4 p-3  rounded-md bg-gray-900" *ngIf="_followChannel">
       <img
-        src="https://onlineecart.shop/channelBanner/{{ _followChannel.banner }}?"
+        src="{{apiUrl}}/channelBanner/{{ _followChannel.banner }}?"
         class="rounded-sm w-full h-76 md:h-96"
         alt="Channel Banner"
       />
