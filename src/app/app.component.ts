@@ -1,39 +1,32 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { PrimeNGConfig } from 'primeng/api';
-import { filter, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { DateService } from './service/user/data/date.service';
 import { AccountService } from './service/user/account/account.service';
-import { NavigationEnd, Router, Event } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit, OnDestroy {
   currentTime$!: Observable<Date>;
   userLoggesIn: boolean = false;
   _isloggedSubscription!: Subscription;
-  showHeader: boolean = true;
-  private routeCheckInterval!: any;
-
+  currentRoute: string = '';
+  private routeCheckInterval!: NodeJS.Timeout;
   constructor(
     private primengConfig: PrimeNGConfig,
     private _dateService: DateService,
     private _accountService: AccountService,
-    private router: Router
-  ) {
-    // Subscribe to router events
-    this.router.events
-      .pipe(filter((event: Event): event is NavigationEnd => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        this.updateHeaderVisibility(event.url);
-      });
-  }
+    private _router: Router
+  ) {}
 
-  ngOnInit(): void {  
+  ngOnInit(): void {
     initFlowbite();
+    this.startCheckingCurrentRoute();
     this.primengConfig.ripple = true;
     this.currentTime$ = this._dateService.getCurrentTime();
     this._dateService.startUpdatingTime();
@@ -42,21 +35,19 @@ export class AppComponent implements OnInit, OnDestroy {
         this.userLoggesIn = this._accountService.islogged();
       }
     );
-
-    // Set interval to check current route
-    this.routeCheckInterval = setInterval(() => {
-      const currentRoute = this.router.url;
-      this.updateHeaderVisibility(currentRoute);
-    }, 1000); // Check every second
   }
+  // title = 'Live-Stream';
 
-  private updateHeaderVisibility(currentRoute: string): void {
-    this.showHeader = !(currentRoute === '/notfound'); 
+  private startCheckingCurrentRoute() {
+    this.routeCheckInterval = setInterval(() => {
+      this.currentRoute = this._router.url; // Update the current route
+      console.log('Current route:', this.currentRoute); // Log the current route
+    }, 1000); // Check every 1000 milliseconds (1 second)
   }
 
   ngOnDestroy(): void {
     this._dateService.stopUpdatingTime();
+    clearInterval(this.routeCheckInterval);
     this._isloggedSubscription?.unsubscribe();
-    clearInterval(this.routeCheckInterval); // Clear the interval
   }
 }

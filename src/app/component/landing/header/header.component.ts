@@ -61,9 +61,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   _menuOpen = false;
   _dropdownOpen = false;
   _isMobileView = false;
+  currentRoute: string = '';
+  private routeCheckInterval!: NodeJS.Timeout;
 
   @HostListener('window:resize', ['$event'])
   ngOnInit(): void {
+    // this.startCheckingCurrentRoute()
+
     this._service.islogged$.subscribe((res) => {
       this.islogged = this._service.islogged();
       this._jwttoken = localStorage.getItem('token');
@@ -97,6 +101,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  // private startCheckingCurrentRoute() {
+  //   this.routeCheckInterval = setInterval(() => {
+  //     this.currentRoute = this._router.url; // Update the current route
+  //     console.log('Current route:', this.currentRoute); // Log the current route
+  //   }, 1000); // Check every 1000 milliseconds (1 second)
+  // }
 
   onlogin() {
     this._router.navigate(['/login']);
@@ -191,6 +202,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this._destroy$.next();
+    // clearInterval(this.routeCheckInterval); 
     this._destroy$.complete();
   }
 }
