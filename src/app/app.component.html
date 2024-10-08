@@ -1,26 +1,26 @@
-<div class="w-full h-20 ">
-  <app-header></app-header>
+<div class="w-full h-20" *ngIf="showHeader">
+  <app-header ></app-header>
 </div>
 
 <router-outlet></router-outlet>
 
-<footer *ngIf="userLoggesIn"  class="footer footer-center md:w-screen w-30  p-24 bg-base-200 text-base-content rounded" >
+<footer *ngIf="userLoggesIn" class="footer footer-center md:w-screen w-30 p-24 bg-base-200 text-base-content rounded">
   <nav class="grid grid-flow-col gap-4">
     <a class="link link-hover">About us</a>
     <a class="link link-hover">Contact</a>
     <a class="link link-hover">Jobs</a>
     <a class="link link-hover">Press kit</a>
-  </nav> 
+  </nav>
   <nav>
     <div class="grid grid-flow-col gap-4 text-xl a-hover:bg-red">
-      <a class="hover:underline cursor-pointer"><i class=" fab fa-facebook-f"></i></a>
+      <a class="hover:underline cursor-pointer"><i class="fab fa-facebook-f"></i></a>
       <a class="hover:underline cursor-pointer"><i class="fab fa-github"></i></a>
       <a class="hover:underline cursor-pointer"><i class="fab fa-instagram"></i></a>
       <a class="hover:underline cursor-pointer"><i class="fab fa-linkedin-in"></i></a>
     </div>
-  </nav> 
+  </nav>
   <aside>
-    <p>Current Date : {{ currentTime$ | async | date}}</p>
-    <p>Copyright © 2024 - All right reserved by Capture </p>
+    <p>Current Date : {{ currentTime$ | async | date }}</p>
+    <p>Copyright © 2024 - All rights reserved by Capture</p>
   </aside>
 </footer>

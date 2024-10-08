@@ -52,9 +52,13 @@ const routes: Routes = [
       import('./modules/admin/admin.module').then((m) => m.AdminModule),
   },
   {
-    path: '**',
-    component: NotFoundComponent, 
+    path: 'notfound',
+    component: NotFoundComponent
   },
+    {
+    path: '**',
+    redirectTo: 'notfound', 
+  }
 ];
 
 @NgModule({
