@@ -26,7 +26,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     initFlowbite();
-    this.startCheckingCurrentRoute();
     this.primengConfig.ripple = true;
     this.currentTime$ = this._dateService.getCurrentTime();
     this._dateService.startUpdatingTime();
@@ -38,12 +37,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
   // title = 'Live-Stream';
 
-  private startCheckingCurrentRoute() {
-    this.routeCheckInterval = setInterval(() => {
-      this.currentRoute = this._router.url; // Update the current route
-      console.log('Current route:', this.currentRoute); // Log the current route
-    }, 1000); // Check every 1000 milliseconds (1 second)
-  }
+ 
 
   ngOnDestroy(): void {
     this._dateService.stopUpdatingTime();

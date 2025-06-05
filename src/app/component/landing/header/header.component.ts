@@ -74,6 +74,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       if (this._jwttoken) {
         const decode = jwtDecode(this._jwttoken);
         this._userData = decode as User;
+        localStorage.setItem('userName', JSON.stringify(this._userData.username));
         // console.log('userdata from the header', this._userData);
       }
     });
