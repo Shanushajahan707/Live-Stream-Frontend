@@ -559,6 +559,10 @@ export class SocketService {
     //     transports: ['websocket'],
     //     withCredentials: true,
     //   } }),
+    // this._socket = io('http://localhost:3000', {
+    //   transports: ['websocket'],
+    //   withCredentials: true,
+    // });
     this._socket = io('https://capturelive.onrender.com', {
       transports: ['websocket'],
       withCredentials: true,
