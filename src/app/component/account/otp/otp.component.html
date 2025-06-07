@@ -1,121 +1,158 @@
 <div>
   <div
-    class="fixed z-50 top-0 w-full flex items-center justify-between bg-gray-800 px-6 py-5 text-white"
+    class="fixed z-50 top-0 w-full flex items-center justify-between bg-gradient-to-r from-gray-900 to-gray-800 bg-opacity-90 backdrop-blur-sm px-4 sm:px-6 py-4 sm:py-5 text-white shadow-md"
   >
-    <p class="text-4xl font-bold">Capture</p>
-    <div>
-      <button
-        class="mr-2 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+    <!-- Logo -->
+    <p
+      class="text-3xl sm:text-4xl font-bold animate-fade-in bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent"
+    >
+      Capture
+    </p>
+
+    <!-- Navigation Buttons -->
+    <div class="space-x-2 sm:space-x-3">
+      <a
+        routerLink="/login"
+        class="rounded bg-blue-500 px-3 sm:px-4 py-2 font-bold text-white border border-blue-600 hover:bg-blue-600 hover:border-blue-500 hover:shadow-lg hover:scale-105 transition-all duration-300"
       >
         Login
-      </button>
-      <button
-        class="rounded bg-green-500 px-4 py-2 font-bold text-white hover:bg-green-700"
+      </a>
+      <a
+        routerLink="/signup"
+        class="rounded bg-green-500 px-3 sm:px-4 py-2 font-bold text-white border border-green-600 hover:bg-green-600 hover:border-green-500 hover:shadow-lg hover:scale-105 transition-all duration-300"
       >
         Signup
-      </button>
+      </a>
     </div>
   </div>
-  <div class="min-h-screen flex items-center justify-center bg-gray-900">
-    <div class="max-w-md w-full bg-gray-800 p-8 rounded-lg shadow-lg">
-      <h2 class="text-3xl font-bold mb-8 text-white">OTP Verification</h2>
-      <form [formGroup]="_otpform" (ngSubmit)="otpsubmit()">
-        <div class="grid grid-cols-6 gap-4">
+  <div
+    class="fixed z-50 top-0 w-full flex items-center justify-between bg-gradient-to-r from-gray-900 to-gray-800 px-4 sm:px-6 py-4 sm:py-5 text-white shadow-lg"
+  >
+    <p class="text-3xl sm:text-4xl font-bold animate-fade-in">Capture</p>
+    <div class="space-x-2 sm:space-x-3">
+      <a
+        routerLink="/login"
+        class="rounded bg-blue-500 px-3 sm:px-4 py-2 font-bold text-white hover:bg-blue-600 transition-all duration-300 hover:scale-105"
+      >
+        Login
+      </a>
+      <a
+        routerLink="/signup"
+        class="rounded bg-green-500 px-3 sm:px-4 py-2 font-bold text-white hover:bg-green-600 transition-all duration-300 hover:scale-105"
+      >
+        Signup
+      </a>
+    </div>
+  </div>
+
+  <!-- OTP Form -->
+  <div
+    class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 p-4 sm:p-6 pt-20 sm:pt-24"
+  >
+    <div
+      class="max-w-md w-full bg-gray-800 bg-opacity-70 backdrop-blur-lg p-6 sm:p-8 rounded-xl shadow-xl"
+    >
+      <h2
+        class="text-2xl sm:text-3xl font-bold mb-8 text-white text-center animate-fade-in"
+      >
+        OTP Verification
+      </h2>
+      <form
+        [formGroup]="_otpform"
+        (ngSubmit)="otpsubmit()"
+        (paste)="handlePaste($event)"
+      >
+        <div class="grid grid-cols-6 gap-2 sm:gap-4 mb-6">
           <input
+            #digit1
             formControlName="digit1"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 1)"
+            (keydown)="onKeyDown($event, 1)"
           />
           <input
+            #digit2
             formControlName="digit2"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 2)"
+            (keydown)="onKeyDown($event, 2)"
           />
           <input
+            #digit3
             formControlName="digit3"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 3)"
+            (keydown)="onKeyDown($event, 3)"
           />
           <input
+            #digit4
             formControlName="digit4"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 4)"
+            (keydown)="onKeyDown($event, 4)"
           />
           <input
+            #digit5
             formControlName="digit5"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 5)"
+            (keydown)="onKeyDown($event, 5)"
           />
           <input
+            #digit6
             formControlName="digit6"
             type="text"
-            class="col-span-1 w-full px-3 py-2 rounded-md bg-gray-700 border border-gray-600 focus:outline-none focus:border-blue-500"
+            class="col-span-1 w-full px-3 py-3 sm:py-4 text-center text-white rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 text-lg"
             maxlength="1"
+            (input)="onDigitInput($event, 6)"
+            (keydown)="onKeyDown($event, 6)"
           />
+        </div>
+        <!-- Validation Messages -->
+        <div class="text-center mb-4">
           <div
-            *ngIf="_otpform.get('digit1')?.errors?.['required'] &&  (_otpform.get('digit1')?.touched)"
-            class="text-red-500 text-xs mt-1"
+            *ngIf="_otpform.invalid && _otpform.touched"
+            class="text-red-500 text-xs animate-fade-in"
           >
-            Fill Properly
-          </div>
-          <div
-            *ngIf="_otpform.get('digit2')?.errors?.['required'] &&  (_otpform.get('digit2')?.touched)"
-            class="text-red-500 text-xs mt-1"
-          >
-            Fill Properly
-          </div>
-          <div
-            *ngIf="_otpform.get('digit3')?.errors?.['required'] &&  (_otpform.get('digit3')?.touched)"
-            class="text-red-500 text-xs mt-1"
-          >
-            Fill Properly
-          </div>
-          <div
-            *ngIf="_otpform.get('digit4')?.errors?.['required'] &&  (_otpform.get('digit4')?.touched)"
-            class="text-red-500 text-xs mt-1"
-          >
-            Fill Properly
-          </div>
-          <div
-            *ngIf="_otpform.get('digit5')?.errors?.['required'] &&  (_otpform.get('digit5')?.touched)"
-            class="text-red-500 text-xs mt-1"
-          >
-            Fill Properly
-          </div>
-          <div
-            *ngIf="_otpform.get('digit6 ')?.errors?.['required'] &&  (_otpform.get('   digit6')?.touched)"
-            class="text-red-500 text-xs mt-1"
-          >
-            Fill Properly
+            Please fill all digits correctly
           </div>
         </div>
         <button
           type="submit"
-          class="w-full mt-8 bg-blue-500 text-white px-4 py-2 rounded-md font-semibold transition duration-300 ease-in-out hover:bg-blue-700 focus:outline-none focus:bg-blue-700"
+          [disabled]="_otpform.invalid"
+          class="w-full bg-blue-500 text-white px-4 py-3 rounded-md font-semibold transition-all duration-300 ease-in-out hover:bg-blue-600 hover:scale-105 focus:outline-none focus:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Verify OTP
         </button>
-        <span *ngIf="_value">
-          <span class="text-red-500 font-semibold mt-2 text-lg">Estimated Time is: {{ _value }}</span>
-        </span>
-        
+        <div class="mt-4 text-center">
+          <span *ngIf="_value">
+            <span class="text-red-400 font-semibold text-sm sm:text-base">
+              Time Remaining: {{ _value }}s
+            </span>
+          </span>
+          <div *ngIf="!_value" class="text-sm text-gray-300">
+            Didn't receive the code?
+            <button
+              *ngIf="_stop"
+              (click)="resendotp()"
+              class="text-blue-500 hover:text-blue-400 transition-colors duration-300"
+              [disabled]="!_stop"
+            >
+              Resend
+            </button>
+          </div>
+        </div>
       </form>
-      <div *ngIf="!_value" class="mt-4 text-sm text-gray-300">
-        Didn't receive the code?
-        <button
-          *ngIf="_stop"
-          (click)="resendotp()"
-          class="text-blue-500 cursor-pointer"
-          [disabled]="!_stop"
-        >
-          Resend
-        </button>
-      </div>
     </div>
   </div>
 </div>

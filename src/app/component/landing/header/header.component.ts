@@ -197,7 +197,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onlogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    this._service.islogged$.next(false);
+this._service.updateLoggedInStatus();
     this._router.navigate(['']);
   }
 

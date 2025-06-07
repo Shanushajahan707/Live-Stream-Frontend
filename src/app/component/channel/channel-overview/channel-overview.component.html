@@ -1,75 +1,85 @@
-<div class="flex flex-col md:flex-row bg-gray-800 h-full mb-5">
-  <div class="md:w-64 hidden sm:block"><app-recommendation /></div>
+<div class="flex flex-col md:flex-row bg-gradient-to-br from-gray-900 to-gray-800 h-full mb-5">
+  <!-- Recommendation Sidebar -->
+  <div class="md:w-64 hidden sm:block overflow-y-auto">
+    <app-recommendation />
+  </div>
 
-  <div class="w-full md:w-3/4 md:m-7 mb-7 md:mb-20">
-    <!-- Banner of the channel -->
-    <div class="relative mb-4 p-3  rounded-md bg-gray-900">
+  <!-- Main Content -->
+  <div class="w-full md:w-3/4 md:m-7 mb-5 md:mb-20">
+    <!-- Banner of the Channel -->
+    <div class="relative mb-4 p-2 rounded-xl bg-gray-900 animate-fade-in" *ngIf="_channel">
       <img
-        *ngIf="_channel"
         src="{{_apiUrl}}/channelBanner/{{ _channel.banner }}"
-        class="rounded-sm w-full h-76 md:h-96"
+        class="rounded-xl w-full h-48 sm:h-64 md:h-80 object-cover transition-transform duration-500 hover:scale-105"
         alt="Channel Banner"
+         onerror="this.src='https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=1920&auto=format&fit=crop';"
       />
-      <!-- <img
-        src="\assets\Images\channel-banner1.png"
-        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
-        alt="Channel Banner"
-      /> -->
+      <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent rounded-xl"></div>
+      <div class="absolute bottom-4 left-4 text-white">
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">{{ _channel.channelName }}</h2>
+      </div>
     </div>
-    <!-- Profile with channel name and followers -->
-    <div class="flex items-center justify-between p-4 bg-gray-800">
-      <div class="flex items-center justify-between">
-        <div class="relative">
+
+    <!-- Profile with Channel Name and Followers -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-gray-800 rounded-xl shadow-lg animate-slide-up mx-2 sm:mx-0">
+      <div class="flex items-center mb-3 sm:mb-0">
+        <div class="relative transform hover:scale-105 transition-transform duration-300">
           <img
-            class="md:w-14 h-20 w-40 md:h-14 rounded-full"
+            class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full object-cover border-2 border-blue-500/50"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
-            alt=""
+            alt="Channel Avatar"
+             onerror="this.src='https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=1920&auto=format&fit=crop';"
           />
           <span
-            class="top-0 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+            class="top-0 left-6 sm:left-7 absolute w-3 h-3 sm:w-4 sm:h-4 bg-green-500 border-2 border-gray-900 rounded-full animate-pulse"
           ></span>
         </div>
-        <div *ngIf="_channel" class="flex flex-col ml-2">
-          <span class="text-lg text-white font-bold ml-2">
-            {{ _channel.channelName }}</span
-          >
-          <span class="font-bold ml-2 text-blue-300"
-            >Followers: {{ _channel && _channel.followers.length }}</span
-          >
+        <div *ngIf="_channel" class="flex flex-col ml-3 sm:ml-4">
+          <span class="text-gray-300 text-xs sm:text-sm flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="w-3 h-3 sm:w-4 sm:h-4 inline-block mr-1 text-blue-400"
+            >
+              <path d="M12 20v-6m0 0V4m0 10h6m-6 0H6"></path>
+            </svg>
+            {{ _channel.followers.length }} Followers
+          </span>
         </div>
-        <div *ngIf="_channel && !_channel.isblocked">
+        <div *ngIf="_channel && !_channel.isblocked" class="ml-3 sm:ml-4">
           <i
             (click)="showDialog()"
             [pTooltip]="tooltipContent"
             severity="secondary"
             tooltipPosition="bottom"
-            class="pi pi-pencil ms-3 mb-2"
-            style="font-size: 1.5rem; color: lightcoral"
+            class="pi pi-pencil text-blue-400 hover:text-blue-300 transition-colors duration-300 text-[1.2rem] sm:text-[1.5rem]"
           ></i>
           <ng-template #tooltipContent>
-            <div class="flex align-items-center">
+            <div class="flex align-items-center p-2 bg-gray-700 rounded text-white">
               <span>Edit Channel</span>
             </div>
           </ng-template>
         </div>
-
-        <!-- Edit Icon -->
       </div>
-      <div class="flex items-center">
-        <div class="cursor-pointer p-2">
-          <!-- Enhanced Upload Icon with Hover Effect -->
+      <div class="flex items-center space-x-2 sm:space-x-3">
+        <div class="cursor-pointer">
           <button
-            class="bg-yellow-50 px-1 py-2.5 mb-2 text-black border rounded-md hover:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out transform"
+            class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm sm:text-base py-1.5 sm:py-2 px-3 sm:px-4 rounded-full transition-all duration-300 hover:scale-105 shadow-md flex items-center"
             (click)="showModal()"
           >
-            <i class="pi pi-upload mx-2"></i>Upload Shorts
+            <i class="pi pi-upload mr-1 sm:mr-2 text-sm sm:text-base"></i>Upload Shorts
           </button>
         </div>
-        <div class="md:block hidden" *ngIf="_channel">
+        <div class="hidden md:block" *ngIf="_channel">
           <button
             disabled
             type="button"
-            class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            class="bg-gray-700 text-gray-300 font-medium py-2 px-5 rounded-full shadow-md"
           >
             {{ _channel.isblocked ? "Blocked" : "Active" }}
           </button>
@@ -77,193 +87,198 @@
       </div>
     </div>
 
-    <!-- Content of the session -->
-    <div class="p-4 text-lg space-x-5 font-bold">
-      <div class="p-4 flex text-lg space-x-5 font-bold">
-        <label for="videos" class="text-white">
+    <!-- Content Tabs -->
+    <div class="p-2 sm:p-4 flex flex-wrap text-base sm:text-lg space-x-3 sm:space-x-6 font-semibold mx-2 sm:mx-0">
+      <label for="shorts" class="relative cursor-pointer mb-2 sm:mb-0">
+        <input
+          type="radio"
+          id="shorts"
+          name="content"
+          [(ngModel)]="_selectedContent"
+          value="shorts"
+          class="sr-only"
+          checked
+        />
+        <span
+          class="text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 relative text-sm sm:text-base"
+          [ngClass]="{'bg-blue-600': _selectedContent === 'shorts', 'hover:bg-gray-700': _selectedContent !== 'shorts'}"
+        >
           Clips
-          <input
-            checked
-            type="radio"
-            id="shorts"
-            name="content"
-            [(ngModel)]="_selectedContent"
-            value="shorts"
-          />
-        </label>
-        <label for="live" class="text-white">
+          <span
+            class="absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300"
+            [ngClass]="{'scale-x-100': _selectedContent === 'shorts'}"
+          ></span>
+        </span>
+      </label>
+      <label for="live" class="relative cursor-pointer mb-2 sm:mb-0">
+        <input
+          type="radio"
+          id="live"
+          name="content"
+          [(ngModel)]="_selectedContent"
+          value="live"
+          class="sr-only"
+        />
+        <span
+          class="text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 relative text-sm sm:text-base"
+          [ngClass]="{'bg-blue-600': _selectedContent === 'live', 'hover:bg-gray-700': _selectedContent !== 'live'}"
+        >
           Live
-          <input
-            type="radio"
-            id="live"
-            name="content"
-            [(ngModel)]="_selectedContent"
-            value="live"
-          />
-        </label>
-        <label for="followers" class="text-white">
+          <span
+            class="absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300"
+            [ngClass]="{'scale-x-100': _selectedContent === 'live'}"
+          ></span>
+        </span>
+      </label>
+      <label for="followers" class="relative cursor-pointer mb-2 sm:mb-0">
+        <input
+          type="radio"
+          id="followers"
+          name="content"
+          [(ngModel)]="_selectedContent"
+          value="followers"
+          class="sr-only"
+        />
+        <span
+          class="text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full transition-all duration-300 relative text-sm sm:text-base"
+          [ngClass]="{'bg-blue-600': _selectedContent === 'followers', 'hover:bg-gray-700': _selectedContent !== 'followers'}"
+        >
           Followers
-          <input
-            type="radio"
-            id="followers"
-            name="content"
-            [(ngModel)]="_selectedContent"
-            value="followers"
-          />
-        </label>
-      </div>
+          <span
+            class="absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300"
+            [ngClass]="{'scale-x-100': _selectedContent === 'followers'}"
+          ></span>
+        </span>
+      </label>
+    </div>
 
-
-
-
-
-
-
-      <!-- Dynamic Content Display Based on Selection -->
-      <div
-        id="videosContainer"
-        class="content-container"
-        *ngIf="_selectedContent === 'shorts'"
-      >
-        <!-- <ul>
-          <li *ngFor="let video of channel?.video; else noVideo">
-            <video controls>
-              <source [src]="video" type="video/mp4">
-              Your browser does not support the video tag.
-            </video>
-          </li>
-        </ul>  -->
-        <!--      
-          <video class="h-29 w-7" controls autoplay muted>
-            <source src="" type="video/mp4">
-            Your browser does not support the video tag.
-          </video> -->
-        <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
-        <div class="card">
-          <!-- Check if followChannel.video is available and has at least one item -->
-          <!-- <ng-container *ngIf="_channel?.video?.length; else singleVideo">
-            <p-carousel
-              [value]="_channel.video"
-              [numVisible]="3"
-              [numScroll]="3"
-              [responsiveOptions]="_responsiveOptions"
-            >
-              <ng-template let-videoItem pTemplate="item">
-                <div class="video-card">
-                  <video
-                    #target
-                    class="h-44 w-48"
-                    [src]="videoItem.url"
-                    controls
-                    muted
-                    (play)="onVideoPlay(videoItem.url)"
-                  ></video>
-                  <div class="video-info">
-                    <span>{{ videoItem.views }} Views</span>
-                  </div>
-                </div>
-              </ng-template>
-            </p-carousel>
-          </ng-container> -->
-
-          <p-carousel 
-          [value]="_channel.video" 
-          [numVisible]="1" 
-          [numScroll]="1" 
-          orientation="vertical" 
-          verticalViewPortHeight="360px">
-              <ng-template let-videoItem pTemplate="item">
-                  <div class="border-3 border-red-600 surface-border border-round m-2  flex justify-center">
-                    <div>
-      
-                    <video
-                          #target
-                          class="h-80 w-72"
-                          [src]="videoItem.url"
-                          controls
-                          muted
-                          (play)="onVideoPlay(videoItem.url)"
-                        ></video>
-                        <div class="video-info">
-                          <span class="font-semibold text-lg m-3">{{ videoItem.views }} Views</span>
-                        </div>
-                      </div>
-      
-                  </div>
-              </ng-template>
-      </p-carousel>
-          <!-- Template for single video when followChannel.video is not available or empty -->
-          <ng-template #singleVideo>
-            <video
-              #target
-              class="video-js h-44 w-45"
-              src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
-              controls
-              muted
-              playsinline
-              preload="none"
-            ></video>
+    <!-- Clips Section -->
+    <div
+      id="videosContainer"
+      class="content-container p-2 sm:p-4 mx-2 sm:mx-0"
+      *ngIf="_selectedContent === 'shorts'"
+    >
+      <div class="card">
+        <p-carousel
+          [value]="_channel.video"
+          [numVisible]="1"
+          [numScroll]="1"
+          orientation="vertical"
+          verticalViewPortHeight="300px sm:400px"
+          class="flex justify-center"
+        >
+          <ng-template let-videoItem pTemplate="item">
+            <div class="bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up">
+              <video
+                #target
+                class="h-64 sm:h-96 w-48 sm:w-72 rounded-t-xl"
+                [src]="videoItem.url"
+                controls
+                muted
+                (play)="onVideoPlay(videoItem.url)"
+              ></video>
+              <div class="p-3 sm:p-4 flex items-center space-x-2">
+                <span class="font-semibold text-gray-300 text-sm sm:text-base">
+                  {{ videoItem.views }} Views
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400"
+                >
+                  <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                </svg>
+              </div>
+            </div>
           </ng-template>
+        </p-carousel>
+        <div *ngIf="!_channel?.video?.length" class="bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 text-center animate-fade-in">
+          <video
+            #target
+            class="h-32 sm:h-44 w-full max-w-[200px] sm:max-w-xs mx-auto rounded-xl"
+            src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
+            controls
+            muted
+            playsinline
+            preload="none"
+          ></video>
+          <p class="text-gray-300 text-xs sm:text-sm mt-2">No clips available.</p>
         </div>
       </div>
+    </div>
 
-      <div
-        id="liveContainer"
-        class="content-container"
-        *ngIf="_selectedContent === 'live'"
-      >
-        <p>Live history not available uniil subscription😒  </p>
+    <!-- Live Section -->
+    <div
+      id="liveContainer"
+      class="content-container p-2 sm:p-4 mx-2 sm:mx-0"
+      *ngIf="_selectedContent === 'live'"
+    >
+      <div class="bg-gray-800 rounded-xl p-4 sm:p-6 text-center shadow-lg animate-fade-in">
+        <p class="text-gray-300 text-base sm:text-lg">Live history not available until subscription.</p>
+        <p class="text-gray-400 text-xs sm:text-sm mt-2">Subscribe to access live sessions!</p>
       </div>
+    </div>
 
-      <div
-        id="followContainer"
-        class="content-container overflow-y-auto h-64"
-        *ngIf="_selectedContent === 'followers'"
-      >
-        <ul *ngIf="_channel.followers; else noFollowers">
+    <!-- Followers Section -->
+    <div
+      id="followContainer"
+      class="content-container p-2 sm:p-4 overflow-y-auto h-48 sm:h-64 mx-2 sm:mx-0"
+      *ngIf="_selectedContent === 'followers'"
+    >
+      <div class="bg-gray-800 rounded-xl shadow-lg p-3 sm:p-4 animate-fade-in">
+        <ul *ngIf="_channel.followers?.length; else noFollowers" class="space-y-2 sm:space-y-3">
           <li
-            class="flex justify-around"
             *ngFor="let follower of _channel.followers"
+            class="flex items-center justify-between p-2 sm:p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors duration-300"
           >
-            {{ follower.username }}
+            <span class="text-gray-300 text-sm sm:text-base">{{ follower.username }}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-4 h-4 sm:w-5 sm:h-5 text-blue-400"
+            >
+              <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+            </svg>
           </li>
         </ul>
         <ng-template #noFollowers>
-          <p>No followers</p>
+          <p class="text-gray-300 text-center text-base sm:text-lg">No followers yet.</p>
+          <p class="text-gray-400 text-xs sm:text-sm text-center mt-2">Share your channel to grow your audience!</p>
         </ng-template>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Modal for asking the edii form --><p-dialog
-  header="Update your Channel_Info!"
+<!-- Edit Channel Dialog -->
+<p-dialog
+  header="Update Your Channel Info!"
   [(visible)]="_visible"
-  [style]="{ width: '25rem' }"
-  class="bg-gray-800 text-white"
+  [style]="{ width: '90%', maxWidth: '25rem' }"
+  class="bg-gray-800 text-white rounded-xl shadow-lg animate-fade-in"
 >
   <form [formGroup]="_channelForm" (ngSubmit)="onSubmit()">
-    <div *ngIf="_channel" class="flex flex-col gap-3 mb-3 p-4">
-      <label for="channelName" class="font-semibold text-lg">ChannelName</label>
+    <div *ngIf="_channel" class="flex flex-col gap-2 sm:gap-3 mb-2 sm:mb-3 p-3 sm:p-4">
+      <label for="channelName" class="font-semibold text-base sm:text-lg text-white">Channel Name</label>
       <input
         pInputText
         id="channelName"
         accept="image/*"
         formControlName="channelName"
-        class="flex-auto bg-gray-200 text-dark border-none rounded-md p-2"
+        class="flex-auto bg-gray-700 text-white border-none rounded-md p-2 text-sm sm:text-base focus:ring-2 focus:ring-blue-500"
         autocomplete="off"
         placeholder="{{ _channel.channelName }}"
       />
     </div>
-    <div class="flex flex-col gap-3 mb-5 p-4">
-      <label for="banner" class="font-semibold text-lg">Banner</label>
+    <div class="flex flex-col gap-2 sm:gap-3 mb-3 sm:mb-5 p-3 sm:p-4">
+      <label for="banner" class="font-semibold text-base sm:text-lg text-white">Banner</label>
       <div
-        class="flex items-center justify-between bg-gray-200 rounded-md p-2 cursor-pointer"
+        class="flex items-center justify-between bg-gray-700 rounded-md p-2 cursor-pointer hover:bg-gray-600 transition-colors duration-300"
         (click)="openFilePicker()"
       >
-        <span *ngIf="!_previewImage" class="text-gray-600"
-          >Select Banner Image</span
-        >
+        <span *ngIf="!_previewImage" class="text-gray-300 text-sm sm:text-base">Select Banner Image</span>
         <input
           #bannerInput
           id="banner"
@@ -272,54 +287,48 @@
           (change)="changeBanner($event)"
           autocomplete="off"
         />
-        <div class="">
+        <div>
           <img
             *ngIf="_previewImage"
             [src]="_previewImage"
             alt="Selected Image"
-            class="w-32 h-32 object-cover rounded-md ml-2"
+            class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-md ml-2"
           />
-          <!-- Add this line -->
         </div>
       </div>
     </div>
-
-    <div class="flex justify-end gap-2 p-4">
+    <div class="flex justify-end gap-2 p-3 sm:p-4">
       <p-button
         label="Cancel"
         severity="secondary"
         (click)="_visible = false"
-        class="bg-red-600 text-white rounded-md px-4 py-2"
+        class="bg-red-600 hover:bg-red-500 text-white rounded-md px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors duration-300"
       />
       <p-button
         label="Save"
         type="submit"
-        class="bg-green-500 hover:bg-green-600 text-white rounded-md px-4 py-2"
+        class="bg-green-600 hover:bg-green-500 text-white rounded-md px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors duration-300"
       />
     </div>
   </form>
 </p-dialog>
 
-<!-- Progress Spinner -->
-
-<!-- The Modal -->
-
+<!-- Upload Shorts Modal -->
 <div class="card flex justify-content-center">
   <p-dialog
     header="Upload Shorts"
     [modal]="true"
     [(visible)]="_isModalVisible"
-    [style]="{ width: '35rem' }"
+    [style]="{ width: '90%', maxWidth: '35rem' }"
+    class="bg-gray-800 text-white rounded-xl shadow-lg animate-fade-in"
   >
-    <div
-      class="modal-content relative bg-white rounded shadow-lg w-11/12 md:w-3/4 lg:w-1/2 p-4"
-    >
+    <div class="modal-content relative bg-gray-800 rounded-xl p-3 sm:p-4">
       <!-- Overlay for loading spinner -->
       <div
         *ngIf="_isLoading"
-        class="modal-progress-overlay absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10"
+        class="modal-progress-overlay absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75 z-10"
       >
-        <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+        <p-progressSpinner ariaLabel="loading" styleClass="text-blue-500"></p-progressSpinner>
       </div>
       <div
         *ngIf="!_filePreview"
@@ -327,11 +336,11 @@
       >
         <label
           for="dropzone-file"
-          class="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+          class="flex flex-col items-center justify-center w-full h-48 sm:h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-700 hover:bg-gray-600 transition-colors duration-300"
         >
-          <div class="flex flex-col items-center justify-center pt-5 pb-6">
+          <div class="flex flex-col items-center justify-center pt-4 sm:pt-5 pb-5 sm:pb-6">
             <svg
-              class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+              class="w-6 h-6 sm:w-8 sm:h-8 mb-3 sm:mb-4 text-blue-400"
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -345,12 +354,10 @@
                 d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
               />
             </svg>
-            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mb-1 sm:mb-2 text-xs sm:text-sm text-gray-300">
               <span class="font-semibold">Click to upload</span>
             </p>
-            <p class="text-xs text-gray-500 dark:text-gray-400">
-              MP4, AVI, MOV (MAX. 10MB)
-            </p>
+            <p class="text-[10px] sm:text-xs text-gray-400">MP4, AVI, MOV (MAX. 10MB)</p>
           </div>
           <input
             id="dropzone-file"
@@ -363,18 +370,18 @@
       </div>
       <div
         *ngIf="_filePreview"
-        class="preview mt-4 flex items-center justify-center"
+        class="preview mt-3 sm:mt-4 flex items-center justify-center"
       >
         <video
           [src]="_filePreview"
           controls
           muted
-          class="w-full h-auto"
+          class="w-full h-auto rounded-xl"
         ></video>
       </div>
-      <div *ngIf="_filePreview" class="flex justify-center mt-4">
+      <div *ngIf="_filePreview" class="flex justify-center mt-3 sm:mt-4">
         <button
-          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm sm:text-base py-1.5 sm:py-2 px-4 sm:px-6 rounded-full transition-all duration-300 hover:scale-105 shadow-md"
           (click)="submitFile()"
         >
           Submit

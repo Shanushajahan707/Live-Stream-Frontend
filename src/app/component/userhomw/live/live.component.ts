@@ -439,6 +439,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  HostListener,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataPassingService } from '../../../service/user/data/data-passing.service';
@@ -486,6 +487,8 @@ export class LiveComponent implements OnInit, OnDestroy {
   isRecording: boolean = false;
   showEmojiPicker: boolean = false;
   viewerCount: number = 0;
+  isChatDrawerOpen: boolean = false;
+  isMobile: boolean = false;
   colors: string[] = [
     'text-red-500',
     'text-blue-500',
@@ -501,10 +504,20 @@ export class LiveComponent implements OnInit, OnDestroy {
     private _dataService: DataPassingService,
     private _liveServive: LiveService,
     private _toaster: ToastrService,
-    private _subscriptionService: SubscriptionService
+    private _subscriptionService: SubscriptionService,
   ) {}
-
+  
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.checkIfMobile();
+  }
+  
+  checkIfMobile(): void {
+    this.isMobile = window.innerWidth < 1024; // LG breakpoint
+  }
+  
   ngOnInit() {
+    this.checkIfMobile()
     this._liveServive
       .onGetChannel()
       .pipe(takeUntil(this._destroy$))
@@ -845,6 +858,10 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   getColor(index: number) {
     return this.colors[index % this.colors.length];
+  }
+
+  toggleChatDrawer(): void {
+    this.isChatDrawerOpen = !this.isChatDrawerOpen;
   }
 
   ngOnDestroy() {

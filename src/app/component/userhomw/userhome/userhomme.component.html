@@ -1,11 +1,10 @@
-<div class="md:w-full h-s flex">
-  <!-- Hide recommendation on small devices -->
-  <div class="hidden bg-gray-900 sm:w-full sm:block md:w-2/12">
+<div class="md:w-full h-full flex bg-gray-900">
+  <!-- Recommendation Sidebar -->
+  <div class="hidden md:block md:w-2/12 bg-gray-900 h-screen sticky top-0 overflow-y-auto">
     <app-recommendation />
   </div>
-  <div
-    class="md:w-10/12 w-full bg-gray-900 flex flex-col justify-center md:ps-8 md:pt-20 pt-8"
-  >
+  <!-- Main Content -->
+  <div class="w-full md:w-10/12 h-full bg-gray-900 flex flex-col md:ps-8 md:pt-20 pt-8">
     <app-recommendlist />
   </div>
 </div>

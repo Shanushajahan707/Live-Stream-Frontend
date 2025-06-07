@@ -17,4 +17,32 @@ export class ChatComponent implements OnInit {
       this._isLogged = this._service.islogged();
     });
   }
+
+  messages: { sender: string, content: string, timestamp: string }[] = [
+    {
+      sender: 'Alice',
+      content: 'Hey there! How\'s it going?',
+      timestamp: '10:24 AM'
+    },
+    {
+      sender: 'Bob (Web Dev)',
+      content: 'Just finished fixing that bug. Feel free to test it now!',
+      timestamp: '2:15 PM'
+    },
+    {
+      sender: 'Charlie',
+      content: 'Woof! Can\'t wait for our walk in the park later.',
+      timestamp: 'Yesterday, 5:32 PM'
+    },
+    {
+      sender: 'Delivery Notification',
+      content: 'Your package is out for delivery today! Check the link for details.',
+      timestamp: '2024-04-20 (Saturday) 9:48 AM'
+    },
+    {
+      sender: 'Group Chat',
+      content: 'Anyone up for a movie night this weekend?',
+      timestamp: 'Last Friday, 8:30 PM'
+    }
+  ];
 }

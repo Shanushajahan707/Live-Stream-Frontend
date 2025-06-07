@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   _registeredEmail!: FormGroup;
   // private loginSubscription: Subscription | undefined;
   loading = false;
-  acknowledge!:boolean
+  acknowledge!: boolean;
 
   constructor(
     private _fb: FormBuilder,
@@ -55,14 +55,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log('authResponse:', authResponse);
         console.log('User:', authResponse.user);
         console.log('token:', JSON.stringify(authResponse.token));
-        this._service.islogged$.next(true);
+        this._service.updateLoggedInStatus();
         this._cookieService.delete('authResponse');
         this._router.navigate(['/userhome']);
       }
     }
 
     // this.ack()
-    
   }
 
   onSubmit() {
@@ -72,23 +71,23 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.sendLoginData(this._loginForm.value);
     }
   }
-  
+
   sendLoginData(data: loginCredential) {
     if (data) {
       console.log('data', data);
-  
+
       this.loading = true; // Start the loader
-  
+
       const intervalId = setInterval(() => {
         this.ack(); // Check for acknowledgment
-  
+
         if (this.acknowledge) {
           clearInterval(intervalId); // Stop checking if ack is true
           this._store.dispatch(userLogin({ userData: data })); // Dispatch login
           this.loading = false; // Stop the loader
         }
       }, 1000); // Check every second
-  
+
       // Additional safeguard to stop the loader in case acknowledgment never happens
       setTimeout(() => {
         if (!this.acknowledge) {
@@ -99,22 +98,24 @@ export class LoginComponent implements OnInit, OnDestroy {
       }, 10000); // Timeout after 10 seconds
     }
   }
-  
+
   ack() {
-    this._service.ack().pipe(takeUntil(this._destroy$)).subscribe({
-      next: (res => {
-        if (res && res.ack) {
-          console.log('ack response', res);
-          this.acknowledge = res.ack;
-        }
-      }),
-      error: (err => {
-        console.log(err.error);
-        this.loading = true; // Start the loader
-      })
-    });
+    this._service
+      .ack()
+      .pipe(takeUntil(this._destroy$))
+      .subscribe({
+        next: (res) => {
+          if (res && res.ack) {
+            console.log('ack response', res);
+            this.acknowledge = res.ack;
+          }
+        },
+        error: (err) => {
+          console.log(err.error);
+          this.loading = true; // Start the loader
+        },
+      });
   }
-  
 
   // sendLoginData(data: loginCredential) {
   //   this.loginSubscription = this._service.login(data).subscribe({

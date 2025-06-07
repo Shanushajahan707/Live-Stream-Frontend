@@ -23,7 +23,7 @@ export class BlockedAccountComponent implements OnInit, OnDestroy {
     const token = localStorage.getItem('token');
     const decode = jwtDecode(token as string);
     this.userdata = decode as User;
-    this._service.islogged$.next(false);
+    this._service.updateLoggedInStatus();
     console.log(this._service.islogged$);
   }
 
@@ -53,7 +53,6 @@ export class BlockedAccountComponent implements OnInit, OnDestroy {
   goBack() {
     console.log('Go Back button clicked');
     localStorage.removeItem('token');
-    this._service.islogged$.next(false);
-    this._router.navigateByUrl('');
+this._service.updateLoggedInStatus();    this._router.navigateByUrl('');
   }
 }

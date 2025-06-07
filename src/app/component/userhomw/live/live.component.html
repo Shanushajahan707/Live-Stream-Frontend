@@ -90,100 +90,310 @@
       </div>
     </div> -->
 
-
-    <div class="flex flex-col h-full mb-20">
+<div class="flex flex-col h-full">
   <!-- Video and Chat Container -->
-  <div class="flex flex-1">
+  <div class="flex flex-1 relative">
     <!-- Video Section -->
-    <div class="flex flex-col lg:flex-row w-full lg:w-3/4 p-4 lg:p-24 bg-black relative">
-      <div class="flex-1 mb-4 lg:mb-0 relative">
-        <!-- Main Video for Remote User -->
-        <video *ngIf="!_startlive" id="remoteVideo" class="w-full h-3/4 video-player" #remoteVideo controls autoplay></video>
-        <!-- Viewer count for viewers -->
-       
-      </div>
-      <!-- User's Video -->
-      <div *ngIf="_startlive" class="w-full lg:w-full lg:h-80 bg-black border border-gray-700 rounded-lg relative">
-        <div class="video-container">
-          <video id="localVideo"  class="video-player" #localVideo controls autoplay muted></video>
-          <!-- Viewer count for broadcasters -->
-          <div *ngIf="_startlive" class="absolute top-4 left-4 flex items-center bg-black bg-opacity-70 text-white font-bold text-sm px-3 py-1 rounded-lg z-10">
-            <i class="fas fa-eye mr-2 text-green-500"></i> Viewers: {{ viewerCount }}
+    <div class="flex flex-col w-full p-4 lg:p-24 bg-black relative">
+      <div class="flex flex-col lg:flex-row w-full">
+        <!-- Main Video -->
+        <div class="flex-1 mb-4 lg:mb-0 relative">
+          <video
+            *ngIf="!_startlive"
+            id="remoteVideo"
+            class="w-full h-3/4 video-player rounded-xl shadow-lg"
+            #remoteVideo
+            controls
+            autoplay
+          ></video>
+          <!-- Viewer count for viewers -->
+          <div
+            *ngIf="_joinlive"
+            class="absolute top-4 left-4 flex items-center bg-gray-900 bg-opacity-80 backdrop-blur-sm text-white font-bold text-sm px-3 py-1 rounded-lg z-10 shadow-md animate-fade-in"
+          >
+            <i class="fas fa-eye mr-2 text-green-400"></i> Viewers: {{ viewerCount }}
           </div>
-          <div *ngIf="!_isVideoOn" class="video-off-message">
-            The video feed is off
+        </div>
+        <!-- User's Video (Broadcaster) -->
+        <div
+          *ngIf="_startlive"
+          class="w-full lg:w-full lg:h-80 bg-black border border-gray-700 rounded-xl relative mt-4 lg:mt-0"
+        >
+          <div class="video-container">
+            <video
+              id="localVideo"
+              class="video-player rounded-xl"
+              #localVideo
+              controls
+              autoplay
+              muted
+            ></video>
+            <!-- Viewer count for broadcasters -->
+            <div
+              *ngIf="_startlive"
+              class="absolute top-4 left-4 flex items-center bg-gray-900 bg-opacity-80 backdrop-blur-sm text-white font-bold text-sm px-3 py-1 rounded-lg z-10 shadow-md animate-fade-in"
+            >
+              <i class="fas fa-eye mr-2 text-green-400"></i> Viewers: {{ viewerCount }}
+            </div>
+            <div *ngIf="!_isVideoOn" class="video-off-message">
+              The video feed is off
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Floating Chat Button for Small Devices -->
+      <button
+        class="lg:hidden fixed bottom-20 right-4 p-3 bg-blue-500 text-white rounded-full shadow-lg z-20 transition-all duration-300 hover:bg-blue-600 hover:scale-110"
+        (click)="toggleChatDrawer()"
+      >
+        <i class="fas fa-comments"></i>
+      </button>
+
+      <!-- Control Buttons -->
+      <div
+        class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4 absolute bottom-0 left-0 right-0 rounded-t-xl"
+      >
+        <button
+          *ngIf="_startlive"
+          class="bg-gray-700 p-2 rounded-full text-white hover:bg-gray-600 transition-all duration-300 hover:scale-105 relative group"
+          (click)="toggleMic()"
+        >
+          <i *ngIf="_isMicOn" class="fas fa-microphone"></i>
+          <i *ngIf="!_isMicOn" class="fas fa-microphone-slash"></i>
+          <span
+            class="absolute bottom-full mb-2 hidden group-hover:block text-xs text-white bg-gray-600 px-2 py-1 rounded-md"
+          >
+            {{ _isMicOn ? 'Mute Mic' : 'Unmute Mic' }}
+          </span>
+        </button>
+        <button
+          *ngIf="_startlive"
+          class="bg-gray-700 p-2 rounded-full text-white hover:bg-gray-600 transition-all duration-300 hover:scale-105 relative group"
+          (click)="toggleVideo()"
+        >
+          <i *ngIf="_isVideoOn" class="fas fa-video"></i>
+          <i *ngIf="!_isVideoOn" class="fas fa-video-slash"></i>
+          <span
+            class="absolute bottom-full mb-2 hidden group-hover:block text-xs text-white bg-gray-600 px-2 py-1 rounded-md"
+          >
+            {{ _isVideoOn ? 'Turn Off Video' : 'Turn On Video' }}
+          </span>
+        </button>
+        <button
+          *ngIf="_startlive"
+          (click)="toggleScreenShare()"
+          id="screenShare"
+          class="bg-gray-700 p-2 rounded-full text-white hover:bg-gray-600 transition-all duration-300 hover:scale-105 relative group"
+        >
+          <i class="fas fa-desktop"></i>
+          <span
+            class="absolute bottom-full mb-2 hidden group-hover:block text-xs text-white bg-gray-600 px-2 py-1 rounded-md"
+          >
+            Share Screen
+          </span>
+        </button>
+        <button
+          (click)="leaveRoom()"
+          class="bg-red-500 p-2 rounded-full text-white hover:bg-red-600 transition-all duration-300 hover:scale-105 relative group"
+        >
+          <i class="fas fa-phone-slash"></i>
+          <span
+            class="absolute bottom-full mb-2 hidden group-hover:block text-xs text-white bg-gray-600 px-2 py-1 rounded-md"
+          >
+            End Call
+          </span>
+        </button>
+      </div>
     </div>
-    <!-- Chat Section -->
-    <div class="p-6 hidden lg:flex w-full lg:w-1/4 flex-col bg-gray-900">
+
+    <!-- Chat Section (Desktop) -->
+    <div
+      class="hidden lg:flex w-full lg:w-1/4 flex-col bg-gray-900 bg-opacity-80 backdrop-blur-md p-6 shadow-xl relative"
+    >
       <div class="h-full flex-1">
-        <div class="flex flex-col h-96 flex-1 overflow-y-scroll text-green-100">
-          <div *ngFor="let message of messages; let i = index" class="flex flex-col my-2">
-            <div class="flex flex-col items-start px-4 py-2 rounded-lg shadow-md">
-              <span [ngClass]="{ 'highlight-username': getSubscriberPlan(message.username) !== null }" class="font-semibold">
+        <div
+          class="flex flex-col h-96 flex-1 overflow-y-scroll text-green-100 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900"
+        >
+          <div
+            *ngFor="let message of messages; let i = index"
+            class="flex flex-col my-2"
+          >
+            <div
+              class="flex flex-col items-start px-4 py-2 rounded-lg bg-gray-800 shadow-md hover:bg-gray-700 transition-colors duration-300"
+            >
+              <span
+                [ngClass]="{
+                  'highlight-username': getSubscriberPlan(message.username) !== null
+                }"
+                class="font-semibold text-white"
+              >
                 {{ message.username }}
                 <ng-container *ngIf="getSubscriberPlan(message.username) as plan">
-                  <span *ngIf="plan === 1">🌟</span>
-                  <span *ngIf="plan === 6">🌟🌟</span>
-                  <span *ngIf="plan === 12">🌟🌟🌟</span>
+                  <span *ngIf="plan === 1" class="text-yellow-400">🌟</span>
+                  <span *ngIf="plan === 6" class="text-yellow-400">🌟🌟</span>
+                  <span *ngIf="plan === 12" class="text-yellow-400">🌟🌟🌟</span>
                 </ng-container>
               </span>
               <ng-container *ngIf="message.type === 'text'">
                 <span [ngClass]="getColor(i)" class="text-sm">{{ message.message }}</span>
               </ng-container>
               <ng-container *ngIf="message.type === 'audio'">
-                <audio controls>
-                  <source [src]="message.audioUrl" type="audio/mpeg">
+                <audio controls class="mt-1">
+                  <source [src]="message.audioUrl" type="audio/mpeg" />
                 </audio>
               </ng-container>
             </div>
-            <span class="text-xs text-gray-500 pl-4">{{ message.timestamp | date:'short' }}</span>
+            <span class="text-xs text-gray-500 pl-4 mt-1">{{
+              message.timestamp | date: 'short'
+            }}</span>
           </div>
         </div>
       </div>
-      <div class="p-4 bg-gray-800 flex items-center">
-        <input [(ngModel)]="newMessage" type="text" placeholder="Type your message..." class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"/>
-        <button (click)="sendMessage(newMessage, 'text')" class="p-2 bg-blue-500 rounded-full text-white">
+      <div class="p-4 bg-gray-800 flex items-center rounded-lg shadow-md relative z-10">
+        <input
+          [(ngModel)]="newMessage"
+          type="text"
+          placeholder="Type your message..."
+          class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          (click)="sendMessage(newMessage, 'text')"
+          class="p-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-all duration-300 hover:scale-105"
+        >
           <i class="fas fa-paper-plane"></i>
         </button>
-        <button (click)="toggleEmojiPicker()" class="p-2 bg-yellow-500 rounded-full text-white">
+        <button
+          (click)="toggleEmojiPicker()"
+          class="p-2 bg-yellow-500 rounded-full text-white hover:bg-yellow-600 transition-all duration-300 hover:scale-105"
+        >
           <i class="fas fa-smile"></i>
         </button>
-        <p-dialog header="Choose Emoji" [modal]="true" [(visible)]="showEmojiPicker" [style]="{ width: '25rem' }">
-          <div class="modal-content">
-            <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
-          </div>
-        </p-dialog>
-        <div *ngIf="isRecording" class="flex items-center justify-center p-2 mx-2 text-white bg-red-500 rounded-full">
+        <div
+          *ngIf="isRecording"
+          class="flex items-center justify-center p-2 mx-2 text-white bg-red-500 rounded-full"
+        >
           <i class="fas fa-circle-notch fa-spin"></i>
           <span class="ml-2">Recording...</span>
         </div>
-        <button *ngIf="!isRecording" (click)="startRecording()" class="p-2 bg-green-500 rounded-full text-white">
+        <button
+          *ngIf="!isRecording"
+          (click)="startRecording()"
+          class="p-2 bg-green-500 rounded-full text-white hover:bg-green-600 transition-all duration-300 hover:scale-105"
+        >
           <i class="fas fa-microphone"></i>
         </button>
-        <button *ngIf="isRecording" (click)="stopRecording()" class="p-2 bg-red-500 rounded-full text-white">
+        <button
+          *ngIf="isRecording"
+          (click)="stopRecording()"
+          class="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-all duration-300 hover:scale-105"
+        >
           <i class="fas fa-stop"></i>
         </button>
       </div>
     </div>
+
+    <!-- Chat Drawer for Small Devices (Option 1: With Fixed Emoji Picker) -->
+    <!-- Chat Drawer for Small Devices (Option 2: Without Emoji Picker) -->
+<div
+  *ngIf="isChatDrawerOpen"
+  class="lg:hidden fixed inset-0 bg-gray-900 bg-opacity-95 z-30 flex flex-col p-4 transition-all duration-300"
+>
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-bold text-white">Live Chat</h3>
+    <button
+      (click)="toggleChatDrawer()"
+      class="p-2 bg-gray-700 rounded-full text-white hover:bg-gray-600 transition-all duration-300"
+    >
+      <i class="fas fa-times"></i>
+    </button>
   </div>
-  <!-- Control Buttons -->
-  <div class="flex justify-center p-4 bg-gray-800 space-x-2 lg:space-x-4 mb-10">
-    <button *ngIf="_startlive" class="bg-gray-700 p-2 rounded-full text-white" (click)="toggleMic()">
-      <i *ngIf="_isMicOn" class="fas fa-microphone"></i>
-      <i *ngIf="!_isMicOn" class="fas fa-microphone-slash"></i>
+  <div
+    class="flex flex-col flex-1 overflow-y-scroll text-green-100 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900 mb-16"
+  >
+    <div
+      *ngFor="let message of messages; let i = index"
+      class="flex flex-col my-2"
+    >
+      <div
+        class="flex flex-col items-start px-4 py-2 rounded-lg bg-gray-800 shadow-md hover:bg-gray-700 transition-colors duration-300"
+      >
+        <span
+          [ngClass]="{
+            'highlight-username': getSubscriberPlan(message.username) !== null
+          }"
+          class="font-semibold text-white"
+        >
+          {{ message.username }}
+          <ng-container *ngIf="getSubscriberPlan(message.username) as plan">
+            <span *ngIf="plan === 1" class="text-yellow-400">🌟</span>
+            <span *ngIf="plan === 6" class="text-yellow-400">🌟🌟</span>
+            <span *ngIf="plan === 12" class="text-yellow-400">🌟🌟🌟</span>
+          </ng-container>
+        </span>
+        <ng-container *ngIf="message.type === 'text'">
+          <span [ngClass]="getColor(i)" class="text-sm">{{ message.message }}</span>
+        </ng-container>
+        <ng-container *ngIf="message.type === 'audio'">
+          <audio controls class="mt-1">
+            <source [src]="message.audioUrl" type="audio/mpeg" />
+          </audio>
+        </ng-container>
+      </div>
+      <span class="text-xs text-gray-500 pl-4 mt-1">{{
+        message.timestamp | date: 'short'
+      }}</span>
+    </div>
+  </div>
+  <div class="p-4 bg-gray-800 flex items-center rounded-lg shadow-md fixed bottom-0 left-0 right-0 z-10">
+    <input
+      [(ngModel)]="newMessage"
+      type="text"
+      placeholder="Type your message..."
+      class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <button
+      (click)="sendMessage(newMessage, 'text')"
+      class="p-2 bg-blue-500 rounded-full text-white hover:bg-blue-600 transition-all duration-300 hover:scale-105"
+    >
+      <i class="fas fa-paper-plane"></i>
     </button>
-    <button *ngIf="_startlive" class="bg-gray-700 p-2 rounded-full text-white" (click)="toggleVideo()">
-      <i *ngIf="_isVideoOn" class="fas fa-video"></i>
-      <i *ngIf="!_isVideoOn" class="fas fa-video-slash"></i>
+    <div
+      *ngIf="isRecording"
+      class="flex items-center justify-center p-2 mx-2 text-white bg-red-500 rounded-full"
+    >
+      <i class="fas fa-circle-notch fa-spin"></i>
+      <span class="ml-2">Recording...</span>
+    </div>
+    <button
+      *ngIf="!isRecording"
+      (click)="startRecording()"
+      class="p-2 bg-green-500 rounded-full text-white hover:bg-green-600 transition-all duration-300 hover:scale-105"
+    >
+      <i class="fas fa-microphone"></i>
     </button>
-    <button *ngIf="_startlive" (click)="toggleScreenShare()" id="screenShare" class="bg-gray-700 p-2 rounded-full text-white">
-      <i class="fas fa-desktop"></i>
-    </button>
-    <button (click)="leaveRoom()" class="bg-red-500 p-2 rounded-full text-white">
-      <i class="fas fa-phone-slash"></i>
+    <button
+      *ngIf="isRecording"
+      (click)="stopRecording()"
+      class="p-2 bg-red-500 rounded-full text-white hover:bg-red-600 transition-all duration-300 hover:scale-105"
+    >
+      <i class="fas fa-stop"></i>
     </button>
   </div>
 </div>
+
+<!-- Emoji Picker Dialog (For Desktop Only) -->
+<p-dialog
+  *ngIf="!isMobile"
+  header="Choose Emoji"
+  [modal]="true"
+  [(visible)]="showEmojiPicker"
+  [style]="{ width: '90%', 'max-width': '25rem', 'z-index': '1000' }"
+  [position]="'topright'"
+  [baseZIndex]="10000"
+  class="bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl"
+>
+  <div class="modal-content">
+    <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+  </div>
+</p-dialog>

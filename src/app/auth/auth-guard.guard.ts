@@ -11,7 +11,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 
   // Check if token exists
   if (!token) {
-    _service.islogged$.next(false);
+    _service.updateLoggedInStatus();
     router.navigateByUrl('');
     return false;
   }
@@ -25,7 +25,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
     if (decodedToken.exp < currentTime) {
       // console.log('here the expire');
       localStorage.removeItem('token');
-      _service.islogged$.next(false);
+      _service.updateLoggedInStatus();
       router.navigateByUrl('');
       return false;
     } else {
@@ -35,21 +35,20 @@ export const authGuard: CanActivateFn = async (route, state) => {
             // console.log('response in the guard', res);
             if (res) {
               if (res.isBlocked == true) {
-                _service.islogged$.next(false);
-                // console.log('usr blocked', res);
+                _service.updateLoggedInStatus(); // console.log('usr blocked', res);
                 router.navigateByUrl('/blocked-account');
                 return false;
               } else {
                 return true;
               }
             } else {
-              _service.islogged$.next(false);
+              _service.updateLoggedInStatus();
               return false;
             }
           },
           error: (err) => {
             if (err && err.error.message) {
-              _service.islogged$.next(false);
+              _service.updateLoggedInStatus();
               console.log('error', err);
               router.navigateByUrl('');
             }
@@ -61,7 +60,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
   } catch (error) {
     console.log('Error decoding token:', error);
     router.navigateByUrl('');
-    _service.islogged$.next(false);
+    _service.updateLoggedInStatus();
     return false;
   }
 };
@@ -96,8 +95,7 @@ export const authGuard: CanActivateFn = async (route, state) => {
 //             console.log('response in the guard', res);
 //             if (res) {
 //               if (res.isBlocked == true) {
-//                 _service.islogged$.next(false);
-//                 console.log('usr blocked', res);
+// this._service.updateLoggedInStatus();//                 console.log('usr blocked', res);
 //                 router.navigateByUrl('/blocked-account');
 //                 return false;
 //               } else {

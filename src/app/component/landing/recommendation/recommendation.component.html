@@ -1,20 +1,24 @@
-<div class="w-full h-full bg-gray-900 ">
-  <div class="p-4 pt-8">
-    <h2 class="text-lg text-white font-bold mb-12">Popular Channel</h2>
-    <!-- Channel listings -->
-    <div *ngIf="_recommendations" class="responsive-container">
-      <div *ngFor="let value of _recommendations; let i = index" class="flex items-center mb-4">
-        <div class="text-white text-lg font-bold mr-4">
-          {{i + 1}}
-        </div>
-        <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
-          <!-- Avatar -->
-          <img src="{{_apiUrl}}/channelBanner/{{value.banner}}" class="w-full h-full object-cover" alt="Avatar">
-        </div>
-        <div class="ml-4 text-white">
-          <p class="font-semibold">{{ value.channelName }}</p>
-          <p class="text-sm">Followers: {{ value.followersCount }}</p>
-        </div>
+<div class="w-full h-full bg-gray-900 p-4 pt-8">
+  <h2 class="text-lg text-white font-bold mb-6">Popular Channels</h2>
+  <div *ngIf="_recommendations" class="space-y-4">
+    <div
+      *ngFor="let value of _recommendations; let i = index"
+      class="flex items-center"
+    >
+      <div class="text-blue-400 text-lg font-bold mr-4">
+        {{ i + 1 }}
+      </div>
+      <div class="w-12 h-12 rounded-full bg-gray-300 overflow-hidden">
+        <img
+          [src]="_apiUrl + '/channelBanner/' + value.banner"
+          class="w-full h-full object-cover"
+          alt="Avatar"
+          onerror="this.src='https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop';"
+        />
+      </div>
+      <div class="ml-4 flex-1 text-white">
+        <p class="font-semibold text-sm">{{ value.channelName }}</p>
+        <p class="text-xs text-white">Followers: {{ value.followersCount }}</p>
       </div>
     </div>
   </div>

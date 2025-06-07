@@ -16,7 +16,7 @@ export class AuthEffects {
     private _toastService: ToastrService
   ) {}
 
-  signupRequest$ = createEffect(() =>
+  loginRequest$ = createEffect(() =>
     this.actions$.pipe(
       ofType(AuthActions.userLogin),
       exhaustMap((action) =>
@@ -24,28 +24,18 @@ export class AuthEffects {
           map((res) => {
             if (res && res.message) {
               this._toastService.success(res.message);
-              //   this.loginForm.reset();
               if (res.isAdmin?.isAdmin) {
                 localStorage.setItem('admindata', res.token);
+                this.service.updateAdminStatus(); // Update isAdmin$ state
                 this.router.navigate(['/admin/dashboard']);
               } else {
                 localStorage.setItem('token', res.token);
                 localStorage.setItem('refreshToken', res.refreshToken);
-                this.service.islogged$.next(true);
+                this.service.updateLoggedInStatus(); // Update islogged$ state
                 this.router.navigateByUrl('/userhome');
-                // this.loginForm.reset();
               }
             }
             return AuthActions.submitSuccess({ successResponse: res.userdata });
-
-            // if (successResponse.message) {
-            //     const userDataString = JSON.stringify(action.userData);
-            //     localStorage.setItem('token', userDataString);
-            //     console.log('login effect working')
-            //     this.toastService.success(successResponse.message)
-            //     this.router.navigate(['userhome'])
-            // }
-            // return AuthActions.submitSuccess({ successResponse })
           }),
           catchError((error) => {
             if (error.error.message) {
@@ -61,40 +51,4 @@ export class AuthEffects {
       )
     )
   );
-
-  //     loginRequest$ = createEffect(() =>
-  //         this.actions$.pipe(
-  //             ofType(AuthActions.studentLogin),
-  //             exhaustMap((action) =>
-  //                 this.service.userLogin(action.userData).pipe(
-  //                     map((successResponse) => {
-  //                         if (successResponse.message) {
-  //                             sessionStorage.setItem('token', successResponse.token)
-  //                             localStorage.setItem('token', successResponse.token);
-  //                             const user = successResponse.student
-  //                             localStorage.setItem('user', JSON.stringify(successResponse.student));
-  //                             this.customToastService.setToastAndNavigate('success', successResponse.message, ['home']);
-  //                             // this.router.navigate(['home']);
-  //                             // this.toastService.set('success', 'Login successful');
-  //                         }
-  //                         return AuthActions.submitSuccess({ successResponse })
-  //                     }),
-  //                     catchError((error) => {
-  //                         this.customToastService.setToast('error', error.error.message)
-  //                         return of(AuthActions.submitFail({ error: error.error.message || 'An error occurred' }));
-  //                     })
-  //                 )
-  //             )
-  //         )
-  //     )
-
-  //     registrationFailure$ = this.actions$.pipe(
-  //         ofType(AuthActions.submitFail),
-  //         tap((action) => {
-  //             alert('sumbission failed')
-
-  //             console.log('submission failed')
-  //             console.log(action)
-  //         })
-  //     );
 }

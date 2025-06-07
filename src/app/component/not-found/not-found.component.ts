@@ -24,6 +24,6 @@ export class NotFoundComponent implements AfterViewInit,OnInit{
   ngOnInit(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
-    this._service.islogged$.next(false);
+    this._service.updateLoggedInStatus();
   }
 }

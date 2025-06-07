@@ -1,26 +1,109 @@
-<div *ngIf="currentRoute !== '/notfound'" class="w-full h-20 ">
-  <app-header></app-header>
-</div>
+<div class="flex flex-col h-screen">
+  <!-- Header -->
+  <div *ngIf="currentRoute !== '/notfound'" class="w-full h-16 sm:h-20">
+    <app-header></app-header>
+  </div>
 
-<router-outlet></router-outlet>
-
-<footer *ngIf="userLoggesIn"  class="footer footer-center md:w-screen w-30  p-24 bg-base-200 text-base-content rounded" >
-  <nav class="grid grid-flow-col gap-4">
-    <a class="link link-hover">About us</a>
-    <a class="link link-hover">Contact</a>
-    <a class="link link-hover">Jobs</a>
-    <a class="link link-hover">Press kit</a>
-  </nav> 
-  <nav>
-    <div class="grid grid-flow-col gap-4 text-xl a-hover:bg-red">
-      <a class="hover:underline cursor-pointer"><i class=" fab fa-facebook-f"></i></a>
-      <a class="hover:underline cursor-pointer"><i class="fab fa-github"></i></a>
-      <a class="hover:underline cursor-pointer"><i class="fab fa-instagram"></i></a>
-      <a class="hover:underline cursor-pointer"><i class="fab fa-linkedin-in"></i></a>
+  <!-- Main Content -->
+  <div class="flex-1 h-50 w-full">
+    <router-outlet></router-outlet>
+  </div>
+  
+ <footer
+    *ngIf="userLoggedIn && currentRoute !== '/live'; else notLoggedIn"
+    class="w-full bg-gradient-to-t from-gray-900 to-gray-800 text-gray-300 py-6 sm:py-8 px-3 sm:px-4 md:px-8 rounded-t-xl border-t-2 border-blue-500"
+  >
+    <div class="max-w-4xl mx-auto text-center">
+      <nav
+        class="grid grid-flow-row sm:grid-flow-col gap-3 sm:gap-4 mb-6 sm:mb-8 animate-fade-in"
+      >
+        <a
+          class="text-xs sm:text-sm md:text-base text-gray-300 hover:text-blue-400 hover:underline transition-all duration-300"
+          >About us</a
+        >
+        <a
+          class="text-xs sm:text-sm md:text-base text-gray-300 hover:text-blue-400 hover:underline transition-all duration-300"
+          >Contact</a
+        >
+        <a
+          class="text-xs sm:text-sm md:text-base text-gray-300 hover:text-blue-400 hover:underline transition-all duration-300"
+          >Jobs</a
+        >
+        <a
+          class="text-xs sm:text-sm md:text-base text-gray-300 hover:text-blue-400 hover:underline transition-all duration-300"
+          >Press kit</a
+        >
+      </nav>
+  
+      <nav class="mb-6 sm:mb-8 animate-fade-in">
+        <div
+          class="grid grid-flow-col gap-3 sm:gap-4 text-base sm:text-lg md:text-xl"
+        >
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-300 hover:text-blue-400 hover:bg-gray-700 rounded-full p-2 transition-all duration-300 hover:scale-105 transform"
+          >
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-300 hover:text-blue-400 hover:bg-gray-700 rounded-full p-2 transition-all duration-300 hover:scale-105 transform"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+          <a
+            href="https://instagram.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-300 hover:text-blue-400 hover:bg-gray-700 rounded-full p-2 transition-all duration-300 hover:scale-105 transform"
+          >
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-300 hover:text-blue-400 hover:bg-gray-700 rounded-full p-2 transition-all duration-300 hover:scale-105 transform"
+          >
+            <i class="fab fa-linkedin-in"></i>
+          </a>
+        </div>
+      </nav>
+  
+      <div class="border-t border-gray-700 my-4 sm:my-6 mx-auto w-3/4"></div>
+  
+      <aside class="animate-fade-in">
+        <p
+          class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium mb-1 sm:mb-2"
+        >
+          Current Date: {{ currentTime$ | async | date : "MMM d, yyyy" }}
+        </p>
+        <p class="text-[10px] sm:text-xs md:text-sm text-gray-400 font-medium">
+          Copyright © {{ currentYear }} - All rights reserved by Capture
+        </p>
+      </aside>
     </div>
-  </nav> 
-  <aside>
-    <p>Current Date : {{ currentTime$ | async | date}}</p>
-    <p>Copyright © 2024 - All right reserved by Capture </p>
-  </aside>
-</footer>
+  </footer>
+ <ng-template #notLoggedIn>
+    <footer
+      *ngIf="currentRoute !== '/live'"
+      class="w-full bg-gradient-to-t from-gray-900 to-gray-800 text-gray-300 py-4 sm:py-6 px-3 sm:px-4 md:px-8 rounded-t-xl border-t-2 border-blue-500"
+    >
+      <div class="max-w-4xl mx-auto text-center">
+        <p class="text-xs sm:text-sm text-red-400 animate-fade-in mb-3">
+          Please log in to see the footer.
+        </p>
+        <a
+          href="/login"
+          class="inline-block px-4 py-2 text-xs sm:text-sm bg-blue-500 text-gray-100 rounded-md hover:bg-blue-600 transition-colors duration-300"
+        >
+          Log In
+        </a>
+      </div>
+    </footer>
+  </ng-template>
+</div>

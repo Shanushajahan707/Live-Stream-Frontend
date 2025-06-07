@@ -1,47 +1,59 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { PrimeNGConfig } from 'primeng/api';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DateService } from './service/user/data/date.service';
 import { AccountService } from './service/user/account/account.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
   currentTime$!: Observable<Date>;
-  userLoggesIn: boolean = false;
-  _isloggedSubscription!: Subscription;
-  currentRoute: string = '';
-  private routeCheckInterval!: NodeJS.Timeout;
+  userLoggedIn = false;
+  currentRoute = '';
+  currentYear!: number;
+  private destroy$ = new Subject<void>();
+
   constructor(
     private primengConfig: PrimeNGConfig,
     private _dateService: DateService,
     private _accountService: AccountService,
-    private _router: Router
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    initFlowbite();
     this.primengConfig.ripple = true;
     this.currentTime$ = this._dateService.getCurrentTime();
     this._dateService.startUpdatingTime();
-    this._isloggedSubscription = this._accountService.islogged$.subscribe(
-      (res) => {
-        this.userLoggesIn = this._accountService.islogged();
-      }
-    );
-  }
-  // title = 'Live-Stream';
 
- 
+    this._accountService.islogged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoggedIn) => {
+        this.userLoggedIn = Boolean(isLoggedIn);
+      });
+
+    this.currentYear = new Date().getFullYear();
+
+    this.router.events
+      .pipe(
+        filter(
+          (event): event is NavigationEnd => event instanceof NavigationEnd
+        ),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event) => {
+        this.currentRoute = event.urlAfterRedirects;
+      });
+  }
 
   ngOnDestroy(): void {
     this._dateService.stopUpdatingTime();
-    clearInterval(this.routeCheckInterval);
-    this._isloggedSubscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

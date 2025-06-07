@@ -1,58 +1,69 @@
-<div class="flex flex-col md:flex-row bg-gray-800 h-full mb-5">
-  <div class="mt-7 md:mt-0 md:w-1/4"><app-recommendation /></div>
+<div class="flex flex-col md:flex-row bg-gradient-to-br from-gray-900 to-gray-800 h-full mb-5">
+  <!-- Recommendation Sidebar -->
+  <div class="mt-7 md:mt-0 md:w-1/4 overflow-y-auto">
+    <app-recommendation />
+  </div>
 
+  <!-- Main Content -->
   <div class="w-full md:w-3/4 md:m-7 mb-7 md:mb-20">
-    <!-- Banner of the channel -->
-    <div class="relative mb-4 p-3  rounded-md bg-gray-900" *ngIf="_followChannel">
+    <!-- Banner of the Channel -->
+    <div class="relative mb-4 p-3 rounded-xl bg-gray-900 animate-fade-in" *ngIf="_followChannel">
       <img
-        src="{{apiUrl}}/channelBanner/{{ _followChannel.banner }}?"
-        class="rounded-sm w-full h-76 md:h-96"
+        src="{{apiUrl}}/channelBanner/{{ _followChannel.banner }}"
+        class="rounded-xl w-full h-64 md:h-80 object-cover transition-transform duration-500 hover:scale-105"
         alt="Channel Banner"
+         onerror="this.src='https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=1920&auto=format&fit=crop';"
       />
-      <!-- <img
-        src="\assets\Images\channel-banner1.png"
-        class="w-full rounded-sm h-56 md:h-64 lg:h-72"
-        alt="Channel Banner"
-      /> -->
+      <div class="absolute inset-0 bg-gradient-to-t from-gray-900/90 to-transparent rounded-xl"></div>
+      <div class="absolute bottom-6 left-6 text-white">
+        <h2 class="text-2xl md:text-3xl font-bold tracking-tight">{{ _followChannel.channelName }}</h2>
+      </div>
     </div>
-    <!-- Profile with channel name and followers -->
-    <div
-      class="flex items-center justify-between p-4 bg-gray-800"
-      *ngIf="_followChannel"
-    >
-      <div class="flex items-center justify-between">
-        <div class="relative md:w-16 w-12">
+
+    <!-- Profile with Channel Name and Followers -->
+    <div class="flex items-center justify-between p-4 bg-gray-800 rounded-xl shadow-lg animate-slide-up" *ngIf="_followChannel">
+      <div class="flex items-center">
+        <div class="relative md:w-16 w-12 transform hover:scale-105 transition-transform duration-300">
           <img
-            class="md:w-14 h-14 md:h-14 rounded-full"
+            class="md:w-14 h-14 md:h-14 rounded-full object-cover border-2 border-blue-500/50"
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRKgUUpHpc-JwcJiRLScAepL-T3oeaxR8T5A&s"
-            alt=""
+            alt="Channel Avatar"
+             onerror="this.src='https://images.unsplash.com/photo-1557683311-eac922347aa1?q=80&w=1920&auto=format&fit=crop';"
           />
           <span
-            class="top-0 left-7 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"
+            class="top-0 left-7 absolute w-4 h-4 bg-green-500 border-2 border-gray-900 rounded-full animate-pulse"
           ></span>
         </div>
-        <div class="flex flex-col ml-2">
-          <span class="md:text-lg text-sm text-white font-bold ml-2">{{
-            _followChannel.channelName
-          }}</span>
-          <span class="font-bold ml-2">
-            Followers:
-            {{ _followChannel && _followChannel.followers.length }}
+        <div class="flex flex-col ml-4">
+          <span class="text-gray-300 text-sm mt-1 flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="w-4 h-4 inline-block mr-1 text-blue-400"
+            >
+              <path d="M12 20v-6m0 0V4m0 10h6m-6 0H6"></path>
+            </svg>
+            {{ _followChannel.followers.length }} Followers
           </span>
         </div>
-        <div *ngIf="_followChannel.isblocked !== true"></div>
-
-        <!-- Edit Icon -->
       </div>
 
-      <div class="md:flex md:items-center flex-row pb-4">
+      <div class="flex items-center space-x-3">
         <!-- Subscribe Button with Conditional Rendering -->
         <div class="cursor-pointer">
           <ng-container *ngIf="!isMember">
-            <div id="Subscribe" class="flex flex-row mx-6">
-              <button class="button w-24 md:28" (click)="openModal()">
+            <div id="Subscribe" class="flex flex-row">
+              <button
+                class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 hover:scale-105 shadow-md"
+                (click)="openModal()"
+              >
                 Subscribe
-                <svg fill="currentColor" viewBox="0 0 24 24" class="icon">
+                <svg fill="currentColor" viewBox="0 0 24 24" class="inline-block w-5 h-5 ml-1">
                   <path
                     clip-rule="evenodd"
                     d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z"
@@ -63,30 +74,27 @@
             </div>
           </ng-container>
           <ng-container *ngIf="isMember">
-            <div id="PaymentSuccess" class="flex flex-row mx-6">
+            <div id="PaymentSuccess" class="flex flex-row">
               <button
-                class="button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+                class="bg-green-600 hover:bg-green-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md"
               >
-                Subscription Added
+                Subscribed
               </button>
             </div>
           </ng-container>
-      
         </div>
-        <div>
-          <ng-container *ngIf="isPaymentFailed">
-            <button
-            class="button bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded"
+        <div *ngIf="isPaymentFailed">
+          <button
+            class="bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md"
           >
-           PaymentFailed
+            Payment Failed
           </button>
-          </ng-container>
         </div>
-        <div class="cursor-pointer ms-3 hidden md:block">
+        <div class="cursor-pointer hidden md:block">
           <button
             disabled
             type="button"
-            class="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            class="bg-gray-700 text-gray-300 font-medium py-2 px-5 rounded-full shadow-md"
           >
             {{ _followChannel.isblocked ? "Blocked" : "Active" }}
           </button>
@@ -94,20 +102,29 @@
       </div>
     </div>
 
-    <!-- Content of the session -->
-    <div class="p-4 flex text-lg space-x-5 font-bold">
-      <label for="videos" class="text-white">
-        Shorts
+    <!-- Content Tabs -->
+    <div class="p-4 flex text-lg space-x-6 font-semibold">
+      <label for="shorts" class="relative cursor-pointer">
         <input
           type="radio"
           id="shorts"
           name="content"
           [(ngModel)]="_selectedContent"
           value="shorts"
+          class="sr-only"
         />
+        <span
+          class="text-white px-4 py-2 rounded-full transition-all duration-300 relative"
+          [ngClass]="{'bg-blue-600': _selectedContent === 'shorts', 'hover:bg-gray-700': _selectedContent !== 'shorts'}"
+        >
+          Shorts
+          <span
+            class="absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300"
+            [ngClass]="{'scale-x-100': _selectedContent === 'shorts'}"
+          ></span>
+        </span>
       </label>
-      <label for="live" class="text-white">
-        Live
+      <label for="live" class="relative cursor-pointer">
         <input
           type="radio"
           id="live"
@@ -115,175 +132,276 @@
           (click)="liveHistorys()"
           [(ngModel)]="_selectedContent"
           value="live"
+          class="sr-only"
         />
+        <span
+          class="text-white px-4 py-2 rounded-full transition-all duration-300 relative"
+          [ngClass]="{'bg-blue-600': _selectedContent === 'live', 'hover:bg-gray-700': _selectedContent !== 'live'}"
+        >
+          Live
+          <span
+            class="absolute bottom-0 left-0 w-full h-1 bg-blue-400 transform scale-x-0 transition-transform duration-300"
+            [ngClass]="{'scale-x-100': _selectedContent === 'live'}"
+          ></span>
+        </span>
       </label>
     </div>
 
-    <!-- Dynamic Content Display Based on Selection -->
+    <!-- Shorts Section -->
     <div
       id="videosContainer"
-      class="content-container"
+      class="content-container p-4"
       *ngIf="_selectedContent === 'shorts'"
     >
-    
-      <!-- <video #target class="video-js" controls muted playsinline preload="none"></video> -->
       <div class="card" *ngIf="_followChannel">
-        <!-- Check if followChannel.video is available and has at least one item -->
         <ng-container *ngIf="_followChannel.video.length; else singleVideo">
-          <p-carousel 
-          [value]="_followChannel.video" 
-          [numVisible]="1" 
-          [numScroll]="1" 
-          orientation="vertical" 
-          verticalViewPortHeight="360px">
-              <ng-template let-videoItem pTemplate="item">
-                  <div class="border-3 border-red-600 surface-border border-round m-2  flex justify-center">
-                    <div>
-      
-                    <video
-                          #target
-                          class="h-80 w-72"
-                          [src]="videoItem.url"
-                          controls
-                          muted
-                          (play)="onVideoPlay(videoItem.url)"
-                        ></video>
-                        <div class="video-info">
-                          <span class="font-semibold text-lg m-3">{{ videoItem.views }} Views</span>
-                        </div>
-                      </div>
-      
-                  </div>
-              </ng-template>
-      </p-carousel>
+          <p-carousel
+            [value]="_followChannel.video"
+            [numVisible]="1"
+            [numScroll]="1"
+            orientation="vertical"
+            verticalViewPortHeight="400px"
+            class="flex justify-center"
+          >
+            <ng-template let-videoItem pTemplate="item">
+              <div class="bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up">
+                <video
+                  #target
+                  class="h-96 w-72 rounded-t-xl"
+                  [src]="videoItem.url"
+                  controls
+                  muted
+                  (play)="onVideoPlay(videoItem.url)"
+                ></video>
+                <div class="p-4 flex items-center space-x-2">
+                  <span class="font-semibold text-gray-300 text-base">
+                    {{ videoItem.views }} Views
+                  </span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    class="w-5 h-5 text-blue-400"
+                  >
+                    <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                  </svg>
+                </div>
+              </div>
+            </ng-template>
+          </p-carousel>
         </ng-container>
-
-        <!-- Template for single video when followChannel.video is not available or empty -->
         <ng-template #singleVideo>
-          <video
-            #target
-            class="video-js h-44 w-45"
-            muted
-            src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
-            controls
-            playsinline
-            [muted]="true"
-          ></video>
+          <div class="bg-gray-800 rounded-xl shadow-lg p-4 text-center animate-fade-in">
+            <video
+              #target
+              class="h-44 w-full max-w-xs mx-auto rounded-xl"
+              muted
+              src="assets\Videos\WhatsApp Video 2020-09-16 at 8.41.02 PM.mp4"
+              controls
+              playsinline
+              [muted]="true"
+            ></video>
+            <p class="text-gray-300 text-sm mt-2">No shorts available.</p>
+          </div>
         </ng-template>
       </div>
     </div>
-  
 
-
-    <div id="liveContainer" class="content-container" *ngIf="_selectedContent === 'live' && isMember;" class="card" >
-      <!-- Check if followChannel.video is available and has at least one item -->
+    <!-- Live Section -->
+    <div
+      id="liveContainer"
+      class="content-container p-4"
+      *ngIf="_selectedContent === 'live' && isMember"
+    >
       <ng-container *ngIf="liveHistory.length; else singleVideo">
         <p-carousel
           [value]="liveHistory"
           [numVisible]="3"
           [numScroll]="3"
           [responsiveOptions]="_responsiveOptions"
+          class="gap-6"
         >
           <ng-template let-live pTemplate="item">
-            <h3>Live Name: {{ live.liveName }}</h3>
-            <p>Channel: {{ live.channelId.channelName }}</p>
-            <p>Start Date: {{ live.startDate | date: 'shortDate' }}</p>
-            <p>Start Time: {{ live.startTime | date: 'shortTime' }}</p>
-            <p *ngIf="live.endTime">End Time: {{ live.endTime | date: 'shortTime' }}</p>
-            <p>Viewer Count: {{ live.viewerCount }}</p>
-            <p>Room ID: {{ live.roomId }}</p>
-            <p>Viewers: <ul>
-              <li *ngFor="let user of live.viewerIds"> {{user.username}}</li>
-            </ul>
-
+            <div class="bg-gray-800 rounded-xl p-4 shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 animate-slide-up">
+              <h3 class="text-lg font-semibold text-white mb-2">{{ live.liveName }}</h3>
+              <p class="text-gray-300 text-sm">Channel: {{ live.channelId.channelName }}</p>
+              <p class="text-gray-300 text-sm">Start: {{ live.startDate | date: 'mediumDate' }} at {{ live.startTime | date: 'shortTime' }}</p>
+              <p class="text-gray-300 text-sm" *ngIf="live.endTime">
+                End: {{ live.endTime | date: 'shortTime' }}
+              </p>
+              <p class="text-gray-300 text-sm flex items-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="w-4 h-4 mr-1 text-blue-400"
+                >
+                  <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                </svg>
+                Viewer Count: {{ live.viewerCount }}
+              </p>
+              <p class="text-gray-300 text-sm">Room ID: {{ live.roomId }}</p>
+              <p class="text-gray-300 text-sm mt-2">Viewers:</p>
+              <ul class="text-gray-300 text-sm list-disc list-inside max-h-20 overflow-y-auto">
+                <li *ngFor="let user of live.viewerIds">{{ user.username }}</li>
+              </ul>
+            </div>
           </ng-template>
         </p-carousel>
       </ng-container>
-
-      <!-- Template for single video when followChannel.video is not available or empty -->
-      <ng-template *ngIf="_selectedContent !== 'live' && !isMember">
-        <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
-      </ng-template>
       <ng-template #singleVideo>
-        <p *ngIf="!liveHistory || liveHistory.length === 0">No live videos available.</p>
+        <div class="bg-gray-800 rounded-xl p-6 text-center shadow-lg animate-fade-in">
+          <p class="text-gray-300 text-lg">No live videos available.</p>
+          <p class="text-gray-400 text-sm mt-2">Check back later for live sessions!</p>
+        </div>
       </ng-template>
     </div>
-
-    
+    <div
+      class="p-4 text-center"
+      *ngIf="_selectedContent === 'live' && !isMember"
+    >
+      <div class="bg-gray-800 rounded-xl p-6 shadow-lg animate-fade-in">
+        <p class="text-gray-300 text-lg">Please subscribe to view live sessions.</p>
+        <button
+          class="mt-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 hover:scale-105 shadow-md"
+          (click)="openModal()"
+        >
+          Subscribe Now
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- Main Payment Dialog -->
-<!-- Main Payment Dialog -->
 <dialog id="my_modal_1" class="modal" #myModal>
-  <div class="modal-box w-11/12 max-w-5xl">
-    <div *ngIf="showPayPal">
-      <ngx-paypal class="bg-red-500" [config]="payPalConfig"></ngx-paypal>
-    </div>
-    <div class="text-xl text-red-500 font-semibold" *ngIf="showSuccess">
+  <div class="modal-box w-11/12 max-w-5xl bg-gray-800 text-white rounded-xl shadow-lg animate-fade-in">
+    <div class="text-xl text-green-400 font-semibold mb-4 flex items-center" *ngIf="showSuccess">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 mr-2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M20.03 4.97a.75.75 0 010 1.06l-11 11a.75.75 0 01-1.06 0l-5-5a.75.75 0 011.06-1.06L8.5 15.44l10.47-10.47a.75.75 0 011.06 0z"
+          clip-rule="evenodd"
+        />
+      </svg>
       Payment Successful!
     </div>
-    <div class="text-xl text-red-500 font-semibold" *ngIf="showCancel">
+    <div class="text-xl text-red-400 font-semibold mb-4 flex items-center" *ngIf="showCancel">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 mr-2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M6.22 6.22a.75.75 0 011.06 0L12 10.94l4.72-4.72a.75.75 0 111.06 1.06L13.06 12l4.72 4.72a.75.75 0 11-1.06 1.06L12 13.06l-4.72 4.72a.75.75 0 01-1.06-1.06L10.94 12 6.22 7.28a.75.75 0 010-1.06z"
+          clip-rule="evenodd"
+        />
+      </svg>
       Payment Cancelled!
     </div>
-    <div class="text-xl text-red-500 font-semibold" *ngIf="showError">
+    <div class="text-xl text-red-400 font-semibold mb-4 flex items-center" *ngIf="showError">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 mr-2"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.5 12a.75.75 0 011.5 0v1.5a.75.75 0 01-1.5 0v-1.5zm0-6a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5z"
+          clip-rule="evenodd"
+        />
+      </svg>
       An Error Occurred!
     </div>
-    <h1 class="font-bold text-lg">
-      Join our family through seamless payments!
-    </h1>
-
-    <div class="flex flex-col items-center">
-      <div
-        id="pricing-table"
-        class="clear w-full flex items-center justify-center flex-wrap"
+    <h1 class="font-bold text-2xl text-white mb-6 flex items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 mr-2 text-blue-400"
       >
+        <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+      </svg>
+      Join Our Family Through Seamless Payments!
+    </h1>
+    <div class="flex flex-col items-center">
+      <div id="pricing-table" class="w-full flex flex-wrap justify-center gap-6">
         <div
           *ngFor="let plan of _channelPlans; let i = index"
-          class="plan h-80"
+          class="plan bg-gray-700 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 w-full sm:w-80"
         >
-          <button id="Payment" (click)="selectPlan(plan, i)">
-            <span>Make Payment</span>
-          </button>
-          <div
-            id="paypal-button-container-{{ i }}"
-            *ngIf="_selectedPlan && _selectedPlan._id === plan._id"
-          ></div>
-          <h3>
-            {{ plan.month }} Month<span>₹{{ plan.price }}</span>
+          <h3 class="text-lg font-semibold text-white mb-4">
+            {{ plan.month }} Month
+            <span class="text-blue-400">₹{{ plan.price }}</span>
           </h3>
-          <ul>
+          <ul class="text-gray-300 text-sm mb-6 space-y-2">
             <li *ngFor="let desc of plan.description; let j = index">
               {{ j + 1 }}. {{ desc.desc }}
             </li>
           </ul>
+          <button
+            id="Payment"
+            (click)="selectPlan(plan, i)"
+            class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 w-full shadow-md"
+          >
+            Make Payment
+          </button>
+          <div
+            id="paypal-button-container-{{ i }}"
+            *ngIf="_selectedPlan && _selectedPlan._id === plan._id"
+            class="mt-4"
+          ></div>
         </div>
       </div>
     </div>
-    <form method="dialog" class="modal-backdrop">
-      <button class="close-btn">Close</button>
+    <form method="dialog" class="modal-backdrop mt-6">
+      <button class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md">
+        Close
+      </button>
     </form>
   </div>
 </dialog>
 
 <!-- Payment Method Selection Dialog -->
 <dialog id="paymentMethodDialog" class="modal" #paymentMethodModal>
-  <div class="modal-box w-11/12 max-w-5xl">
-    <h2 class="font-bold text-lg">Choose Payment Method</h2>
-    <button
-      class="button text-red-400 mx-2"
-      (click)="selectPaymentMethod('paypal')"
-    >
-      Pay with PayPal
-    </button>
-    <button
-      class="button text-red-400 mx-2"
-      (click)="selectPaymentMethod('razorpay')"
-    >
-      Pay with Razorpay
-    </button>
-    <form method="dialog" class="modal-backdrop">
-      <button>close</button>
+  <div class="modal-box w-11/12 max-w-5xl bg-gray-800 text-white rounded-xl shadow-lg animate-fade-in">
+    <h2 class="font-bold text-2xl text-white mb-6 flex items-center">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        class="w-6 h-6 mr-2 text-blue-400"
+      >
+        <path d="M12 15.5a3.5 3.5 0 100-7 3.5 3.5 0 000 7zM12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+      </svg>
+      Choose Payment Method
+    </h2>
+    <div class="flex justify-center space-x-4">
+      <button
+        class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 hover:scale-105 shadow-md"
+        (click)="selectPaymentMethod('paypal')"
+      >
+        Pay with PayPal
+      </button>
+      <button
+        class="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 hover:scale-105 shadow-md"
+        (click)="selectPaymentMethod('razorpay')"
+      >
+        Pay with Razorpay
+      </button>
+    </div>
+    <form method="dialog" class="modal-backdrop mt-6">
+      <button class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-6 rounded-full transition-all duration-300 shadow-md">
+        Close
+      </button>
     </form>
   </div>
 </dialog>

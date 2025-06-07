@@ -1,57 +1,24 @@
-    <div id="chat" class=" hidden sm:block flex-col w-full h-full bg-gray-900 pt-16">
-    <!-- Messages container -->
-    <div class="flex flex-col flex-1 overflow-y-auto text-green-100 ">
-        <!-- Sample messages -->
-        <div class="flex flex-col my-2">
-            <!-- Username and message content -->
-            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-                <span class="font-semibold">Alice</span>
-                <span class="text-sm">Hey there! How's it going?</span>
-            </div>
-            <span class="text-xs text-gray-500 pl-4">10:24 AM</span>
-        </div>
-        
-        <div class="flex flex-col my-2">
-            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-                <span class="font-semibold">Bob (Web Dev)</span>
-                <span class="text-sm">Just finished fixing that bug. Feel free to test it now!</span>
-            </div>
-            <span class="text-xs text-gray-500 pl-4">2:15 PM</span>
-        </div>
-        
-        <div class="flex flex-col my-2">
-            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-                <span class="font-semibold">Charlie</span>
-                <span class="text-sm">Woof! Can't wait for our walk in the park later.</span>
-            </div>
-            <span class="text-xs text-gray-500 pl-4">Yesterday, 5:32 PM</span>
-        </div>
-        
-        <div class="flex flex-col my-2">
-            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-                <span class="font-semibold">Delivery Notification</span>
-                <span class="text-sm">Your package is out for delivery today! Check the link for details.</span>
-            </div>
-            <span class="text-xs text-gray-500 pl-4">2024-04-20 (Saturday) 9:48 AM</span>
-        </div>
-        
-        <div class="flex flex-col my-2">
-            <div class="flex flex-col items-start px-4 py-2 bg-white-100 rounded-lg shadow-md">
-                <span class="font-semibold">Group Chat</span>
-                <span class="text-sm">Anyone up for a movie night this weekend?</span>
-            </div>
-            <span class="text-xs text-gray-500 pl-4">Last Friday, 8:30 PM</span>
-        </div>
-        
-        <!-- Repeat this structure for each message -->
+<div id="chat" class="flex flex-col w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 pt-16">
+  <!-- Messages container -->
+  <div class="flex flex-col flex-1 overflow-y-auto text-white p-4 space-y-4">
+    <div *ngFor="let message of messages" class="flex flex-col my-2">
+      <div class="flex flex-col items-start px-4 py-2 rounded-lg shadow-md"
+           [ngClass]="message.sender === 'Delivery Notification' || message.sender === 'Group Chat' ? 'bg-blue-600/30' : 'bg-gray-800/50'">
+        <span class="font-semibold text-blue-300">{{ message.sender }}</span>
+        <span class="text-sm">{{ message.content }}</span>
+      </div>
+      <span class="text-xs text-gray-300 pl-4">{{ message.timestamp }}</span>
     </div>
-
-    <!-- Input box for sending messages -->
-    <div *ngIf="_isLogged" class="p-4 bg-gray-800 flex items-center">
-        <input type="text" placeholder="Type your message..." class="w-full p-2 mr-2 border rounded-md bg-gray-700 text-white"/>
-        <button class="p-2 bg-blue-500 rounded-full text-white">
-            <i class="fas fa-paper-plane"></i> <!-- Send icon -->
-        </button>
-    </div>
+  </div>
+  <!-- Input box -->
+  <div *ngIf="_isLogged" class="p-4 bg-gray-800/70 flex items-center">
+    <input
+      type="text"
+      placeholder="Type your message..."
+      class="w-full p-3 border border-gray-600 rounded-full bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+    />
+    <button  class="ml-2 p-3 bg-gradient-to-r from-blue-500 to-blue-700 rounded-full text-white hover:from-blue-600 hover:to-blue-800 transition-all duration-300">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
 </div>
-  

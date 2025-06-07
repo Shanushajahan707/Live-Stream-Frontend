@@ -5,20 +5,22 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class DateService {
-  private currentTime = new BehaviorSubject<Date>(new Date());
-  private intervalId!: any;
+private currentTimeSubject = new BehaviorSubject<Date>(new Date());
+  private updateInterval: any;
 
-  constructor() {
-    this.startUpdatingTime();
+  getCurrentTime(): Observable<Date> {
+    return this.currentTimeSubject.asObservable();
   }
 
   startUpdatingTime(): void {
-    this.currentTime.next(new Date());
+    this.updateInterval = setInterval(() => {
+      this.currentTimeSubject.next(new Date());
+    }, 1000);
   }
 
-  stopUpdatingTime(): void {}
-
-  getCurrentTime(): Observable<Date> {
-    return this.currentTime.asObservable();
+  stopUpdatingTime(): void {
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
   }
 }
