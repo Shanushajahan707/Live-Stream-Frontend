@@ -383,17 +383,23 @@
 </div>
 
 <!-- Emoji Picker Dialog (For Desktop Only) -->
-<p-dialog
-  *ngIf="!isMobile"
-  header="Choose Emoji"
-  [modal]="true"
-  [(visible)]="showEmojiPicker"
-  [style]="{ width: '90%', 'max-width': '25rem', 'z-index': '1000' }"
-  [position]="'topright'"
+<!-- <p-dialog
+  
+  [style]="{ width: '90%', 'max-width': '25rem', 'z-index': '10000' }"
+  [position]="'center'"
   [baseZIndex]="10000"
-  class="bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-lg shadow-xl"
+  class="bg-gray-800 bg-opacity-90  backdrop-blur-md rounded-lg shadow-xl"
 >
   <div class="modal-content">
     <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
   </div>
-</p-dialog>
+</p-dialog> -->
+
+   <p-dialog *ngIf="!isMobile"
+  header="Choose Emoji"
+  [modal]="true"
+  [(visible)]="showEmojiPicker" [style]="{ width: '25rem' }">
+              <div class="modal-content">
+                <emoji-mart (emojiSelect)="addEmoji($event)"></emoji-mart>
+              </div>
+            </p-dialog>

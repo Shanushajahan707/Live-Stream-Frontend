@@ -1,5 +1,5 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { AccountService } from '../../../service/user/account/account.service';
 import { DataPassingService } from '../../../service/user/data/data-passing.service';
 import { ChannelData, User } from '../../../model/auth';
@@ -66,6 +66,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   @HostListener('window:resize', ['$event'])
   ngOnInit(): void {
+
+    this.currentRoute = this._router.url;
+
+    // Subscribe to route changes
+    this._router.events
+      .pipe(takeUntil(this._destroy$))
+      .subscribe(event => {
+        if (event instanceof NavigationEnd) {
+          this.currentRoute = event.urlAfterRedirects;
+          console.log('Current route updated:', this.currentRoute); // Debug log
+        }
+      });
+
+
+
     // this.startCheckingCurrentRoute()
 
     this._service.islogged$.subscribe((res) => {
@@ -101,6 +116,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
           }
         },
       });
+
+      
   }
 
   // private startCheckingCurrentRoute() {
