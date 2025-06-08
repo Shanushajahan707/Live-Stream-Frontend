@@ -524,7 +524,7 @@
 // }
 
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 @Injectable({
@@ -535,7 +535,7 @@ export class SocketService {
   private peerConnections: { [id: string]: RTCPeerConnection } = {};
   private iceCandidateQueues: { [id: string]: RTCIceCandidateInit[] } = {};
   private broadcasterStream: MediaStream | null = null;
-  private remoteStreamSubject = new Subject<MediaStream>();
+  private remoteStreamSubject = new BehaviorSubject<MediaStream | null>(null);
   private chatMessagesSubject = new Subject<{
     username: string;
     message: string;
@@ -551,6 +551,7 @@ export class SocketService {
   error$ = this.errorSubject.asObservable();
   private roomId: string | null = null;
   private username: string | null = null;
+  private retryCounts: { [peerId: string]: number } = {};
 
   constructor() {
     // this._socket = io(
@@ -571,6 +572,10 @@ export class SocketService {
 
     this.initializeSocketEvents();
     this.handleChatMessages();
+  }
+
+  public getPeerConnections(): { [peerId: string]: RTCPeerConnection } {
+    return this.peerConnections;
   }
 
   private initializeSocketEvents() {
@@ -696,17 +701,25 @@ export class SocketService {
     });
   }
 
-  private createPeerConnection(peerId: string): RTCPeerConnection {
+  public createPeerConnection(peerId: string): RTCPeerConnection {
     if (this.peerConnections[peerId]) {
       console.log(`Reusing existing peer connection for ${peerId}`);
       return this.peerConnections[peerId];
     }
-
     const peerConnection = new RTCPeerConnection({
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun1.l.google.com:19302' },
+        {
+          urls: [
+            'turn:us-0.expressturn.com:3478?transport=udp',
+            'turn:us-0.expressturn.com:3478?transport=tcp',
+          ],
+          username: '000000002064725712', // Replace with the username ExpressTURN gave you
+          credential: 'zZNbvdpUR/EiQbgshgaKJjLNT+w=', // Replace with the password ExpressTURN gave you
+        },
       ],
+      iceTransportPolicy: 'all', // Allow both relay and direct connections
     });
 
     peerConnection.onicecandidate = (event) => {
@@ -728,7 +741,13 @@ export class SocketService {
         const remoteStream = event.streams[0];
         console.log(`Remote stream tracks:`, remoteStream.getTracks());
         if (remoteStream.getTracks().length > 0) {
-          this.remoteStreamSubject.next(remoteStream);
+          // Only emit stream if not already set
+          if (
+            !this.remoteStreamSubject.getValue() ||
+            this.remoteStreamSubject.getValue() !== remoteStream
+          ) {
+            this.remoteStreamSubject.next(remoteStream);
+          }
         } else {
           console.warn(`Remote stream from ${peerId} has no tracks`);
         }
@@ -741,11 +760,28 @@ export class SocketService {
       console.log(
         `ICE connection state for ${peerId}: ${peerConnection.iceConnectionState}`
       );
-      if (peerConnection.iceConnectionState === 'failed') {
-        peerConnection.restartIce();
+      const state = peerConnection.iceConnectionState;
+      if (state === 'failed' || state === 'disconnected') {
+        if (!this.retryCounts[peerId]) this.retryCounts[peerId] = 0;
+        if (this.retryCounts[peerId] < 3) {
+          // Limit retries to 3
+          this.retryCounts[peerId]++;
+          console.log(
+            `Restarting ICE for ${peerId}, attempt ${this.retryCounts[peerId]}`
+          );
+          peerConnection.restartIce();
+          if (state === 'disconnected') {
+            // Renegotiate offer for persistent disconnects
+            this.createOffer(peerId);
+          }
+        } else {
+          console.error(`Max ICE retries reached for ${peerId}`);
+          this.errorSubject.next('Connection failed after multiple retries');
+        }
+      } else if (state === 'connected') {
+        this.retryCounts[peerId] = 0; // Reset retries on success
       }
     };
-
     this.peerConnections[peerId] = peerConnection;
     return peerConnection;
   }

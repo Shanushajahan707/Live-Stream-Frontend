@@ -253,7 +253,7 @@
 //   startRecording() {
 //     this.isRecording = true;
 //     console.log('recording started');
-    
+
 //     this._toaster.info('recording started');
 //     navigator.mediaDevices
 //       .getUserMedia({ audio: true })
@@ -489,6 +489,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   viewerCount: number = 0;
   isChatDrawerOpen: boolean = false;
   isMobile: boolean = false;
+  errorMessage: string = '';
   colors: string[] = [
     'text-red-500',
     'text-blue-500',
@@ -504,20 +505,20 @@ export class LiveComponent implements OnInit, OnDestroy {
     private _dataService: DataPassingService,
     private _liveServive: LiveService,
     private _toaster: ToastrService,
-    private _subscriptionService: SubscriptionService,
+    private _subscriptionService: SubscriptionService
   ) {}
-  
+
   @HostListener('window:resize', ['$event'])
   onResize(event: Event): void {
     this.checkIfMobile();
   }
-  
+
   checkIfMobile(): void {
     this.isMobile = window.innerWidth < 1024; // LG breakpoint
   }
-  
+
   ngOnInit() {
-    this.checkIfMobile()
+    this.checkIfMobile();
     this._liveServive
       .onGetChannel()
       .pipe(takeUntil(this._destroy$))
@@ -570,23 +571,58 @@ export class LiveComponent implements OnInit, OnDestroy {
 
             this._socketService.remoteStream$
               .pipe(takeUntil(this._destroy$))
-              .subscribe((remoteStream) => {
-                if (remoteStream && this._joinlive) {
-                  console.log('Viewer received stream, tracks:', remoteStream.getTracks());
-                  this._remoteVideo.nativeElement.srcObject = null; // Reset to avoid stale streams
-                  this._remoteVideo.nativeElement.srcObject = remoteStream;
-                  this._remoteVideo.nativeElement
-                    .play()
-                    .catch((err: Error) => {
+              .subscribe((stream) => {
+                if (stream) {
+                  const videoElement = this._remoteVideo.nativeElement;
+                  videoElement.srcObject = stream;
+                  // Get the viewer's peer connection (one for broadcaster)
+                  const peerConnection = Object.values(
+                    this._socketService.getPeerConnections()
+                  )[0];
+                  if (
+                    peerConnection &&
+                    peerConnection.iceConnectionState === 'connected'
+                  ) {
+                    videoElement.play().catch((err) => {
                       console.error('Video play error:', err);
-                      this._toaster.error('Failed to play video stream');
+                      this.errorMessage =
+                        'Failed to play video stream. Check network or browser settings.';
+                      this._toaster.error(this.errorMessage);
                     });
-                } else {
-                  console.warn('No remote stream or not in viewer mode');
+                  } else {
+                    console.log(
+                      'Waiting for ICE connection to stabilize before playing video'
+                    );
+                    if (peerConnection) {
+                      const stateChangeHandler = () => {
+                        if (peerConnection.iceConnectionState === 'connected') {
+                          videoElement.play().catch((err) => {
+                            console.error('Video play error:', err);
+                            this.errorMessage = 'Failed to play video stream.';
+                            this._toaster.error(this.errorMessage);
+                          });
+                          peerConnection.removeEventListener(
+                            'iceconnectionstatechange',
+                            stateChangeHandler
+                          );
+                        }
+                      };
+                      peerConnection.addEventListener(
+                        'iceconnectionstatechange',
+                        stateChangeHandler
+                      );
+                    } else {
+                      console.warn(
+                        'No peer connection available yet for video playback'
+                      );
+                      this.errorMessage =
+                        'Waiting for connection to broadcaster. Ensure WebRTC is enabled in your browser.';
+                      this._toaster.warning(this.errorMessage);
+                    }
+                  }
                 }
               });
-
-             this._socketService.chatMessages$
+            this._socketService.chatMessages$
               .pipe(takeUntil(this._destroy$))
               .subscribe((message) => {
                 this.messages.push(message);
@@ -779,8 +815,13 @@ export class LiveComponent implements OnInit, OnDestroy {
           const reader = new FileReader();
           reader.onload = () => {
             const base64AudioMessage = reader.result as string;
-            let username: string = localStorage.getItem('userName') || 'Anonymous';
-            this._socketService.sendMessage(username,base64AudioMessage, 'audio');
+            let username: string =
+              localStorage.getItem('userName') || 'Anonymous';
+            this._socketService.sendMessage(
+              username,
+              base64AudioMessage,
+              'audio'
+            );
             this.audioChunks = [];
           };
           reader.readAsDataURL(this.audioBlob);
@@ -801,12 +842,11 @@ export class LiveComponent implements OnInit, OnDestroy {
     }
   }
 
- sendMessage(message: string, messageType: 'text' | 'audio') {
+  sendMessage(message: string, messageType: 'text' | 'audio') {
     let username: string = localStorage.getItem('userName') || 'Anonymous';
-    this._socketService.sendMessage(username,message, messageType);
+    this._socketService.sendMessage(username, message, messageType);
     this.newMessage = '';
   }
-
 
   toggleEmojiPicker() {
     this.showEmojiPicker = !this.showEmojiPicker;
