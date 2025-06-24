@@ -105,7 +105,14 @@ _apiUrl:string=environment.apiUrl
     ];
   }
 
-  
+  copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text).then(() => {
+    // Optional: Add a success notification or visual feedback
+    console.log('Copied to clipboard:', text);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+  });
+}
 
   follow(channel: ChannelData) {
     this._channelService
