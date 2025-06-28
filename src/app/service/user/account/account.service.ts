@@ -63,7 +63,10 @@ export class AccountService {
   }
 
   forgotUrl(formData: FormData): Observable<GetForgotPassResponse> {
-    return this._http.post<GetForgotPassResponse>(`${this.apiUrl}forgoturl`, formData);
+    return this._http.post<GetForgotPassResponse>(
+      `${this.apiUrl}forgoturl`,
+      formData
+    );
   }
 
   googleAuth(): Observable<string> {
@@ -85,23 +88,34 @@ export class AccountService {
 
   refreshToken(): Observable<GetRefreshTokenResponse> {
     const refreshToken = localStorage.getItem('refreshToken');
-    return this._http.post<GetRefreshTokenResponse>(`${this.apiUrl}refreshtoken`, { refreshToken });
+    return this._http.post<GetRefreshTokenResponse>(
+      `${this.apiUrl}refreshtoken`,
+      { refreshToken }
+    );
   }
 
   forgotPasswordOtp(otpValue: number): Observable<GetForgotPassOtpResponse> {
     const email = localStorage.getItem('email');
-    return this._http.post<GetForgotPassOtpResponse>(`${this.apiUrl}forgotpasswordotp`, {
-      otpValue,
-      email,
-    });
+    return this._http.post<GetForgotPassOtpResponse>(
+      `${this.apiUrl}forgotpasswordotp`,
+      {
+        otpValue,
+        email,
+      }
+    );
   }
 
-  changePassword(changePasswordForm: FormData): Observable<GetChangePasswordResponse> {
+  changePassword(
+    changePasswordForm: FormData
+  ): Observable<GetChangePasswordResponse> {
     const email = localStorage.getItem('email');
-    return this._http.put<GetChangePasswordResponse>(`${this.apiUrl}changepassword`, {
-      changePasswordForm,
-      email,
-    });
+    return this._http.put<GetChangePasswordResponse>(
+      `${this.apiUrl}changepassword`,
+      {
+        changePasswordForm,
+        email,
+      }
+    );
   }
 
   userIsBlocked(): Observable<GetIsBlockedResponse> {

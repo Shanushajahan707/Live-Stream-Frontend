@@ -154,4 +154,4 @@ export const authGuardForLoggedUsers: CanActivateFn = (route, state) => {
     localStorage.removeItem('token');
     return true;
   }
-};
+}

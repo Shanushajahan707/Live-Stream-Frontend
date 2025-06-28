@@ -650,55 +650,94 @@ export class LiveComponent implements OnInit, OnDestroy {
       });
   }
 
+  // initializeConnection(RoomId: number) {
+  //   const currentDate = new Date();
+  //   const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
+  //   localStorage.setItem('payment-required', this.channelData._id);
+  //   if (lastDateOfLive > currentDate) {
+  //     this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
+  //       next: (res) => console.log('Update live info:', res),
+  //       error: (err: HttpErrorResponse) =>
+  //         this._toaster.error(
+  //           err.error?.message || 'Failed to update live info'
+  //         ),
+  //     });
+
+  //     this._liveServive.getAllSubscribedMember().subscribe({
+  //       next: (res) => (this.subscribers = res.members),
+  //       error: (err: HttpErrorResponse) =>
+  //         this._toaster.error(
+  //           err.error?.message || 'Failed to fetch subscribers'
+  //         ),
+  //     });
+
+  //     this._liveServive
+  //       .updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId)
+  //       .subscribe({
+  //         next: (res) => (this.streamingId = res.liveId),
+  //         error: (err: HttpErrorResponse) =>
+  //           this._toaster.error(
+  //             err.error?.message || 'Failed to update live history'
+  //           ),
+  //       });
+
+  //     this._socketService.joinRoom(RoomId, 'broadcaster');
+  //     navigator.mediaDevices
+  //       .getUserMedia({ video: true, audio: true })
+  //       .then((stream) => {
+  //         this.stream = stream;
+  //         console.log('Broadcaster stream tracks:', stream.getTracks());
+  //         this._localVideo.nativeElement.srcObject = stream;
+  //         this._socketService.handleAddTrack(stream);
+  //       })
+  //       .catch((error: Error) => {
+  //         console.error('Error accessing media devices:', error);
+  //         this._toaster.error('Failed to access camera or microphone');
+  //       });
+  //   } else {
+  //     this._toaster.error('Your trial is over');
+  //     this._router.navigate(['/subscriptionplan']);
+  //   }
+  // }
+
   initializeConnection(RoomId: number) {
-    const currentDate = new Date();
-    const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
-    localStorage.setItem('payment-required', this.channelData._id);
-    if (lastDateOfLive > currentDate) {
-      this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
-        next: (res) => console.log('Update live info:', res),
-        error: (err: HttpErrorResponse) =>
-          this._toaster.error(
-            err.error?.message || 'Failed to update live info'
-          ),
+  const currentDate = new Date();
+  const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
+  localStorage.setItem('payment-required', this.channelData._id);
+  if (lastDateOfLive > currentDate) {
+    this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
+      next: (res) => console.log('Update live info:', res),
+      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to update live info'),
+    });
+
+    this._liveServive.getAllSubscribedMember().subscribe({
+      next: (res) => (this.subscribers = res.members),
+      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to fetch subscribers'),
+    });
+
+    this._liveServive.updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId).subscribe({
+      next: (res) => (this.streamingId = res.liveId),
+      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to update live history'),
+    });
+
+    this._socketService.joinRoom(RoomId, 'broadcaster');
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        this.stream = stream;
+        console.log('Broadcaster stream tracks:', stream.getTracks());
+        this._localVideo.nativeElement.srcObject = stream;
+        this._socketService.handleAddTrack(stream); // Ensure tracks are sent immediately
+        this._socketService.setRemoteStream(stream); // Preview local stream as remote for broadcaster
+      })
+      .catch((error: Error) => {
+        console.error('Error accessing media devices:', error);
+        this._toaster.error('Failed to access camera or microphone');
       });
-
-      this._liveServive.getAllSubscribedMember().subscribe({
-        next: (res) => (this.subscribers = res.members),
-        error: (err: HttpErrorResponse) =>
-          this._toaster.error(
-            err.error?.message || 'Failed to fetch subscribers'
-          ),
-      });
-
-      this._liveServive
-        .updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId)
-        .subscribe({
-          next: (res) => (this.streamingId = res.liveId),
-          error: (err: HttpErrorResponse) =>
-            this._toaster.error(
-              err.error?.message || 'Failed to update live history'
-            ),
-        });
-
-      this._socketService.joinRoom(RoomId, 'broadcaster');
-      navigator.mediaDevices
-        .getUserMedia({ video: true, audio: true })
-        .then((stream) => {
-          this.stream = stream;
-          console.log('Broadcaster stream tracks:', stream.getTracks());
-          this._localVideo.nativeElement.srcObject = stream;
-          this._socketService.handleAddTrack(stream);
-        })
-        .catch((error: Error) => {
-          console.error('Error accessing media devices:', error);
-          this._toaster.error('Failed to access camera or microphone');
-        });
-    } else {
-      this._toaster.error('Your trial is over');
-      this._router.navigate(['/subscriptionplan']);
-    }
+  } else {
+    this._toaster.error('Your trial is over');
+    this._router.navigate(['/subscriptionplan']);
   }
+}
 
   joinLiveStream(RoomId: number) {
     if (this._joinreceivedData.RoomId) {

@@ -10,7 +10,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './interceptor/auth-interceptor';
 import { AdminModule } from './modules/admin/admin.module';
 import { UserModule } from './modules/user/user.module';
-import { HeaderComponent } from './component/landing/header/header.component';
 import { userReducer } from './store/userlogin/login-reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { AuthEffects } from './store/userlogin/login-effects';
@@ -19,20 +18,23 @@ import { ForgotPasswordComponent } from './component/account/forgot-password/for
 import { BlockedAccountComponent } from './component/account/blocked-account/blocked-account.component';
 import { PickerModule } from '@ctrl/ngx-emoji-mart';
 import { NotFoundComponent } from './component/not-found/not-found.component';
+import { CommonModule } from '@angular/common';
+import { HeaderComponent } from './component/landing/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     ForgotPasswordComponent,
     BlockedAccountComponent,
     NotFoundComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     AdminModule,
     UserModule,
+    CommonModule,
     ReactiveFormsModule,
     HttpClientModule,
     StoreModule.forRoot({}, {}),
@@ -44,12 +46,12 @@ import { NotFoundComponent } from './component/not-found/not-found.component';
     EffectsModule.forRoot([AuthEffects]),
     DialogModule,
     FormsModule,
-    PickerModule, 
-    BrowserAnimationsModule
+    PickerModule,
+    BrowserAnimationsModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

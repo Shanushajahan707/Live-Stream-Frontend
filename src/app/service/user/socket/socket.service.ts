@@ -835,10 +835,19 @@ export class SocketService {
     console.log(`Joined room ${roomId} as ${role}`);
   }
 
-  handleAddTrack(stream: MediaStream) {
-    console.log(`Storing broadcaster stream tracks:`, stream.getTracks());
-    this.broadcasterStream = stream;
-  }
+ handleAddTrack(stream: MediaStream) {
+  console.log(`Storing broadcaster stream tracks:`, stream.getTracks());
+  this.broadcasterStream = stream;
+  Object.values(this.peerConnections).forEach((peerConnection) => {
+    stream.getTracks().forEach((track) => {
+      const alreadyAdded = peerConnection.getSenders().some((sender) => sender.track === track);
+      if (!alreadyAdded) {
+        peerConnection.addTrack(track, stream);
+        console.log(`Added track ${track.kind} to ${peerConnection} for immediate streaming`);
+      }
+    });
+  });
+}
 
   handleReplaceTrack(oldTrack: MediaStreamTrack, newTrack: MediaStreamTrack) {
     console.log(`Trying to replace ${oldTrack.kind} with ${newTrack.kind}`);
@@ -892,6 +901,30 @@ export class SocketService {
     console.log(`Manually setting remote stream:`, stream.getTracks());
     this.remoteStreamSubject.next(stream);
   }
+  async handleAnswer(data: { id: string; answer: RTCSessionDescriptionInit }) {
+  console.log(`Received answer from ${data.id}, SDP:`, data.answer.sdp);
+  const peerConnection = this.peerConnections[data.id];
+  if (!peerConnection) {
+    console.warn(`No peer connection for ${data.id}`);
+    return;
+  }
+
+  try {
+    if (peerConnection.signalingState === 'stable') {
+      console.log(`Renegotiating for ${data.id} due to stable state`);
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+    }
+    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+    console.log(`Set remote description for ${data.id}`);
+    this.processQueuedIceCandidates(data.id);
+  } catch (err) {
+    console.error('Error handling answer:', err);
+    this.errorSubject.next('Failed to handle answer');
+  }
+}
+
+
 
   disconnect() {
     console.log('Disconnecting socket and closing peer connections');
