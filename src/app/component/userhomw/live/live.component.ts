@@ -440,6 +440,7 @@ import {
   ViewChild,
   ElementRef,
   HostListener,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataPassingService } from '../../../service/user/data/data-passing.service';
@@ -475,7 +476,13 @@ export class LiveComponent implements OnInit, OnDestroy {
   _isViewing = false;
   _joinlive = false;
   _startlive = false;
-  messages: Message[] = [];
+  messages: {
+    username: string;
+    message: string;
+    timestamp: Date;
+    type: 'text' | 'audio';
+    audioUrl?: string;
+  }[] = [];
   newMessage: string = '';
   streamingId!: string;
   channelData!: ChannelData;
@@ -505,7 +512,8 @@ export class LiveComponent implements OnInit, OnDestroy {
     private _dataService: DataPassingService,
     private _liveServive: LiveService,
     private _toaster: ToastrService,
-    private _subscriptionService: SubscriptionService
+    private _subscriptionService: SubscriptionService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   @HostListener('window:resize', ['$event'])
@@ -514,7 +522,7 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   checkIfMobile(): void {
-    this.isMobile = window.innerWidth < 1024; // LG breakpoint
+    this.isMobile = window.innerWidth < 1024;
   }
 
   ngOnInit() {
@@ -569,64 +577,12 @@ export class LiveComponent implements OnInit, OnDestroy {
                 }
               });
 
-            this._socketService.remoteStream$
-              .pipe(takeUntil(this._destroy$))
-              .subscribe((stream) => {
-                if (stream) {
-                  const videoElement = this._remoteVideo.nativeElement;
-                  videoElement.srcObject = stream;
-                  // Get the viewer's peer connection (one for broadcaster)
-                  const peerConnection = Object.values(
-                    this._socketService.getPeerConnections()
-                  )[0];
-                  if (
-                    peerConnection &&
-                    peerConnection.iceConnectionState === 'connected'
-                  ) {
-                    videoElement.play().catch((err) => {
-                      console.error('Video play error:', err);
-                      this.errorMessage =
-                        'Failed to play video stream. Check network or browser settings.';
-                      this._toaster.error(this.errorMessage);
-                    });
-                  } else {
-                    console.log(
-                      'Waiting for ICE connection to stabilize before playing video'
-                    );
-                    if (peerConnection) {
-                      const stateChangeHandler = () => {
-                        if (peerConnection.iceConnectionState === 'connected') {
-                          videoElement.play().catch((err) => {
-                            console.error('Video play error:', err);
-                            this.errorMessage = 'Failed to play video stream.';
-                            this._toaster.error(this.errorMessage);
-                          });
-                          peerConnection.removeEventListener(
-                            'iceconnectionstatechange',
-                            stateChangeHandler
-                          );
-                        }
-                      };
-                      peerConnection.addEventListener(
-                        'iceconnectionstatechange',
-                        stateChangeHandler
-                      );
-                    } else {
-                      console.warn(
-                        'No peer connection available yet for video playback'
-                      );
-                      this.errorMessage =
-                        'Waiting for connection to broadcaster. Ensure WebRTC is enabled in your browser.';
-                      this._toaster.warning(this.errorMessage);
-                    }
-                  }
-                }
-              });
             this._socketService.chatMessages$
               .pipe(takeUntil(this._destroy$))
               .subscribe((message) => {
                 this.messages.push(message);
               });
+
             this._socketService.viewerCount$
               .pipe(takeUntil(this._destroy$))
               .subscribe((count) => {
@@ -650,98 +606,125 @@ export class LiveComponent implements OnInit, OnDestroy {
       });
   }
 
-  // initializeConnection(RoomId: number) {
-  //   const currentDate = new Date();
-  //   const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
-  //   localStorage.setItem('payment-required', this.channelData._id);
-  //   if (lastDateOfLive > currentDate) {
-  //     this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
-  //       next: (res) => console.log('Update live info:', res),
-  //       error: (err: HttpErrorResponse) =>
-  //         this._toaster.error(
-  //           err.error?.message || 'Failed to update live info'
-  //         ),
-  //     });
+  ngAfterViewInit() {
+    if (this._startlive && !this._remoteVideo) {
+      console.log('Broadcaster mode: remoteVideo not expected in DOM');
+      return;
+    }
+    if (!this._remoteVideo && !this._startlive) {
+      console.warn('Remote video element not found in viewer mode');
+      this._toaster.warning(
+        'Video element not found. Please check the template.'
+      );
+      return;
+    }
 
-  //     this._liveServive.getAllSubscribedMember().subscribe({
-  //       next: (res) => (this.subscribers = res.members),
-  //       error: (err: HttpErrorResponse) =>
-  //         this._toaster.error(
-  //           err.error?.message || 'Failed to fetch subscribers'
-  //         ),
-  //     });
-
-  //     this._liveServive
-  //       .updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId)
-  //       .subscribe({
-  //         next: (res) => (this.streamingId = res.liveId),
-  //         error: (err: HttpErrorResponse) =>
-  //           this._toaster.error(
-  //             err.error?.message || 'Failed to update live history'
-  //           ),
-  //       });
-
-  //     this._socketService.joinRoom(RoomId, 'broadcaster');
-  //     navigator.mediaDevices
-  //       .getUserMedia({ video: true, audio: true })
-  //       .then((stream) => {
-  //         this.stream = stream;
-  //         console.log('Broadcaster stream tracks:', stream.getTracks());
-  //         this._localVideo.nativeElement.srcObject = stream;
-  //         this._socketService.handleAddTrack(stream);
-  //       })
-  //       .catch((error: Error) => {
-  //         console.error('Error accessing media devices:', error);
-  //         this._toaster.error('Failed to access camera or microphone');
-  //       });
-  //   } else {
-  //     this._toaster.error('Your trial is over');
-  //     this._router.navigate(['/subscriptionplan']);
-  //   }
-  // }
+    this._socketService.remoteStream$
+      .pipe(takeUntil(this._destroy$))
+      .subscribe((stream) => {
+        if (stream && this._remoteVideo && !this._startlive) {
+          const videoElement = this._remoteVideo.nativeElement;
+          videoElement.srcObject = stream;
+          const peerConnection = Object.values(
+            this._socketService.getPeerConnections()
+          )[0];
+          if (
+            peerConnection &&
+            peerConnection.iceConnectionState === 'connected'
+          ) {
+            videoElement.play().catch((err) => {
+              console.error('Video play error:', err);
+              this.errorMessage = 'Failed to play video stream.';
+              this._toaster.error(this.errorMessage);
+            });
+          } else {
+            console.log('Waiting for ICE connection to stabilize');
+            if (peerConnection) {
+              const stateChangeHandler = () => {
+                if (
+                  peerConnection.iceConnectionState === 'connected' &&
+                  this._remoteVideo
+                ) {
+                  this._remoteVideo.nativeElement.play().catch((err) => {
+                    console.error('Video play error:', err);
+                    this.errorMessage = 'Failed to play video stream.';
+                    this._toaster.error(this.errorMessage);
+                  });
+                  peerConnection.removeEventListener(
+                    'iceconnectionstatechange',
+                    stateChangeHandler
+                  );
+                }
+              };
+              peerConnection.addEventListener(
+                'iceconnectionstatechange',
+                stateChangeHandler
+              );
+            } else {
+              console.warn('No peer connection available yet');
+              this.errorMessage = 'Waiting for connection to broadcaster.';
+              this._toaster.warning(this.errorMessage);
+            }
+          }
+        }
+      });
+  }
 
   initializeConnection(RoomId: number) {
-  const currentDate = new Date();
-  const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
-  localStorage.setItem('payment-required', this.channelData._id);
-  if (lastDateOfLive > currentDate) {
-    this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
-      next: (res) => console.log('Update live info:', res),
-      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to update live info'),
-    });
-
-    this._liveServive.getAllSubscribedMember().subscribe({
-      next: (res) => (this.subscribers = res.members),
-      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to fetch subscribers'),
-    });
-
-    this._liveServive.updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId).subscribe({
-      next: (res) => (this.streamingId = res.liveId),
-      error: (err: HttpErrorResponse) => this._toaster.error(err.error?.message || 'Failed to update live history'),
-    });
-
-    this._socketService.joinRoom(RoomId, 'broadcaster');
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        this.stream = stream;
-        console.log('Broadcaster stream tracks:', stream.getTracks());
-        this._localVideo.nativeElement.srcObject = stream;
-        this._socketService.handleAddTrack(stream); // Ensure tracks are sent immediately
-        this._socketService.setRemoteStream(stream); // Preview local stream as remote for broadcaster
-      })
-      .catch((error: Error) => {
-        console.error('Error accessing media devices:', error);
-        this._toaster.error('Failed to access camera or microphone');
+    const currentDate = new Date();
+    const lastDateOfLive = new Date(this.channelData.lastDateOfLive);
+    localStorage.setItem('payment-required', this.channelData._id);
+    if (lastDateOfLive > currentDate) {
+      this._liveServive.onUpdateStartLiveInfo(RoomId).subscribe({
+        next: (res) => console.log('Update live info:', res),
+        error: (err: HttpErrorResponse) =>
+          this._toaster.error(
+            err.error?.message || 'Failed to update live info'
+          ),
       });
-  } else {
-    this._toaster.error('Your trial is over');
-    this._router.navigate(['/subscriptionplan']);
+
+      this._liveServive.getAllSubscribedMember().subscribe({
+        next: (res) => (this.subscribers = res.members),
+        error: (err: HttpErrorResponse) =>
+          this._toaster.error(
+            err.error?.message || 'Failed to fetch subscribers'
+          ),
+      });
+
+      this._liveServive
+        .updateLiveHistoryInfo(this._livereceivedData.Livename, RoomId)
+        .subscribe({
+          next: (res) => (this.streamingId = res.liveId),
+          error: (err: HttpErrorResponse) =>
+            this._toaster.error(
+              err.error?.message || 'Failed to update live history'
+            ),
+        });
+
+      this._socketService.joinRoom(RoomId, 'broadcaster');
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((stream) => {
+          this.stream = stream;
+          console.log('Broadcaster stream tracks:', stream.getTracks());
+          this._localVideo.nativeElement.srcObject = stream;
+          this._socketService.handleAddTrack(stream);
+          this._socketService.setRemoteStream(stream);
+        })
+        .catch((error: Error) => {
+          console.error('Error accessing media devices:', error);
+          this._toaster.error('Failed to access camera or microphone');
+        });
+    } else {
+      this._toaster.error('Your trial is over');
+      this._router.navigate(['/subscriptionplan']);
+    }
   }
-}
 
   joinLiveStream(RoomId: number) {
     if (this._joinreceivedData.RoomId) {
       this._isViewing = true;
+      this.cdr.detectChanges();
       const token = localStorage.getItem('token');
       if (token) {
         this.decodetoken = jwtDecode(token);

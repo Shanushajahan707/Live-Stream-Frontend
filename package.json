@@ -25,6 +25,7 @@
     "@paypal/checkout-server-sdk": "^1.0.3",
     "@paypal/paypal-js": "^8.1.0",
     "@paypal/sdk-client": "^4.0.193",
+    "@types/webrtc": "^0.0.46",
     "apexcharts": "^3.49.0",
     "chart.js": "^4.4.3",
     "david-ui-angular": "^1.1.0",

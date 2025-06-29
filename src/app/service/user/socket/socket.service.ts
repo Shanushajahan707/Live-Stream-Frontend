@@ -522,7 +522,6 @@
 //     this.broadcasterStream = null;
 //   }
 // }
-
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
@@ -534,6 +533,7 @@ export class SocketService {
   private _socket: Socket;
   private peerConnections: { [id: string]: RTCPeerConnection } = {};
   private iceCandidateQueues: { [id: string]: RTCIceCandidateInit[] } = {};
+  private answerQueue: { [id: string]: RTCSessionDescriptionInit[] } = {};
   private broadcasterStream: MediaStream | null = null;
   private remoteStreamSubject = new BehaviorSubject<MediaStream | null>(null);
   private chatMessagesSubject = new Subject<{
@@ -552,23 +552,13 @@ export class SocketService {
   private roomId: string | null = null;
   private username: string | null = null;
   private retryCounts: { [peerId: string]: number } = {};
+  private isNegotiating: { [peerId: string]: boolean } = {};
 
   constructor() {
-    // this._socket = io(
-    //   'http://localhost:3000',
-    //   ,{   {
-    //     transports: ['websocket'],
-    //     withCredentials: true,
-    //   } }),
-    // this._socket = io('http://localhost:3000', {
-    //   transports: ['websocket'],
-    //   withCredentials: true,
-    // });
     this._socket = io('https://capturelive.onrender.com', {
       transports: ['websocket'],
       withCredentials: true,
     });
-    // this._socket = io('https://onlineecart.shop', {});
 
     this.initializeSocketEvents();
     this.handleChatMessages();
@@ -586,10 +576,17 @@ export class SocketService {
     this._socket.on('offer', async (data) => {
       console.log(`Received offer from ${data.id}, SDP:`, data.offer.sdp);
       const peerConnection = this.createPeerConnection(data.id);
+      if (this.isNegotiating[data.id]) {
+        console.log(`Negotiation in progress for ${data.id}, queuing offer`);
+        return;
+      }
+      this.isNegotiating[data.id] = true;
       try {
-        await peerConnection.setRemoteDescription(
-          new RTCSessionDescription(data.offer)
-        );
+        if (peerConnection.signalingState !== ('stable' as RTCSignalingState)) {
+          console.warn(`Cannot set offer, signaling state: ${peerConnection.signalingState}`);
+          return;
+        }
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
         this._socket.emit('answer', { id: data.id, answer });
@@ -598,26 +595,13 @@ export class SocketService {
       } catch (err) {
         console.error('Error handling offer:', err);
         this.errorSubject.next('Failed to handle offer');
+      } finally {
+        this.isNegotiating[data.id] = false;
       }
     });
 
     this._socket.on('answer', async (data) => {
-      console.log(`Received answer from ${data.id}, SDP:`, data.answer.sdp);
-      const peerConnection = this.peerConnections[data.id];
-      if (peerConnection) {
-        try {
-          await peerConnection.setRemoteDescription(
-            new RTCSessionDescription(data.answer)
-          );
-          console.log(`Set remote description for ${data.id}`);
-          this.processQueuedIceCandidates(data.id);
-        } catch (err) {
-          console.error('Error handling answer:', err);
-          this.errorSubject.next('Failed to handle answer');
-        }
-      } else {
-        console.warn(`No peer connection for ${data.id}`);
-      }
+      await this.handleAnswer(data);
     });
 
     this._socket.on('ice-candidate', async (data) => {
@@ -626,18 +610,14 @@ export class SocketService {
       if (peerConnection) {
         if (peerConnection.remoteDescription) {
           try {
-            await peerConnection.addIceCandidate(
-              new RTCIceCandidate(data.candidate)
-            );
+            await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
             console.log(`Added ICE candidate from ${data.id}`);
           } catch (err) {
             console.error('ICE candidate error:', err);
             this.errorSubject.next('Failed to add ICE candidate');
           }
         } else {
-          console.log(
-            `Queuing ICE candidate from ${data.id} (no remote description)`
-          );
+          console.log(`Queuing ICE candidate from ${data.id} (no remote description)`);
           if (!this.iceCandidateQueues[data.id]) {
             this.iceCandidateQueues[data.id] = [];
           }
@@ -652,23 +632,34 @@ export class SocketService {
       console.log(`Viewer joined: ${viewerId}`);
       const peerConnection = this.createPeerConnection(viewerId);
       if (this.broadcasterStream) {
-        console.log(
-          `Adding broadcaster stream tracks to ${viewerId}:`,
-          this.broadcasterStream.getTracks()
-        );
+        console.log(`Adding broadcaster stream tracks to ${viewerId}:`, this.broadcasterStream.getTracks());
         this.broadcasterStream.getTracks().forEach((track) => {
-          const alreadyAdded = peerConnection
-            .getSenders()
-            .some((sender) => sender.track === track);
+          const alreadyAdded = peerConnection.getSenders().some((sender) => sender.track === track);
           if (!alreadyAdded) {
             peerConnection.addTrack(track, this.broadcasterStream!);
-            console.log(
-              `Added track ${track.kind} to peer connection for ${viewerId}`
-            );
+            console.log(`Added track ${track.kind} to peer connection for ${viewerId}`);
           }
         });
       }
-      this.createOffer(viewerId);
+      if (peerConnection.signalingState === ('stable' as RTCSignalingState) && !this.isNegotiating[viewerId]) {
+        this.createOffer(viewerId);
+      } else {
+        console.log(`Skipping offer for ${viewerId} due to signaling state: ${peerConnection.signalingState}`);
+      }
+    });
+
+    this._socket.on('viewer-left', (viewerId) => {
+      console.log(`Viewer ${viewerId} left`);
+      const peerConnection = this.peerConnections[viewerId];
+      if (peerConnection) {
+        peerConnection.close();
+        delete this.peerConnections[viewerId];
+        delete this.iceCandidateQueues[viewerId];
+        delete this.retryCounts[viewerId];
+        delete this.isNegotiating[viewerId];
+        delete this.answerQueue[viewerId];
+        console.log(`Cleaned up peer connection for ${viewerId}`);
+      }
     });
 
     this._socket.on('viewer count', (data) => {
@@ -715,11 +706,11 @@ export class SocketService {
             'turn:us-0.expressturn.com:3478?transport=udp',
             'turn:us-0.expressturn.com:3478?transport=tcp',
           ],
-          username: '000000002064725712', // Replace with the username ExpressTURN gave you
-          credential: 'zZNbvdpUR/EiQbgshgaKJjLNT+w=', // Replace with the password ExpressTURN gave you
+          username: '000000002064725712',
+          credential: 'zZNbvdpUR/EiQbgshgaKJjLNT+w=',
         },
       ],
-      iceTransportPolicy: 'all', // Allow both relay and direct connections
+      iceTransportPolicy: 'all',
     });
 
     peerConnection.onicecandidate = (event) => {
@@ -733,19 +724,13 @@ export class SocketService {
     };
 
     peerConnection.ontrack = (event) => {
-      console.log(
-        `Received remote track from ${peerId}, streams:`,
-        event.streams
-      );
+      console.log(`Received remote track from ${peerId}, streams:`, event.streams);
       if (event.streams && event.streams[0]) {
         const remoteStream = event.streams[0];
         console.log(`Remote stream tracks:`, remoteStream.getTracks());
         if (remoteStream.getTracks().length > 0) {
-          // Only emit stream if not already set
-          if (
-            !this.remoteStreamSubject.getValue() ||
-            this.remoteStreamSubject.getValue() !== remoteStream
-          ) {
+          const currentStream = this.remoteStreamSubject.getValue();
+          if (!currentStream || currentStream.id !== remoteStream.id) {
             this.remoteStreamSubject.next(remoteStream);
           }
         } else {
@@ -757,31 +742,34 @@ export class SocketService {
     };
 
     peerConnection.oniceconnectionstatechange = () => {
-      console.log(
-        `ICE connection state for ${peerId}: ${peerConnection.iceConnectionState}`
-      );
+      console.log(`ICE connection state for ${peerId}: ${peerConnection.iceConnectionState}`);
       const state = peerConnection.iceConnectionState;
       if (state === 'failed' || state === 'disconnected') {
         if (!this.retryCounts[peerId]) this.retryCounts[peerId] = 0;
         if (this.retryCounts[peerId] < 3) {
-          // Limit retries to 3
           this.retryCounts[peerId]++;
-          console.log(
-            `Restarting ICE for ${peerId}, attempt ${this.retryCounts[peerId]}`
-          );
-          peerConnection.restartIce();
-          if (state === 'disconnected') {
-            // Renegotiate offer for persistent disconnects
-            this.createOffer(peerId);
+          console.log(`Restarting ICE for ${peerId}, attempt ${this.retryCounts[peerId]}`);
+          if (peerConnection.signalingState === ('stable' as RTCSignalingState) && !this.isNegotiating[peerId]) {
+            peerConnection.restartIce();
+            if (state === 'disconnected') {
+              this.createOffer(peerId);
+            }
+          } else {
+            console.log(`Skipping ICE restart due to signaling state: ${peerConnection.signalingState}`);
           }
         } else {
           console.error(`Max ICE retries reached for ${peerId}`);
           this.errorSubject.next('Connection failed after multiple retries');
         }
       } else if (state === 'connected') {
-        this.retryCounts[peerId] = 0; // Reset retries on success
+        this.retryCounts[peerId] = 0;
       }
     };
+
+    peerConnection.onsignalingstatechange = () => {
+      console.log(`Signaling state for ${peerId}: ${peerConnection.signalingState}`);
+    };
+
     this.peerConnections[peerId] = peerConnection;
     return peerConnection;
   }
@@ -792,7 +780,16 @@ export class SocketService {
       console.warn(`No peer connection for ${peerId}`);
       return;
     }
+    if (this.isNegotiating[peerId]) {
+      console.log(`Negotiation in progress for ${peerId}, skipping offer`);
+      return;
+    }
+    this.isNegotiating[peerId] = true;
     try {
+      if (peerConnection.signalingState !== ('stable' as RTCSignalingState)) {
+        console.warn(`Cannot create offer, signaling state: ${peerConnection.signalingState}`);
+        return;
+      }
       const offer = await peerConnection.createOffer();
       await peerConnection.setLocalDescription(offer);
       this._socket.emit('offer', { id: peerId, offer });
@@ -800,15 +797,23 @@ export class SocketService {
     } catch (err) {
       console.error('Error creating offer:', err);
       this.errorSubject.next('Failed to create offer');
+    } finally {
+      this.isNegotiating[peerId] = false;
+      // Process any queued answers
+      if (this.answerQueue[peerId]?.length > 0) {
+        const nextAnswer = this.answerQueue[peerId].shift();
+        if (nextAnswer) {
+          console.log(`Processing queued answer for ${peerId}`);
+          await this.handleAnswer({ id: peerId, answer: nextAnswer });
+        }
+      }
     }
   }
 
   private async processQueuedIceCandidates(peerId: string) {
     const queue = this.iceCandidateQueues[peerId];
     if (queue && queue.length > 0) {
-      console.log(
-        `Processing ${queue.length} queued ICE candidates for ${peerId}`
-      );
+      console.log(`Processing ${queue.length} queued ICE candidates for ${peerId}`);
       const peerConnection = this.peerConnections[peerId];
       for (const candidate of queue) {
         try {
@@ -822,11 +827,50 @@ export class SocketService {
     }
   }
 
+  private async handleAnswer(data: { id: string; answer: RTCSessionDescriptionInit }) {
+    const peerId = data.id;
+    const peerConnection = this.peerConnections[peerId];
+    if (!peerConnection) {
+      console.warn(`No peer connection for ${peerId}`);
+      return;
+    }
+    if (this.isNegotiating[peerId] || peerConnection.signalingState !== ('have-local-offer' as RTCSignalingState)) {
+      console.log(`Queuing answer for ${peerId}, state: ${peerConnection.signalingState}`);
+      if (!this.answerQueue[peerId]) this.answerQueue[peerId] = [];
+      this.answerQueue[peerId].push(data.answer);
+      return;
+    }
+    this.isNegotiating[peerId] = true;
+    try {
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      console.log(`Set remote description for ${peerId}`);
+      this.processQueuedIceCandidates(peerId);
+      // Process any queued answers
+      if (this.answerQueue[peerId]?.length > 0) {
+        const nextAnswer = this.answerQueue[peerId].shift();
+        if (nextAnswer && peerConnection.signalingState === ('stable' as RTCSignalingState)) {
+          console.log(`Processing queued answer for ${peerId}`);
+          await this.createOffer(peerId);
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(nextAnswer));
+        }
+      }
+    } catch (err) {
+      console.error('Error handling answer:', err);
+      this.errorSubject.next('Failed to handle answer');
+    } finally {
+      this.isNegotiating[peerId] = false;
+    }
+  }
+
   joinRoom(roomId: number, role: 'broadcaster' | 'viewer') {
+    if (!roomId) {
+      console.error('Room ID is missing');
+      this.errorSubject.next('Cannot join room: Missing room ID');
+      return;
+    }
     this.roomId = roomId.toString();
     const storedUserName = localStorage.getItem('userName');
-    this.username =
-      (storedUserName ? storedUserName : 'user_') + this._socket.id;
+    this.username = storedUserName || `user_${this._socket.id}`;
     this._socket.emit('join room', {
       room: this.roomId,
       role,
@@ -835,36 +879,31 @@ export class SocketService {
     console.log(`Joined room ${roomId} as ${role}`);
   }
 
- handleAddTrack(stream: MediaStream) {
-  console.log(`Storing broadcaster stream tracks:`, stream.getTracks());
-  this.broadcasterStream = stream;
-  Object.values(this.peerConnections).forEach((peerConnection) => {
-    stream.getTracks().forEach((track) => {
-      const alreadyAdded = peerConnection.getSenders().some((sender) => sender.track === track);
-      if (!alreadyAdded) {
-        peerConnection.addTrack(track, stream);
-        console.log(`Added track ${track.kind} to ${peerConnection} for immediate streaming`);
-      }
+  handleAddTrack(stream: MediaStream) {
+    console.log(`Storing broadcaster stream tracks:`, stream.getTracks());
+    this.broadcasterStream = stream;
+    Object.values(this.peerConnections).forEach((peerConnection) => {
+      stream.getTracks().forEach((track) => {
+        const alreadyAdded = peerConnection.getSenders().some((sender) => sender.track === track);
+        if (!alreadyAdded) {
+          peerConnection.addTrack(track, stream);
+          console.log(`Added track ${track.kind} to ${peerConnection} for immediate streaming`);
+        }
+      });
     });
-  });
-}
+  }
 
   handleReplaceTrack(oldTrack: MediaStreamTrack, newTrack: MediaStreamTrack) {
     console.log(`Trying to replace ${oldTrack.kind} with ${newTrack.kind}`);
     Object.values(this.peerConnections).forEach((peerConnection) => {
-      const sender = peerConnection
-        .getSenders()
-        .find((s) => s.track === oldTrack);
+      const sender = peerConnection.getSenders().find((s) => s.track === oldTrack);
       if (sender) {
         sender.replaceTrack(newTrack);
         console.log(`Replaced track in peer connection`);
         if (this.broadcasterStream) {
           this.broadcasterStream.removeTrack(oldTrack);
           this.broadcasterStream.addTrack(newTrack);
-          console.log(
-            `Updated broadcaster stream tracks:`,
-            this.broadcasterStream.getTracks()
-          );
+          console.log(`Updated broadcaster stream tracks:`, this.broadcasterStream.getTracks());
         }
       } else {
         console.warn(`No sender found for track ${oldTrack.kind}`);
@@ -872,11 +911,7 @@ export class SocketService {
     });
   }
 
-  sendMessage(
-    username: string,
-    message: string,
-    messageType: 'text' | 'audio'
-  ) {
+  sendMessage(username: string, message: string, messageType: 'text' | 'audio') {
     if (this.roomId && this.username) {
       this._socket.emit('chat message', {
         room: this.roomId,
@@ -891,9 +926,7 @@ export class SocketService {
       });
     } else {
       console.error('Error sending message: roomId or username not set');
-      this.errorSubject.next(
-        'Failed to send message: Room ID or username missing'
-      );
+      this.errorSubject.next('Failed to send message: Room ID or username missing');
     }
   }
 
@@ -901,30 +934,6 @@ export class SocketService {
     console.log(`Manually setting remote stream:`, stream.getTracks());
     this.remoteStreamSubject.next(stream);
   }
-  async handleAnswer(data: { id: string; answer: RTCSessionDescriptionInit }) {
-  console.log(`Received answer from ${data.id}, SDP:`, data.answer.sdp);
-  const peerConnection = this.peerConnections[data.id];
-  if (!peerConnection) {
-    console.warn(`No peer connection for ${data.id}`);
-    return;
-  }
-
-  try {
-    if (peerConnection.signalingState === 'stable') {
-      console.log(`Renegotiating for ${data.id} due to stable state`);
-      const offer = await peerConnection.createOffer();
-      await peerConnection.setLocalDescription(offer);
-    }
-    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-    console.log(`Set remote description for ${data.id}`);
-    this.processQueuedIceCandidates(data.id);
-  } catch (err) {
-    console.error('Error handling answer:', err);
-    this.errorSubject.next('Failed to handle answer');
-  }
-}
-
-
 
   disconnect() {
     console.log('Disconnecting socket and closing peer connections');
@@ -932,8 +941,11 @@ export class SocketService {
     Object.values(this.peerConnections).forEach((pc) => pc.close());
     this.peerConnections = {};
     this.iceCandidateQueues = {};
+    this.answerQueue = {};
     this.broadcasterStream = null;
     this.roomId = null;
     this.username = null;
+    this.retryCounts = {};
+    this.isNegotiating = {};
   }
 }
