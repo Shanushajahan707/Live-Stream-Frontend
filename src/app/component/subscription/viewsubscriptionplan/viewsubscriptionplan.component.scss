@@ -1,79 +1,91 @@
+
 #pricing-table {
     text-align: center;
+    padding: 20px 0;
 }
 
 #pricing-table .plan {
-    font: 12px 'Lucida Sans', 'trebuchet MS', Arial, Helvetica;
-    text-shadow: 0 1px rgba(255, 255, 255, 0.8);
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.2); /* Updated border color to RGBA */
-    color: #333;
-    padding: 20px;
-    // width: 180px;
-    float: left;
+    font: 14px 'Lucida Sans', 'trebuchet MS', Arial, Helvetica;
+    background: rgba(31, 41, 55, 0.9);
+    border: 1px solid rgba(75, 85, 99, 0.5); /* Darker border for contrast */
+    color: #d1d5db; /* Light gray text for dark theme */
+    padding: 25px;
     position: relative;
-    margin: 1.1rem;
-    transition: transform 0.3s ease-in-out; /* Smooth transition for the zoom effect */
+    margin: 1.5rem;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    backdrop-filter: blur(10px); /* Matches backdrop-blur effect */
 }
 
 #pricing-table .plan:hover {
-    transform: scale(1.05); /* Zoom effect on hover */
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
 }
 
 #pricing-table #most-popular {
     z-index: 2;
-    top: -13px;
-    border-width: 3px;
-    padding: 30px 20px;
-    border-radius: 5px;
-    box-shadow: 20px 0 10px -10px rgba(0, 0, 0, 0.15), -20px 0 10px -10px rgba(0, 0, 0, 0.15);
+    top: -16px;
+    border-width: 2px;
+    padding: 35px 25px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(59, 130, 246, 0.3); /* Blue-accented shadow */
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95), rgba(17, 24, 39, 0.95));
 }
 
 #pricing-table .plan:first-child {
-    border-radius: 5px 0 0 5px;
+    border-radius: 10px 0 0 10px;
 }
 
 #pricing-table .plan:last-child {
-    border-radius: 0 5px 5px 0;
+    border-radius: 0 10px 10px 0;
 }
 
 #pricing-table h3 {
-    font-size: 20px;
-    font-weight: normal;
-    padding: 20px;
-    margin: -20px -20px 50px -20px;
-    background-color: #eee;
-    background-image: linear-gradient(#fff, #eee);
-    border-radius: 5px 5px 0 0;
+    font-size: 22px;
+    font-weight: 600;
+    padding: 15px;
+    margin: -25px -25px 40px -25px;
+    background: linear-gradient(to right, #1e293b, #0f172a);
+    border-radius: 10px 10px 0 0;
+    color: #f9fafb;
 }
 
 #pricing-table #most-popular h3 {
-    background-color: #ddd;
-    background-image: linear-gradient(#eee, #ddd);
-    margin-top: -30px;
-    padding-top: 30px;
+    background: linear-gradient(to right, #1e40af, #3b82f6); /* Blue gradient for "most popular" */
+    margin-top: -35px;
+    padding-top: 20px;
 }
 
 #pricing-table h3 span {
     display: block;
-    font: bold 25px/100px Georgia, Serif;
-    // color: #777;
-    background: #fff;
-    border: 5px solid #fff;
-    height: 100px;
-    width: 100px;
-    margin: 10px auto -65px;
-    border-radius: 100px;
-    box-shadow: 0 5px 20px #ddd inset, 0 3px 0 #999 inset;
+    font: bold 28px/100px Georgia, Serif;
+    color: #3b82f6; /* Blue accent for price */
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(59, 130, 246, 0.3);
+    height: 120px;
+    width: 120px;
+    margin: 10px auto -80px;
+    border-radius: 60px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2) inset, 0 3px 0 rgba(59, 130, 246, 0.3) inset;
 }
 
 #pricing-table ul {
-    margin: 20px 0 0 0;
+    margin: 25px 0 0 0;
     padding: 0;
     list-style: none;
 }
 
 #pricing-table li {
-    border-top: 1px solid rgba(0, 0, 0, 0.1); /* Updated border color to RGBA */
-    padding: 10px 0;
+    border-top: 1px solid rgba(75, 85, 99, 0.3); /* Lighter border for dark theme */
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#pricing-table li::before {
+    content: "✔"; /* Unicode checkmark */
+    color: #3b82f6; /* Blue accent */
+    font-weight: bold;
+    margin-right: 10px;
 }

@@ -6,5 +6,8 @@ import { Component } from '@angular/core';
   styleUrl: './subscription.component.scss'
 })
 export class SubscriptionComponent {
-
+  sidebarVisible: boolean = false;
+  toggleSidebar() {
+    this.sidebarVisible = !this.sidebarVisible;
+  }
 }

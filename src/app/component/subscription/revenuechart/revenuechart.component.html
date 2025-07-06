@@ -1,29 +1,46 @@
-<div class="card mx-4">
-  <p class="text-white" *ngIf="overallData">
-    Total Payment: <span class="text-red-600 text-base font-bold">{{ totalPayment | currency : "INR" }}</span>
+<div class="card mx-4 p-6 bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl backdrop-blur-md">
+  <p class="text-white text-lg" *ngIf="overallData">
+    Total Payment: <span class="text-blue-400 text-base font-bold">{{ totalPayment | currency : "INR" }}</span>
   </p>
-  <div class="date-picker-container">
-    <label class="text-white" for="startDate">Start Date:</label>
-    <input class="mx-2 rounded-md" type="date" id="startDate" #startDateInput />
-    <label class="text-white" for="endDate">End Date:</label>
-    <input class="mx-2 rounded-md" type="date" id="endDate" #endDateInput />
+  <div class="date-picker-container mt-6 flex flex-col sm:flex-row items-center gap-4">
+    <div class="flex items-center">
+      <label class="text-white mr-2 whitespace-nowrap" for="startDate">Start Date:</label>
+      <input
+        class="w-40 p-2 bg-gray-800 text-white rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+        type="date"
+        id="startDate"
+        #startDateInput
+      />
+    </div>
+    <div class="flex items-center">
+      <label class="text-white mr-2 whitespace-nowrap" for="endDate">End Date:</label>
+      <input
+        class="w-40 p-2 bg-gray-800 text-white rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+        type="date"
+        id="endDate"
+        #endDateInput
+      />
+    </div>
     <button
-      class="bg-red-400 p-3 ms-4 rounded-md"
+      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-all duration-300 mt-4 sm:mt-0"
       (click)="downloadExcelReport(startDateInput.value, endDateInput.value)"
     >
       Download Excel Report
     </button>
   </div>
-  <p-chart
-    *ngIf="overallData; else noDataTemplate"
-    type="line"
-    [data]="overallData"
-    [options]="options"
-  ></p-chart>
-  <div *ngIf="overallData"></div>
+  <div class="mt-6">
+    <p-chart
+      *ngIf="overallData; else noDataTemplate"
+      type="line"
+      [data]="overallData"
+      [options]="options"
+      style="height: 300px;"
+    ></p-chart>
+  </div>
+  <ng-template #noDataTemplate>
+    <div class="mt-6 text-center">
+      <p-chart type="line" [options]="options" style="height: 300px;"></p-chart>
+      <p *ngIf="!monthlySubscription" class="text-blue-300 mt-4">No data available to show</p>
+    </div>
+  </ng-template>
 </div>
-
-<ng-template #noDataTemplate>
-  <p-chart type="line" [options]="options"></p-chart>
-  <p *ngIf="!monthlySubscription">No data available to show</p>
-</ng-template>
